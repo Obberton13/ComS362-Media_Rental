@@ -6,6 +6,7 @@ import java.util.ArrayList;
  * Created by Obberton13 on 2/16/2015.
  */
 public class Customer {
+
     protected int id;
     protected Store store;
     protected ArrayList<Transaction> transactions;

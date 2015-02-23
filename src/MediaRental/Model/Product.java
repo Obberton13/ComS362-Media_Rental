@@ -4,10 +4,19 @@ package MediaRental.Model;
  * Created by Obberton13 on 2/16/2015.
  */
 public class Product {
+	protected int id;
 	protected String title;
 	protected String type;
 	protected Store store;
 	protected int quantity;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public String getTitle() {
 		return title;
