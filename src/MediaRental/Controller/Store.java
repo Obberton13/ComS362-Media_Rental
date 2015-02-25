@@ -1,6 +1,7 @@
 package MediaRental.Controller;
 
 import MediaRental.Model.*;
+import MediaRental.DatabaseSupport;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,18 +11,28 @@ import java.util.HashMap;
  */
 public class Store {
 	public boolean AddCustomer(String name, String address) {
-		return true;
+		MediaRental.Model.Store store = this.getStore();
+		Customer customer = new Customer();
+		customer.setStore(store);
+		customer.setName(name);
+		customer.setAddress(address);
+		return DatabaseSupport.putCustomer(customer);
 	}
 
 	public boolean RemoveCustomer(int cid) {
-		return true;
+		return DatabaseSupport.removeCustomer(cid);
 	}
 
 	public boolean CreateProduct(String name, String type, ArrayList<String> keywords) {
-		return true;
+		Product product = new Product();
+		product.setStore(this.getStore());
+		product.setTitle(name);
+		product.setQuantity(0);
+		product.setType(type);
+		return DatabaseSupport.putProduct(product);
 	}
 
-	public boolean AddProduct(int qty) {
+	public boolean AddProduct(int pid, int qty) {
 		return true;
 	}
 
@@ -39,5 +50,9 @@ public class Store {
 
 	public ArrayList<Product> FindProduct(HashMap<String, String> arguments) {
 		return new ArrayList<Product>();
+	}
+	private MediaRental.Model.Store getStore()
+	{
+		return new MediaRental.Model.Store();
 	}
 }

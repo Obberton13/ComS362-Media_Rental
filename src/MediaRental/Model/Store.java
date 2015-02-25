@@ -7,9 +7,18 @@ import java.util.ArrayList;
  */
 public class Store {
 	protected int id;
+	protected String name;
 	protected ArrayList<Transaction> transactions;
 	protected ArrayList<Customer> customers;
 	protected ArrayList<Product> products;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public int getId() {
 		return id;

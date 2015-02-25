@@ -9,7 +9,25 @@ public class Customer {
 
     protected int id;
     protected Store store;
-    protected ArrayList<Transaction> transactions;
+	protected String name;
+	protected String address;
+	protected ArrayList<Transaction> transactions;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
     public Customer()
     {
