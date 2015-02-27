@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import MediaRental.Model.Customer;
 import MediaRental.Model.Product;
+import MediaRental.Model.Transaction;
 
 public class DatabaseSupport
 
@@ -161,7 +162,61 @@ public class DatabaseSupport
             if (rs.next()){
                 int id = rs.getInt(1);
                 product.setId(id);
-                return (id);
+                return id;
+            }
+
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+        return 0;
+    }
+    
+    /**
+     * Add a product to the database.
+     * @param catalog_id: Id of the catalog item
+     * @return - id of the product from the product db
+     */
+    public int addProductToStore(int catalog_id){
+        String statement = "INSERT INTO Product (productCatalogID) VALUES (" + catalog_id + ");";
+        try {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next()){
+                int id = rs.getInt(1);      
+                return id;
+            }
+
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+        return 0;
+    }
+    
+    /**
+     * Add a transaction to the database
+     * @param transaction
+     * @return id of transaction
+     */
+    public int addTransactionToStore(Transaction transaction){
+        
+
+        String statement = "INSERT INTO Transaction (customerID, paid) " +
+        		"VALUES (" + transaction.getCustomer().getId() + ", 0);";
+        try {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next()){
+                int id = rs.getInt(1);
+                transaction.setId(id);
+                return id;
             }
 
         }

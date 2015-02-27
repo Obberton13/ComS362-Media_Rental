@@ -41,7 +41,7 @@ public class Customer {
 		transactions = new ArrayList<Transaction>();
     }
 
-    int getId() {
+    public int getId() {
 		return id;
     }
 
