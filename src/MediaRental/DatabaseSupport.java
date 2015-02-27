@@ -109,15 +109,17 @@ public class DatabaseSupport
         } 
     }
     
-    public int addCustomer(String name, String address){
+    public int addCustomer(Customer customer){
         String statement = "INSERT INTO Customer (Name, Address)" +
-        		" VALUES ('" + name +"', '" + address + "');";
+        		" VALUES ('" + customer.getName() +"', '" + customer.getAddress() + "');";
         try {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
             stmt1.executeUpdate();
             ResultSet rs = stmt1.getGeneratedKeys();
             if (rs.next()){
-                return (rs.getInt(1));
+                int id = rs.getInt(1);
+                customer.setId(id);
+                return (id);
             }
 
         }
