@@ -13,6 +13,11 @@ public class Customer {
 	protected String address;
 	protected ArrayList<Transaction> transactions;
 
+	public Customer()
+	{
+		transactions = new ArrayList<Transaction>();
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -28,11 +33,6 @@ public class Customer {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-
-    public Customer()
-    {
-		transactions = new ArrayList<Transaction>();
-    }
 
     public int getId() {
 		return id;

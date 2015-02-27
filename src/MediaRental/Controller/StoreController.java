@@ -9,15 +9,16 @@ import java.util.HashMap;
 /**
  * Created by Obberton13 on 2/16/2015.
  */
-public class Store {
+public class StoreController
+{
 
 	/**
 	 * @param name the name of the customer to add
 	 * @param address the address of the customer to add
 	 * @return true on success, false otherwise
 	 */
-	public boolean AddCustomer(String name, String address) {
-		MediaRental.Model.Store store = this.getStore();
+	public static boolean AddCustomer(String name, String address) {//IMO this should be in the CustomerController. Not the StoreController.
+		MediaRental.Model.Store store = getStore();
 		Customer customer = new Customer();
 		customer.setStore(store);
 		customer.setName(name);
@@ -30,7 +31,7 @@ public class Store {
 	 * @param cid the ID of the customer to remove
 	 * @return true on success, false otherwise
 	 */
-	public boolean RemoveCustomer(int cid) {
+	public static boolean RemoveCustomer(int cid) {
 		return false;
 		//return DatabaseSupport.removeCustomer(cid);
 	}
@@ -40,9 +41,9 @@ public class Store {
 	 * @param type the type of the product to create
 	 * @return true on success, false otherwise
 	 */
-	public boolean CreateProduct(String name, String type) {
+	public static boolean CreateProduct(String name, String type) {
 		Product product = new Product();
-		product.setStore(this.getStore());
+		product.setStore(getStore());
 		product.setTitle(name);
 		product.setQuantity(0);
 		product.setType(type);
@@ -55,7 +56,7 @@ public class Store {
 	 * @param qty the amount of the product to add to the store
 	 * @return true on success, false otherwise
 	 */
-	public boolean AddProduct(int pid, int qty) {
+	public static boolean AddProduct(int pid, int qty) {
 		return true;
 	}
 
@@ -63,7 +64,7 @@ public class Store {
 	 * @param cid The ID of the customer who is doing the purchasing
 	 * @return true on success, false otherwise
 	 */
-	public boolean CreateTransaction(int cid){
+	public static boolean CreateTransaction(int cid){
 		return true;
 	}
 
@@ -72,7 +73,7 @@ public class Store {
 	 * @param transactionID The ID of the transaction to be added to
 	 * @return true on success, false otherwise
 	 */
-	public boolean AddSale(int productID, int transactionID) {
+	public static boolean AddSale(int productID, int transactionID) {
 		return true;
 	}
 
@@ -82,7 +83,7 @@ public class Store {
 	 * @param rentalLength The length that the specified product will be rented
 	 * @return true on success, false otherwise
 	 */
-	public boolean AddRental(int productID, int transactionID, int rentalLength) {
+	public static boolean AddRental(int productID, int transactionID, int rentalLength) {
 		return true;
 	}
 
@@ -90,12 +91,12 @@ public class Store {
 	 * @param arguments The arguments used to find the product(s).
 	 * @return an ArrayList of products containing all products found that match the arguments
 	 */
-	public ArrayList<Product> FindProduct(HashMap<String, String> arguments) {
+	public static ArrayList<Product> FindProduct(HashMap<String, String> arguments) {
 		return new ArrayList<Product>();
 	}
 
 	//private helper methods
-	private MediaRental.Model.Store getStore()
+	private static MediaRental.Model.Store getStore()
 	{
 		return new MediaRental.Model.Store();
 	}
