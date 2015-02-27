@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import MediaRental.Model.Customer;
+import MediaRental.Model.Product;
 
 public class DatabaseSupport
 
@@ -133,6 +134,33 @@ public class DatabaseSupport
             if (rs.next()){
                 int id = rs.getInt(1);
                 customer.setId(id);
+                return (id);
+            }
+
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+        return 0;
+    }
+    
+    /**
+     * Used when creating a completely new product in the store
+     * @param product - should have a title and a type but no id
+     * @return new id of product
+     */
+    public int addProductToCatalog(Product product){
+        String statement = "INSERT INTO ProductCatalog (title, genre)" +
+                " VALUES ('" + product.getTitle() + "', '" + product.getType() + "');";
+        try {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next()){
+                int id = rs.getInt(1);
+                product.setId(id);
                 return (id);
             }
 
