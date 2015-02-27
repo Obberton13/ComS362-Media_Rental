@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
 import MediaRental.Model.Customer;
 import MediaRental.Model.Product;
@@ -227,7 +228,26 @@ public class DatabaseSupport
         } 
         return 0;
     }
-        
+    
+    /**
+     * Add a product to a transaction in the db
+     * @param product
+     * @param duedate - format YYYY-MM-DD
+     */
+    public void addProductToTransaction(Product product, String duedate, Transaction transaction){
+        String statement = "UPDATE Product SET transactionID=" + transaction.getId() + 
+                           ", dueDate=" + duedate + " WHERE id=" + product.getId();
+        try {
+            Statement stmt1 = conn.createStatement();
+            stmt1.executeUpdate(statement);
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+    }
+    
     /**
      * Create db tables. Only run this if initializing db for the very first time
      * @return boolean indicating success
@@ -247,9 +267,10 @@ public class DatabaseSupport
                 "PRIMARY KEY (id));";
         
         String statement3 = "CREATE TABLE movieRental.Product (" +
-                "id INT NOT NULL," +
+                "id INT NOT NULL AUTO_INCREMENT," +
                 "productCatalogID INT NOT NULL," +
                 "transactionID INT NULL," +
+                "dueDate DATE NULL" + 
                 "PRIMARY KEY (id)," +
                 "FOREIGN KEY (productCatalogID) REFERENCES ProductCatalog(id));";
         
