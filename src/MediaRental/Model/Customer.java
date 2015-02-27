@@ -13,6 +13,11 @@ public class Customer {
 	protected String address;
 	protected ArrayList<Transaction> transactions;
 
+	public Customer()
+	{
+		transactions = new ArrayList<Transaction>();
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -36,7 +41,7 @@ public class Customer {
 		transactions = new ArrayList<Transaction>();
     }
 
-    public int getId() {
+    int getId() {
 		return id;
     }
 
