@@ -2,8 +2,13 @@ package MediaRental;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+
+import MediaRental.Model.Customer;
 
 public class DatabaseSupport
 
@@ -32,8 +37,100 @@ public class DatabaseSupport
         }    
     }
     
+    /**
+     * 
+     * @param name - can be null
+     * @param address - can be null
+     * @return customers that have a name or address similar to the passed in values
+     */
+    public ArrayList<Customer> findCustomers(String name, String address){
+        String statement = "Select id, name, address from Customer";
+        String whereClause = "";
+        ArrayList<Customer> customers = new ArrayList();
+        if(name != null && !name.isEmpty()){
+            whereClause += "where name like %'" + name + "%'";
+            if(address != null && !address.isEmpty()){
+                whereClause += "and address like %'" + address + "%'";               
+            }
+        }
+        else if(address != null && !address.isEmpty()){
+            whereClause += "where address like %'" + address + "%'";
+        }
+        statement += whereClause + ";";
+        try {
+            Statement stmt1 = conn.createStatement ();
+            ResultSet rs1 = stmt1.executeQuery (statement);
+            while(rs1.next()){
+                int id = rs1.getInt("id");
+                String n = rs1.getString("name"); 
+                String a = rs1.getString("address");
+                Customer cust = new Customer(name, address);
+                cust.setId(id);
+                customers.add(cust);
+            }    
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+        return customers;
+        
+    }
     
-    public static boolean createTables(){
+    public Customer getCustomer(int id){
+        String statement = "Select name, address from Customer where id = " + id + ";";
+        try {
+            Statement stmt1 = conn.createStatement ();
+            ResultSet rs1 = stmt1.executeQuery (statement);
+            rs1.next();
+            String name = rs1.getString (1); 
+            String address = rs1.getString (2);
+            return new Customer(name, address);
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return null;
+        } 
+    }
+    
+    public void removeCustomer(int id){
+        String statement = "delete from Customer where id = " + id + ";";
+        try {
+            Statement stmt1 = conn.createStatement ();
+            stmt1.execute(statement);
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+    }
+    
+    public int addCustomer(String name, String address){
+        String statement = "INSERT INTO Customer (Name, Address)" +
+        		" VALUES ('" + name +"', '" + address + "');";
+        try {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next()){
+                return (rs.getInt(1));
+            }
+
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+        return 0;
+    }
+        
+    
+    public boolean createTables(){
         String statement = "CREATE TABLE movieRental.Customer (" +
                 "id INT NOT NULL AUTO_INCREMENT," +
                 "Name VARCHAR(45) NULL," +

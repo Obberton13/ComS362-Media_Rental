@@ -18,10 +18,8 @@ public class Store {
 	 */
 	public boolean AddCustomer(String name, String address) {
 		MediaRental.Model.Store store = this.getStore();
-		Customer customer = new Customer();
+		Customer customer = new Customer(name, address);
 		customer.setStore(store);
-		customer.setName(name);
-		customer.setAddress(address);
 		return false;
 		//return DatabaseSupport.putCustomer(customer);
 	}
