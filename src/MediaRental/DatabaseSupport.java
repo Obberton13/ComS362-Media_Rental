@@ -78,6 +78,11 @@ public class DatabaseSupport
         
     }
     
+    /**
+     * Get a customer from the database by id
+     * @param id
+     * @return a customer object
+     */
     public Customer getCustomer(int id){
         String statement = "Select name, address from Customer where id = " + id + ";";
         try {
@@ -96,6 +101,10 @@ public class DatabaseSupport
         } 
     }
     
+    /**
+     * Remove a customer from the db
+     * @param id
+     */
     public void removeCustomer(int id){
         String statement = "delete from Customer where id = " + id + ";";
         try {
@@ -109,6 +118,11 @@ public class DatabaseSupport
         } 
     }
     
+    /**
+     * Add a customer to the database
+     * @param customer object to add (id should not be set yet)
+     * @return id of customer added
+     */
     public int addCustomer(Customer customer){
         String statement = "INSERT INTO Customer (Name, Address)" +
         		" VALUES ('" + customer.getName() +"', '" + customer.getAddress() + "');";
@@ -131,7 +145,10 @@ public class DatabaseSupport
         return 0;
     }
         
-    
+    /**
+     * Create db tables. Only run this if initializing db for the very first time
+     * @return boolean indicating success
+     */
     public boolean createTables(){
         String statement = "CREATE TABLE movieRental.Customer (" +
                 "id INT NOT NULL AUTO_INCREMENT," +
