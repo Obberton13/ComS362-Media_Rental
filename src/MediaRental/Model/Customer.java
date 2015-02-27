@@ -34,7 +34,14 @@ public class Customer {
 		this.address = address;
 	}
 
-    public int getId() {
+    public Customer(String name, String address)
+    {
+        this.name = name;
+        this.address = address;
+		transactions = new ArrayList<Transaction>();
+    }
+
+    int getId() {
 		return id;
     }
 

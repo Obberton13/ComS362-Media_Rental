@@ -17,12 +17,11 @@ public class StoreController
 	 * @param address the address of the customer to add
 	 * @return true on success, false otherwise
 	 */
-	public static boolean AddCustomer(String name, String address) {//IMO this should be in the CustomerController. Not the StoreController.
+	public static boolean AddCustomer(String name, String address) {
 		MediaRental.Model.Store store = getStore();
-		Customer customer = new Customer();
+		Customer customer = new Customer(name, address);
+
 		customer.setStore(store);
-		customer.setName(name);
-		customer.setAddress(address);
 		return false;
 		//return DatabaseSupport.putCustomer(customer);
 	}
