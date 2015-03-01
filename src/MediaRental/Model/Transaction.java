@@ -10,7 +10,6 @@ public class Transaction {
 	protected ArrayList<Product> rentals;
 	protected ArrayList<Product> sales;
 	protected Customer customer;
-	protected Store store;
 
 	public int getId() {
 		return id;
@@ -42,13 +41,5 @@ public class Transaction {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	}
-
-	public Store getStore() {
-		return store;
-	}
-
-	public void setStore(Store store) {
-		this.store = store;
 	}
 }

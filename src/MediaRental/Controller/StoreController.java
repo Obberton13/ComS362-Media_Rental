@@ -17,13 +17,10 @@ public class StoreController
 	 * @param address the address of the customer to add
 	 * @return true on success, false otherwise
 	 */
-	public static boolean AddCustomer(String name, String address) {
-		MediaRental.Model.Store store = getStore();
+	public static int AddCustomer(String name, String address) {
+		DatabaseSupport db = new DatabaseSupport();
 		Customer customer = new Customer(name, address);
-
-		customer.setStore(store);
-		return false;
-		//DatabaseSupport.putCustomer(customer);
+		return db.addCustomer(customer);
 	}
 
 	/**
@@ -42,7 +39,6 @@ public class StoreController
 	 */
 	public static boolean CreateProduct(String name, String type) {
 		Product product = new Product();
-		product.setStore(getStore());
 		product.setTitle(name);
 		product.setQuantity(0);
 		product.setType(type);
@@ -92,11 +88,5 @@ public class StoreController
 	 */
 	public static ArrayList<Product> FindProduct(HashMap<String, String> arguments) {
 		return new ArrayList<Product>();
-	}
-
-	//private helper methods
-	private static MediaRental.Model.Store getStore()
-	{
-		return new MediaRental.Model.Store();
 	}
 }

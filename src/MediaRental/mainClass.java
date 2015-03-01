@@ -1,6 +1,5 @@
 package MediaRental;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import MediaRental.Controller.*;
@@ -12,93 +11,94 @@ import MediaRental.Model.Product;
 public class mainClass {
 	public static void main(String args[])
 	{
-		System.out.println("Hey, it did something!");
-		Scanner sc = new Scanner(System.in);
-		DatabaseSupport.createTables();
-
 		//this is the main loop for the program.
+		Scanner sc = new Scanner(System.in);
 		while(sc.hasNext())
 		{
-			String input = sc.nextLine().toLowerCase();
-			String[] in = input.split(" ");
-			for(String s : in)
+			String in = sc.next().toLowerCase();
+			char c = in.charAt(0);
+			switch(c)
 			{
-				System.out.println(s);
+				case 'q': break;
+				case 'a': Create(sc); break;
+				case 'e': Edit(sc); break;
+				case 'i': Index(sc); break;
+				case 'd': Delete(sc); break;
+				case 'c': BaseCommands(); break;
+				default: System.out.println("Invalid command: " + in);
 			}
-			if(in[0].startsWith("q")) break;
-			if(in[0].startsWith("a")) Create(in);
-			if(in[0].startsWith("e")) Edit(in);
-			if(in[0].startsWith("i")) Index(in);
-			if(in[0].startsWith("d")) Delete(in);
-			if(in[0].startsWith("c")) BaseCommands();
+			if(c=='q') break;
 		}
 		System.out.println("G'bye!");
 		sc.close();
 	}
-	private static void Create(String[] in)
+	private static void Create(Scanner in)
 	{
-		if(in.length<2||in[1].equals("commands"))
+		System.out.println("<c|p|t|q>\n\n" +
+				"c adds a customer\n" +
+				"p adds a product\n" +
+				"t adds a transaction\n" +
+				"q returns to the previous menu");
+		String input = in.next();
+		switch(input.charAt(0))//creates a customer
 		{
-			System.out.println("<c|p|t>\n\n" +
-					"c adds a customer\n" +
-					"p adds a product\n" +
-					"t adds a transaction");
-			return;
-		}
-		if(in[1].startsWith("c"))//creates a customer
-		{
-			if(in.length<4)
-			{
-				System.out.println("Usage: add c \"<name>\" \"<address>\"");
+			case 'c':
+				System.out.println("Adding a Customer.\nCustomer name: ");
+				String name = in.nextLine();
+				System.out.println("Customer Address: ");
+				String address = in.nextLine();
+				StoreController.AddCustomer(name, address);
+				break;
+			case 'p':
+				System.out.println("Product Title: ");
+				String title = in.nextLine();
+				System.out.println("Product Type: ");
+				String type = in.nextLine();
+				StoreController.CreateProduct(title, type);
+				break;
+			case 't':
+				System.out.println("Customer ID: ");
+				int id = Integer.parseInt(in.next());
+				StoreController.CreateTransaction(id);
+				break;
+			case 'q':
 				return;
-			}
-			System.out.println(StoreController.AddCustomer(in[2], in[3]));
-		}
-		if(in[1].startsWith("p"))
-		{
-			if(in.length<4)
-			{
-				System.out.println("Usage: add p <Title> <Type>");
-				return;
-			}
-			StoreController.CreateProduct(in[2], in[3]);
-		}
-		if(in[1].startsWith("t"))
-		{
-			if(in.length<4)
-			{
-				System.out.println("Usage: add t <Customer ID>");
-				return;
-			}
-			StoreController.CreateTransaction(Integer.parseInt(in[2]));
+			default:
+				System.out.println("Invalid thing to add: " + input);
+				break;
 		}
 	}
 
-	private static void Edit(String[] in)
+	private static void Edit(Scanner in)
 	{
 		System.out.println("Editing items is not yet supported");
+		in.next();
 	}
 
-	private static void Index(String[] in)
+	private static void Index(Scanner in)
 	{
-		if(in.length<2||in[1].equals("commands"))
+		String input = in.next();
+		switch(input.charAt(0))
 		{
-			System.out.println("p (product)");
-			return;
-		}
-		if(in[1].startsWith("p"))
-		{
-			ArrayList<Product> products = StoreController.FindProduct(new HashMap<String, String>());
-			for(Product p : products)
-			{
-				System.out.println(p.getTitle() + " " + p.getType() + " " + p.getQuantity());
-			}
+			case 'p':
+				//TODO index based on name OR genre OR both
+				for(Product p : StoreController.FindProduct(new HashMap<String, String>()))
+				{
+					System.out.println(p);
+				}
+				break;
+			case 'c':
+				System.out.println("p");
+				break;
+			default:
+				System.out.println("Invalid thing to index: " + input);
 		}
 	}
 
-	private static void Delete(String[] in)
+	private static void Delete(Scanner in)
 	{
-
+		System.out.println("Deletion is not yet available.");
+		in.next();
 	}
 
 	private static void BaseCommands()
