@@ -222,9 +222,9 @@ public class DatabaseSupport
         return 0;
     }
     
-    public int addSaleToStore(Rental rental){
-        String statement = "INSERT INTO Sale (productID, price) VALUES (" + rental.getProduct().getId() + 
-                ", " + rental.getPrice() + ");";
+    public int addSaleToStore(Sale sale){
+        String statement = "INSERT INTO Sale (productID, price) VALUES (" + sale.getProduct().getId() + 
+                ", " + sale.getPrice() + ");";
         try {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
             stmt1.executeUpdate();
