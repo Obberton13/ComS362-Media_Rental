@@ -48,7 +48,7 @@ public class DatabaseSupport
      * @param address - can be null
      * @return customers that have a name or address similar to the passed in values
      */
-    public ArrayList<Customer> findProducts(String title, String genre){
+    public ArrayList<Product> findProducts(String title, String genre){
         String statement = "Select id, title, genre from ProductCatalog";
         String whereClause = "";
         ArrayList<Product> products = new ArrayList();
