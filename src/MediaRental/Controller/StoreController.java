@@ -22,8 +22,8 @@ public class StoreController
 		Customer customer = new Customer(name, address);
 
 		customer.setStore(store);
-		return false;
-		//return DatabaseSupport.putCustomer(customer);
+		//return false;
+		return DatabaseSupport.putCustomer(customer);
 	}
 
 	/**
@@ -46,8 +46,8 @@ public class StoreController
 		product.setTitle(name);
 		product.setQuantity(0);
 		product.setType(type);
-		return false;
-		//return DatabaseSupport.putProduct(product);
+		//return false;
+		return DatabaseSupport.addProductToCatalog(product);
 	}
 
 	/**
@@ -56,6 +56,12 @@ public class StoreController
 	 * @return true on success, false otherwise
 	 */
 	public static boolean AddProduct(int pid, int qty) {
+		MediaRental.Model.Store store = getStore();
+		for (int i = 0; i < qty; i++)
+		{
+		DatabaseSupport.addProductToStore(pid);
+		}
+		
 		return true;
 	}
 
@@ -64,7 +70,11 @@ public class StoreController
 	 * @return true on success, false otherwise
 	 */
 	public static boolean CreateTransaction(int cid){
-		return true;
+		Transaction transaction = new Transaction();
+		transaction.setStore(getStore());
+		transaction.setCustomer(DatabaseSupport.getCustomer(cid));
+		transaction.setID(DatabaseSupport.addTransactionToStore(transaction));
+		return false;
 	}
 
 	/**
@@ -73,6 +83,9 @@ public class StoreController
 	 * @return true on success, false otherwise
 	 */
 	public static boolean AddSale(int productID, int transactionID) {
+		Product product = DatabaseSupport.getProduct(productID);
+		Transaction transaction = DatabaseSupport.getTransaction(transactionID);
+		
 		return true;
 	}
 
