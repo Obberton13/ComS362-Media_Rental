@@ -12,6 +12,7 @@ import java.util.Date;
 import MediaRental.Model.Customer;
 import MediaRental.Model.Product;
 import MediaRental.Model.Rental;
+import MediaRental.Model.Sale;
 import MediaRental.Model.Transaction;
 
 public class DatabaseSupport
