@@ -8,7 +8,6 @@ import java.util.ArrayList;
 public class Customer {
 
     protected int id;
-    protected Store store;
 	protected String name;
 	protected String address;
 	protected ArrayList<Transaction> transactions;
@@ -49,14 +48,6 @@ public class Customer {
 		this.id = id;
     }
 
-    public Store getStore() {
-		return store;
-    }
-
-    public void setStore(Store store) {
-		this.store = store;
-    }
-
     public ArrayList<Transaction> getTransactions() {
 		return transactions;
     }
@@ -64,4 +55,10 @@ public class Customer {
     public void setTransactions(ArrayList<Transaction> transactions) {
 		this.transactions = transactions;
     }
+
+	@Override
+	public String toString()
+	{
+		return "" + id + ", " + name + ", " + address;
+	}
 }
