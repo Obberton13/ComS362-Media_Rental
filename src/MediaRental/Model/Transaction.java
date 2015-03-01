@@ -42,4 +42,12 @@ public class Transaction {
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
+	
+	public void addSale(Sale sale) {
+		sales.add(sale);
+	}
+		
+	public void addRental(Rental rental) {
+			rentals.add(rental);
+	}
 }

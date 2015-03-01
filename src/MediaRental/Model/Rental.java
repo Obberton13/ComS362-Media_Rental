@@ -5,7 +5,7 @@ public class Rental {
 	protected Product product;
 	protected int id;
 	protected int price;
-	protected int rentalLength; 
+	protected String dueDate; 
 	
 	public int getId() {
 		return id;
@@ -23,12 +23,12 @@ public class Rental {
 		return price;
 	}
 	
-	public void setRentalLength(int len) {
-		rentalLength = len;
+	public void setDueDate(String len) {
+		dueDate = len;
 		}
 	
-	public int getRentalLength() {
-		return rentalLength;
+	public String getDueDate() {
+		return dueDate;
 	}
 	
 	public void setProduct(Product p) {
