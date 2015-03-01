@@ -7,7 +7,6 @@ public class Product {
 	protected int id;
 	protected String title;
 	protected String type;
-	protected Store store;
 	protected int quantity;
 
 	public int getId() {
@@ -34,19 +33,17 @@ public class Product {
 		this.type = type;
 	}
 
-	public Store getStore() {
-		return store;
-	}
-
-	public void setStore(Store store) {
-		this.store = store;
-	}
-
 	public int getQuantity() {
 		return quantity;
 	}
 
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "" + id + ", " + title + ", " + type;
 	}
 }

@@ -16,7 +16,7 @@ import MediaRental.Model.Transaction;
 public class DatabaseSupport
 
 {
-    public static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/movieRental";
+    public static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/movie_rental";
     public static final String USER = "root";
     public static final String PASSWORD = "pass";
     public static final String DB_DRIVER = "com.mysql.jdbc.Driver";
@@ -225,18 +225,32 @@ public class DatabaseSupport
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
-        } 
+        }
         return 0;
     }
     
     /**
      * Add a product to a transaction in the db
-     * @param product
+     * @param product_id The ID of the product to add to the transaction.
      * @param duedate - format YYYY-MM-DD
      */
-    public void addProductToTransaction(int product_id, String duedate, Transaction transaction){
-        String statement = "UPDATE Product SET transactionID=" + transaction.getId() + 
-                           ", dueDate=" + duedate + " WHERE id=" + product_id;
+    public void addRentalToTransaction(int rental_id, String duedate, Transaction transaction){
+        String statement = "UPDATE Rental SET transactionID=" + transaction.getId() + 
+                           ", dueDate=" + duedate + " WHERE id=" + rental_id;
+        try {
+            Statement stmt1 = conn.createStatement();
+            stmt1.executeUpdate(statement);
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+    }
+    
+    public void addSaleToTransaction(int sale_id, String duedate, Transaction transaction){
+        String statement = "UPDATE Sale SET transactionID=" + transaction.getId() + 
+                           ", dueDate=" + duedate + " WHERE id=" + sale_id;
         try {
             Statement stmt1 = conn.createStatement();
             stmt1.executeUpdate(statement);
@@ -253,40 +267,60 @@ public class DatabaseSupport
      * @return boolean indicating success
      */
     public boolean createTables(){
-        String statement = "CREATE TABLE movieRental.Customer (" +
-                "id INT NOT NULL AUTO_INCREMENT," +
-                "Name VARCHAR(45) NULL," +
-                "Address VARCHAR(120) NULL," +
-                "PRIMARY KEY (id));";
+        String statement = "CREATE TABLE Customer ( " +
+                "id INT NOT NULL AUTO_INCREMENT, " +
+                "Name VARCHAR(45) NULL, " +
+                "Address VARCHAR(120) NULL, " +
+                "PRIMARY KEY (id)); ";
         
-        String statement2 = "CREATE TABLE movieRental.ProductCatalog (" +
-                "id INT NOT NULL AUTO_INCREMENT," +
-                "title VARCHAR(45) NULL," +
-                "description VARCHAR(120) NULL," +
-                "genre VARCHAR(45) NULL," +
-                "PRIMARY KEY (id));";
+        String statement2 = "CREATE TABLE ProductCatalog ( " +
+                "id INT NOT NULL AUTO_INCREMENT, " +
+                "title VARCHAR(45) NULL, " +
+                "description VARCHAR(120) NULL, " +
+                "genre VARCHAR(45) NULL, " +
+                "PRIMARY KEY (id)); ";
         
-        String statement3 = "CREATE TABLE movieRental.Product (" +
-                "id INT NOT NULL AUTO_INCREMENT," +
-                "productCatalogID INT NOT NULL," +
-                "transactionID INT NULL," +
-                "dueDate DATE NULL" + 
-                "PRIMARY KEY (id)," +
+        String statement3 = "CREATE TABLE Product ( " +
+                "id INT NOT NULL AUTO_INCREMENT, " +
+                "productCatalogID INT NOT NULL, " +
+                "PRIMARY KEY (id), " +
                 "FOREIGN KEY (productCatalogID) REFERENCES ProductCatalog(id));";
         
-        String statement4 = "CREATE TABLE movieRental.Transaction (" +
-                "id INT NOT NULL AUTO_INCREMENT," +
-                "customerID INT NOT NULL," +
-                "statement VARCHAR(2000) NULL," +
-                "paid TINYINT(1) NULL DEFAULT 0," +
-                "PRIMARY KEY (id)," +
-                "FOREIGN KEY (customerID) REFERENCES Customer(id));";
+        String statement4 = "CREATE TABLE Transaction ( " +
+                "id INT NOT NULL AUTO_INCREMENT, " +
+                "customerID INT NOT NULL, " +
+                "statement VARCHAR(2000) NULL, " +
+                "paid TINYINT(1) NULL DEFAULT 0, " +
+                "PRIMARY KEY (id), " +
+                "FOREIGN KEY (customerID) REFERENCES Customer(id)); ";
+        
+        String statement5 = "CREATE TABLE Sale (" +
+        		"id INT NOT NULL, " +
+        		"productID INT NOT NULL, " +
+        		"price FLOAT 0.0, " +
+        		"transactionID INT NULL, " +
+        		"PRIMARY KEY (id), " +
+        		"FOREIGN KEY (transactionID) REFERENCES Transaction(id), " + 
+        		"FOREIGN KEY (productID) REFERENCES Product(id));";
+        
+        String statement6 = "CREATE TABLE Rental (" +
+                "id INT NOT NULL, " +
+                "productID INT NOT NULL," +
+                "price FLOAT 0.0, " +
+                "dueDate DATE NULL, " +
+                "transactionID INT NULL, " +
+                "PRIMARY KEY (id), " +
+                "FOREIGN KEY (transactionID) REFERENCES Transaction(id), " + 
+                "FOREIGN KEY (productID) REFERENCES Product(id));";
+        
         try {
             Statement stmt = conn.createStatement ();
             stmt.execute(statement);
             stmt.execute(statement2);
             stmt.execute(statement3);
             stmt.execute(statement4);
+            stmt.execute(statement5);
+            stmt.execute(statement6);
             stmt.close();
             return true;
         }
