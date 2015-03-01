@@ -41,8 +41,7 @@ public class StoreController
 	 * @return true on success, false otherwise
 	 */
 	public static boolean CreateProduct(String name, String type) {
-		Product product = new Product();
-		product.setTitle(name);
+		Product product = new Product(name);
 		product.setType(type);
 		product.setId(db.addProductToCatalog(product));
 		
@@ -111,8 +110,7 @@ public class StoreController
 	 * @return an ArrayList of products containing all products found that match the arguments
 	 */
 	public static ArrayList<Product> FindProduct(String title, String type) {
-		
-		return new ArrayList<Product>();
+		return db.findProducts(title,type);
 	}
 }
 
