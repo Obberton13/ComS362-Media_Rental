@@ -14,46 +14,79 @@ public class mainClass {
 	{
 		System.out.println("Hey, it did something!");
 		Scanner sc = new Scanner(System.in);
+		DatabaseSupport.createTables();
 
 		//this is the main loop for the program.
 		while(sc.hasNext())
 		{
-			String in = sc.next().toLowerCase();
-			if(in.startsWith("q")) break;
-			if(in.startsWith("a")) Create(sc);
-			if(in.startsWith("e")) Edit(sc);
-			if(in.startsWith("i")) Index(sc);
-			if(in.startsWith("d")) Delete(sc);
-			if(in.startsWith("c")) BaseCommands();
+			String input = sc.nextLine().toLowerCase();
+			String[] in = input.split(" ");
+			for(String s : in)
+			{
+				System.out.println(s);
+			}
+			if(in[0].startsWith("q")) break;
+			if(in[0].startsWith("a")) Create(in);
+			if(in[0].startsWith("e")) Edit(in);
+			if(in[0].startsWith("i")) Index(in);
+			if(in[0].startsWith("d")) Delete(in);
+			if(in[0].startsWith("c")) BaseCommands();
 		}
+		System.out.println("G'bye!");
 		sc.close();
 	}
-	private static void Create(Scanner sc)
+	private static void Create(String[] in)
 	{
-		String in = sc.next().toLowerCase();
-		if(in.equals("commands"))
+		if(in.length<2||in[1].equals("commands"))
 		{
-			System.out.println("c (customer)\np (product)\nt (transaction)");
+			System.out.println("<c|p|t>\n\n" +
+					"c adds a customer\n" +
+					"p adds a product\n" +
+					"t adds a transaction");
 			return;
 		}
-		if(in.startsWith("c")) StoreController.AddCustomer(sc.next(), sc.next());
-		if(in.startsWith("p")) StoreController.CreateProduct(sc.next(), sc.next());
-		if(in.startsWith("t")) StoreController.CreateTransaction(sc.nextInt());
+		if(in[1].startsWith("c"))//creates a customer
+		{
+			if(in.length<4)
+			{
+				System.out.println("Usage: add c \"<name>\" \"<address>\"");
+				return;
+			}
+			System.out.println(StoreController.AddCustomer(in[2], in[3]));
+		}
+		if(in[1].startsWith("p"))
+		{
+			if(in.length<4)
+			{
+				System.out.println("Usage: add p <Title> <Type>");
+				return;
+			}
+			StoreController.CreateProduct(in[2], in[3]);
+		}
+		if(in[1].startsWith("t"))
+		{
+			if(in.length<4)
+			{
+				System.out.println("Usage: add t <Customer ID>");
+				return;
+			}
+			StoreController.CreateTransaction(Integer.parseInt(in[2]));
+		}
 	}
 
-	private static void Edit(Scanner sc)
+	private static void Edit(String[] in)
 	{
 		System.out.println("Editing items is not yet supported");
 	}
 
-	private static void Index(Scanner sc)
+	private static void Index(String[] in)
 	{
-		String in = sc.next();
-		if(in.equals("commands"))
+		if(in.length<2||in[1].equals("commands"))
 		{
 			System.out.println("p (product)");
+			return;
 		}
-		if(in.startsWith("p"))
+		if(in[1].startsWith("p"))
 		{
 			ArrayList<Product> products = StoreController.FindProduct(new HashMap<String, String>());
 			for(Product p : products)
@@ -63,7 +96,7 @@ public class mainClass {
 		}
 	}
 
-	private static void Delete(Scanner sc)
+	private static void Delete(String[] in)
 	{
 
 	}

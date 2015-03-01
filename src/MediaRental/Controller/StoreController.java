@@ -24,7 +24,7 @@ public class StoreController
 		customer.setName(name);
 		customer.setAddress(address);
 		return false;
-		//return DatabaseSupport.putCustomer(customer);
+		//DatabaseSupport.putCustomer(customer);
 	}
 
 	/**
