@@ -18,10 +18,11 @@ public class StoreController
 	 * @param address the address of the customer to add
 	 * @return true on success, false otherwise
 	 */
-	public static int AddCustomer(String name, String address) {
+	public static boolean AddCustomer(String name, String address) {
 		DatabaseSupport db = new DatabaseSupport();
 		Customer customer = new Customer(name, address);
-		return db.addCustomer(customer);
+		customer.setId(db.addCustomer(customer));
+		return db.addCustomer(customer) != 0;
 
 	}
 
@@ -42,9 +43,10 @@ public class StoreController
 	public static boolean CreateProduct(String name, String type) {
 		Product product = new Product();
 		product.setTitle(name);
-		product.setQuantity(0);
 		product.setType(type);
-		return db.addProductToCatalog(product) == 0;
+		product.setId(db.addProductToCatalog(product));
+		
+		return db.addProductToCatalog(product) != 0;
 	}
 
 	/**
@@ -58,7 +60,7 @@ public class StoreController
 		    db.addProductToStore(pid);
 		}
 		
-		return true;
+		return db.addProductToStore(pid) != 0;
 	}
 
 	/**
@@ -69,7 +71,7 @@ public class StoreController
 		Transaction transaction = new Transaction();
 		transaction.setCustomer(db.getCustomer(cid));
 		transaction.setId(db.addTransactionToStore(transaction));
-		return false;
+		return db.addTransactionToStore(transaction) != 0;
 	}
 
 	/**
@@ -77,10 +79,14 @@ public class StoreController
 	 * @param transactionID The ID of the transaction to be added to
 	 * @return true on success, false otherwise
 	 */
-	public static boolean AddSale(Transaction transaction, Product product, String duedate) {
-		transaction.getSales().add(product);
+	public static boolean AddSale(Transaction transaction, Product product) {
+		Sale sale = new Sale();
+		sale.setProduct(product);
+		transaction.addSale(sale);
+		sale.setId(db.addSaleToStore(sale));
+		db.addSaleToTransaction(sale.getId(),transaction);
 		
-		return true;
+		return db.addSaleToStore(sale) != 0;
 	}
 
 	/**
@@ -90,15 +96,22 @@ public class StoreController
 	 * @return true on success, false otherwise
 	 */
 	public static boolean AddRental(Product product, Transaction transaction, String dueDate) {
-		transaction.getRentals().add(product); 
-		return true;
+		Rental rental = new Rental();
+		rental.setProduct(product);
+		rental.setDueDate(dueDate);
+		transaction.addRental(rental);
+		rental.setId(db.addRentalToStore(rental));
+		db.addRentalToTransaction(rental.getId(),rental.getDueDate(),transaction);
+		
+		return db.addRentalToStore(rental) != 0;
 	}
 
 	/**
 	 * @param arguments The arguments used to find the product(s).
 	 * @return an ArrayList of products containing all products found that match the arguments
 	 */
-	public static ArrayList<Product> FindProduct(HashMap<String, String> arguments) {
+	public static ArrayList<Product> FindProduct(String title, String type) {
+		
 		return new ArrayList<Product>();
 	}
 }

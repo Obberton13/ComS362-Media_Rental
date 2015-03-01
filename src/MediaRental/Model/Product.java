@@ -7,8 +7,14 @@ public class Product {
 	protected int id;
 	protected String title;
 	protected String type;
+	protected String genre;
 	protected int quantity;
+	protected int catalogId;
 
+	public Product(String title) {
+		this.title = title;
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -32,14 +38,23 @@ public class Product {
 	public void setType(String type) {
 		this.type = type;
 	}
-
-	public int getQuantity() {
-		return quantity;
+	
+	public int getCatalogId() {
+		return catalogId;
+	}
+	
+	public void setCatalogId(int id) {
+		catalogId = id;
+	}
+	
+	public void setGenre(String genre) {
+		this.genre = genre;
 	}
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
+	public String getGenre() {
+		return genre;
 	}
+
 
 	@Override
 	public String toString()
