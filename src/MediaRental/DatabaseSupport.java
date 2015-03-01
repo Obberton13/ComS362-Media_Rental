@@ -7,9 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
 import MediaRental.Model.Customer;
 import MediaRental.Model.Product;
+import MediaRental.Model.Transaction;
 
 public class DatabaseSupport
 
@@ -161,7 +163,7 @@ public class DatabaseSupport
             if (rs.next()){
                 int id = rs.getInt(1);
                 product.setId(id);
-                return (id);
+                return id;
             }
 
         }
@@ -172,7 +174,80 @@ public class DatabaseSupport
         } 
         return 0;
     }
+    
+    /**
+     * Add a product to the database.
+     * @param catalog_id: Id of the catalog item
+     * @return - id of the product from the product db
+     */
+    public int addProductToStore(int catalog_id){
+        String statement = "INSERT INTO Product (productCatalogID) VALUES (" + catalog_id + ");";
+        try {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next()){
+                int id = rs.getInt(1);      
+                return id;
+            }
+
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+        return 0;
+    }
+    
+    /**
+     * Add a transaction to the database
+     * @param transaction
+     * @return id of transaction
+     */
+    public int addTransactionToStore(Transaction transaction){
         
+
+        String statement = "INSERT INTO Transaction (customerID, paid) " +
+        		"VALUES (" + transaction.getCustomer().getId() + ", 0);";
+        try {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next()){
+                int id = rs.getInt(1);
+                transaction.setId(id);
+                return id;
+            }
+
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+        return 0;
+    }
+    
+    /**
+     * Add a product to a transaction in the db
+     * @param product
+     * @param duedate - format YYYY-MM-DD
+     */
+    public void addProductToTransaction(int product_id, String duedate, Transaction transaction){
+        String statement = "UPDATE Product SET transactionID=" + transaction.getId() + 
+                           ", dueDate=" + duedate + " WHERE id=" + product_id;
+        try {
+            Statement stmt1 = conn.createStatement();
+            stmt1.executeUpdate(statement);
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+    }
+    
     /**
      * Create db tables. Only run this if initializing db for the very first time
      * @return boolean indicating success
@@ -192,9 +267,10 @@ public class DatabaseSupport
                 "PRIMARY KEY (id));";
         
         String statement3 = "CREATE TABLE movieRental.Product (" +
-                "id INT NOT NULL," +
+                "id INT NOT NULL AUTO_INCREMENT," +
                 "productCatalogID INT NOT NULL," +
                 "transactionID INT NULL," +
+                "dueDate DATE NULL" + 
                 "PRIMARY KEY (id)," +
                 "FOREIGN KEY (productCatalogID) REFERENCES ProductCatalog(id));";
         
