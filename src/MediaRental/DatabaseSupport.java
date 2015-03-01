@@ -334,9 +334,8 @@ public class DatabaseSupport
         } 
     }
     
-    public void addSaleToTransaction(int sale_id, String duedate, Transaction transaction){
-        String statement = "UPDATE Sale SET transactionID=" + transaction.getId() + 
-                           ", dueDate=" + duedate + " WHERE id=" + sale_id;
+    public void addSaleToTransaction(int sale_id, Transaction transaction){
+        String statement = "UPDATE Sale SET transactionID=" + transaction.getId() + " WHERE id=" + sale_id;
         try {
             Statement stmt1 = conn.createStatement();
             stmt1.executeUpdate(statement);
