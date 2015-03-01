@@ -234,9 +234,9 @@ public class DatabaseSupport
      * @param product
      * @param duedate - format YYYY-MM-DD
      */
-    public void addProductToTransaction(Product product, String duedate, Transaction transaction){
+    public void addProductToTransaction(int product_id, String duedate, Transaction transaction){
         String statement = "UPDATE Product SET transactionID=" + transaction.getId() + 
-                           ", dueDate=" + duedate + " WHERE id=" + product.getId();
+                           ", dueDate=" + duedate + " WHERE id=" + product_id;
         try {
             Statement stmt1 = conn.createStatement();
             stmt1.executeUpdate(statement);
