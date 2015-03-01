@@ -48,6 +48,47 @@ public class DatabaseSupport
      * @param address - can be null
      * @return customers that have a name or address similar to the passed in values
      */
+    public ArrayList<Customer> findProducts(String title, String genre){
+        String statement = "Select id, title, genre from ProductCatalog";
+        String whereClause = "";
+        ArrayList<Product> products = new ArrayList();
+        if( title != null && !title.isEmpty()){
+            whereClause += "where title like %'" + title + "%'";
+            if(genre != null && !genre.isEmpty()){
+                whereClause += "and genre like %'" + genre + "%'";               
+            }
+        }
+        else if(genre != null && !genre.isEmpty()){
+            whereClause += "where genre like %'" + genre + "%'";
+        }
+        statement += whereClause + ";";
+        try {
+            Statement stmt1 = conn.createStatement ();
+            ResultSet rs1 = stmt1.executeQuery (statement);
+            while(rs1.next()){
+                int id = rs1.getInt("id");
+                String n = rs1.getString("title"); 
+                String a = rs1.getString("genre");
+                Product prod = new Product(title);
+                prod.setCatalogId(id);
+                products.add(prod);
+            }    
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+        return products;
+        
+    }
+    
+    /**
+     * 
+     * @param name - can be null
+     * @param address - can be null
+     * @return customers that have a name or address similar to the passed in values
+     */
     public ArrayList<Customer> findCustomers(String name, String address){
         String statement = "Select id, name, address from Customer";
         String whereClause = "";
