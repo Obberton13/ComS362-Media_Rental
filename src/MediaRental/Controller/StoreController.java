@@ -95,10 +95,11 @@ public class StoreController
 	}
 
 	/**
-	 * @param arguments The arguments used to find the product(s).
-	 * @return an ArrayList of products containing all products found that match the arguments
+	 * @param title the title of the product you are looking for
+	 * @param type the type of the product you are looking for
+	 * @return
 	 */
-	public static ArrayList<Product> FindProduct(HashMap<String, String> arguments) {
+	public static ArrayList<Product> FindProduct(String title, String type) {
 		return new ArrayList<Product>();
 	}
 }
