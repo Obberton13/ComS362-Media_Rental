@@ -269,7 +269,6 @@ public class DatabaseSupport
         String statement3 = "CREATE TABLE Product ( " +
                 "id INT NOT NULL AUTO_INCREMENT, " +
                 "productCatalogID INT NOT NULL, " +
-                "transactionID INT NULL, " +
                 "PRIMARY KEY (id), " +
                 "FOREIGN KEY (productCatalogID) REFERENCES ProductCatalog(id));";
         
