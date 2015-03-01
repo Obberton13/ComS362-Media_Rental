@@ -11,6 +11,7 @@ import java.util.Date;
 
 import MediaRental.Model.Customer;
 import MediaRental.Model.Product;
+import MediaRental.Model.Rental;
 import MediaRental.Model.Transaction;
 
 public class DatabaseSupport
@@ -182,6 +183,48 @@ public class DatabaseSupport
      */
     public int addProductToStore(int catalog_id){
         String statement = "INSERT INTO Product (productCatalogID) VALUES (" + catalog_id + ");";
+        try {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next()){
+                int id = rs.getInt(1);      
+                return id;
+            }
+
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+        return 0;
+    }
+    
+    public int addRentalToStore(Rental rental){
+        String statement = "INSERT INTO Rental (productID, price, dueDate) VALUES (" + rental.getProduct().getId() + 
+                ", " + rental.getPrice() + ", " + rental.getDueDate() + ");";
+        try {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next()){
+                int id = rs.getInt(1);      
+                return id;
+            }
+
+        }
+        catch (SQLException E){
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        } 
+        return 0;
+    }
+    
+    public int addSaleToStore(Rental rental){
+        String statement = "INSERT INTO Sale (productID, price) VALUES (" + rental.getProduct().getId() + 
+                ", " + rental.getPrice() + ");";
         try {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
             stmt1.executeUpdate();
