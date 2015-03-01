@@ -11,7 +11,8 @@ import java.util.HashMap;
  */
 public class StoreController
 {
-
+	static DatabaseSupport Db = new DatabaseSupport();
+	
 	/**
 	 * @param name the name of the customer to add
 	 * @param address the address of the customer to add
@@ -23,7 +24,7 @@ public class StoreController
 
 		customer.setStore(store);
 		//return false;
-		return DatabaseSupport.putCustomer(customer);
+		return Db.addCustomer(customer) == 0;
 	}
 
 	/**
@@ -31,8 +32,8 @@ public class StoreController
 	 * @return true on success, false otherwise
 	 */
 	public static boolean RemoveCustomer(int cid) {
-		return false;
-		//return DatabaseSupport.removeCustomer(cid);
+		Db.removeCustomer(cid);
+		return true;
 	}
 
 	/**
@@ -46,8 +47,7 @@ public class StoreController
 		product.setTitle(name);
 		product.setQuantity(0);
 		product.setType(type);
-		//return false;
-		return DatabaseSupport.addProductToCatalog(product);
+		return Db.addProductToCatalog(product) == 0;
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class StoreController
 		MediaRental.Model.Store store = getStore();
 		for (int i = 0; i < qty; i++)
 		{
-		DatabaseSupport.addProductToStore(pid);
+		Db.addProductToStore(pid);
 		}
 		
 		return true;
@@ -69,11 +69,12 @@ public class StoreController
 	 * @param cid The ID of the customer who is doing the purchasing
 	 * @return true on success, false otherwise
 	 */
-	public static boolean CreateTransaction(int cid){
+	public static boolean CreateTransaction(int cid, int pid){
 		Transaction transaction = new Transaction();
 		transaction.setStore(getStore());
-		transaction.setCustomer(DatabaseSupport.getCustomer(cid));
-		transaction.setID(DatabaseSupport.addTransactionToStore(transaction));
+		transaction.setCustomer(Db.getCustomer(cid));
+		Db.addProductToTransaction(pid, null, transaction);
+		//transaction.setId(Db.addTransactionToStore(transaction));
 		return false;
 	}
 
@@ -82,9 +83,8 @@ public class StoreController
 	 * @param transactionID The ID of the transaction to be added to
 	 * @return true on success, false otherwise
 	 */
-	public static boolean AddSale(int productID, int transactionID) {
-		Product product = DatabaseSupport.getProduct(productID);
-		Transaction transaction = DatabaseSupport.getTransaction(transactionID);
+	public static boolean AddSale(Transaction transaction, Product product, String duedate) {
+		transaction.getSales().add(product);
 		
 		return true;
 	}
@@ -95,7 +95,8 @@ public class StoreController
 	 * @param rentalLength The length that the specified product will be rented
 	 * @return true on success, false otherwise
 	 */
-	public static boolean AddRental(int productID, int transactionID, int rentalLength) {
+	public static boolean AddRental(Product product, Transaction transaction, String dueDate) {
+		transaction.getRentals().add(product); 
 		return true;
 	}
 
