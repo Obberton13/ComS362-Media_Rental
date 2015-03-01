@@ -67,9 +67,10 @@ public class DatabaseSupport
             ResultSet rs1 = stmt1.executeQuery (statement);
             while(rs1.next()){
                 int id = rs1.getInt("id");
-                String n = rs1.getString("title"); 
-                String a = rs1.getString("genre");
-                Product prod = new Product(title);
+                String t = rs1.getString("title"); 
+                String g = rs1.getString("genre");
+                Product prod = new Product(t);
+                prod.setGenre(g);
                 prod.setCatalogId(id);
                 products.add(prod);
             }    
