@@ -11,7 +11,8 @@ import java.util.HashMap;
  */
 public class StoreController
 {
-
+	static DatabaseSupport db = new DatabaseSupport();
+	
 	/**
 	 * @param name the name of the customer to add
 	 * @param address the address of the customer to add
@@ -21,6 +22,7 @@ public class StoreController
 		DatabaseSupport db = new DatabaseSupport();
 		Customer customer = new Customer(name, address);
 		return db.addCustomer(customer);
+
 	}
 
 	/**
@@ -28,8 +30,8 @@ public class StoreController
 	 * @return true on success, false otherwise
 	 */
 	public static boolean RemoveCustomer(int cid) {
-		return false;
-		//return DatabaseSupport.removeCustomer(cid);
+		db.removeCustomer(cid);
+		return true;
 	}
 
 	/**
@@ -42,8 +44,7 @@ public class StoreController
 		product.setTitle(name);
 		product.setQuantity(0);
 		product.setType(type);
-		return false;
-		//return DatabaseSupport.putProduct(product);
+		return db.addProductToCatalog(product) == 0;
 	}
 
 	/**
@@ -52,6 +53,11 @@ public class StoreController
 	 * @return true on success, false otherwise
 	 */
 	public static boolean AddProduct(int pid, int qty) {
+		for (int i = 0; i < qty; i++)
+		{
+		    db.addProductToStore(pid);
+		}
+		
 		return true;
 	}
 
@@ -60,7 +66,10 @@ public class StoreController
 	 * @return true on success, false otherwise
 	 */
 	public static boolean CreateTransaction(int cid){
-		return true;
+		Transaction transaction = new Transaction();
+		transaction.setCustomer(db.getCustomer(cid));
+		transaction.setId(db.addTransactionToStore(transaction));
+		return false;
 	}
 
 	/**
@@ -68,7 +77,9 @@ public class StoreController
 	 * @param transactionID The ID of the transaction to be added to
 	 * @return true on success, false otherwise
 	 */
-	public static boolean AddSale(int productID, int transactionID) {
+	public static boolean AddSale(Transaction transaction, Product product, String duedate) {
+		transaction.getSales().add(product);
+		
 		return true;
 	}
 
@@ -78,7 +89,8 @@ public class StoreController
 	 * @param rentalLength The length that the specified product will be rented
 	 * @return true on success, false otherwise
 	 */
-	public static boolean AddRental(int productID, int transactionID, int rentalLength) {
+	public static boolean AddRental(Product product, Transaction transaction, String dueDate) {
+		transaction.getRentals().add(product); 
 		return true;
 	}
 
@@ -90,3 +102,5 @@ public class StoreController
 		return new ArrayList<Product>();
 	}
 }
+
+

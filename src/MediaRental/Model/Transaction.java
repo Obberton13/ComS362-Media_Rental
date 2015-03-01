@@ -7,8 +7,8 @@ import java.util.ArrayList;
  */
 public class Transaction {
 	protected int id;
-	protected ArrayList<Product> rentals;
-	protected ArrayList<Product> sales;
+	protected ArrayList<Rental> rentals;
+	protected ArrayList<Sale> sales;
 	protected Customer customer;
 
 	public int getId() {
@@ -19,19 +19,19 @@ public class Transaction {
 		this.id = id;
 	}
 
-	public ArrayList<Product> getRentals() {
+	public ArrayList<Rental> getRentals() {
 		return rentals;
 	}
 
-	public void setRentals(ArrayList<Product> rentals) {
+	public void setRentals(ArrayList<Rental> rentals) {
 		this.rentals = rentals;
 	}
 
-	public ArrayList<Product> getSales() {
+	public ArrayList<Sale> getSales() {
 		return sales;
 	}
 
-	public void setSales(ArrayList<Product> sales) {
+	public void setSales(ArrayList<Sale> sales) {
 		this.sales = sales;
 	}
 
@@ -41,5 +41,13 @@ public class Transaction {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+	
+	public void addSale(Sale sale) {
+		sales.add(sale);
+	}
+		
+	public void addRental(Rental rental) {
+			rentals.add(rental);
 	}
 }
