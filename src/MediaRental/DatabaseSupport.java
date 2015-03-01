@@ -270,7 +270,6 @@ public class DatabaseSupport
                 "id INT NOT NULL AUTO_INCREMENT, " +
                 "productCatalogID INT NOT NULL, " +
                 "transactionID INT NULL, " +
-                "dueDate DATE NULL, " +
                 "PRIMARY KEY (id), " +
                 "FOREIGN KEY (productCatalogID) REFERENCES ProductCatalog(id));";
         
@@ -281,12 +280,30 @@ public class DatabaseSupport
                 "paid TINYINT(1) NULL DEFAULT 0, " +
                 "PRIMARY KEY (id), " +
                 "FOREIGN KEY (customerID) REFERENCES Customer(id)); ";
+        
+        String statement5 = "CREATE TABLE Sale (" +
+        		"id INT NOT NULL, " +
+        		"productID INT NOT NULL, " +
+        		"price FLOAT 0.0, " +
+        		"PRIMARY KEY (id), " +
+        		"FOREIGN KEY (productID) REFERENCES Product(id));";
+        
+        String statement6 = "CREATE TABLE Rental (" +
+                "id INT NOT NULL, " +
+                "productID INT NOT NULL," +
+                "price FLOAT 0.0, " +
+                "dueDate DATE NULL, " +
+                "PRIMARY KEY (id), " +
+                "FOREIGN KEY (productID) REFERENCES Product(id));";
+        
         try {
             Statement stmt = conn.createStatement ();
             stmt.execute(statement);
             stmt.execute(statement2);
             stmt.execute(statement3);
             stmt.execute(statement4);
+            stmt.execute(statement5);
+            stmt.execute(statement6);
             stmt.close();
             return true;
         }
