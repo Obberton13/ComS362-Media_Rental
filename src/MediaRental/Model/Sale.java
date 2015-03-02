@@ -27,6 +27,13 @@ public class Sale
 		this.price = price;
 	}
 
+	public Sale(Product product, double price, int id)
+	{
+		this.product = product;
+		this.price = price;
+		this.id = id;
+	}
+
 	public int getId()
 	{
 		return id;

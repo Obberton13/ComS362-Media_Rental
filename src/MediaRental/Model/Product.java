@@ -52,6 +52,16 @@ public class Product
 		this.id = 0;
 	}
 
+	public Product(String title, String type, String genre, int quantity, int id)
+	{
+		this.title = title;
+		this.type = type;
+		this.genre = genre;
+		this.quantity = quantity;
+		this.catalogId = 0;
+		this.id = id;
+	}
+
 	public int getId()
 	{
 		return id;

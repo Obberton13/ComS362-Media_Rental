@@ -36,6 +36,14 @@ public class Transaction
 		id = 0;
 	}
 
+	public Transaction(Customer customer, ArrayList<Rental> rentals, ArrayList<Sale> sales, int id)
+	{
+		this.customer = customer;
+		this.rentals = rentals;
+		this.sales = sales;
+		this.id = id;
+	}
+
 	public int getId()
 	{
 		return id;
