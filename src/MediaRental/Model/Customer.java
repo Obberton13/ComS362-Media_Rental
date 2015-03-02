@@ -1,5 +1,6 @@
 package MediaRental.Model;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -8,41 +9,17 @@ import java.util.ArrayList;
 public class Customer
 {
 
-	protected int id;
-	protected String name;
-	protected String address;
-	protected ArrayList<Transaction> transactions;
+	private int id;
+	private String name;
+	private String address;
+	private ArrayList<Transaction> transactions;
 
-	public Customer()
-	{
-		id = 0;
-		name = "";
-		address = "";
-		transactions = new ArrayList<Transaction>();
-	}
-
-	public Customer(String name, String address)
-	{
-		id = 0;
-		this.name = name;
-		this.address = address;
-		this.transactions = new ArrayList<Transaction>();
-	}
-
-	public Customer(String name, String address, ArrayList<Transaction> transactions)
-	{
-		id = 0;
-		this.name = name;
-		this.address = address;
-		this.transactions = transactions;
-	}
-
-	public Customer(String name, String address, ArrayList<Transaction> transactions, int id)
+	public Customer(String name, String address, int id)
 	{
 		this.id = id;
 		this.name = name;
 		this.address = address;
-		this.transactions = transactions;
+		this.transactions = new ArrayList<Transaction>();
 	}
 
 	public String getName()
@@ -50,29 +27,14 @@ public class Customer
 		return name;
 	}
 
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
 	public String getAddress()
 	{
 		return address;
 	}
 
-	public void setAddress(String address)
-	{
-		this.address = address;
-	}
-
 	public int getId()
 	{
 		return id;
-	}
-
-	public void setId(int id)
-	{
-		this.id = id;
 	}
 
 	public ArrayList<Transaction> getTransactions()
@@ -83,6 +45,12 @@ public class Customer
 	public void setTransactions(ArrayList<Transaction> transactions)
 	{
 		this.transactions = transactions;
+	}
+
+	public boolean addTransaction(int tid)
+	{
+		Transaction t = new Transaction(this, tid);
+		return transactions.add(t);
 	}
 
 	@Override

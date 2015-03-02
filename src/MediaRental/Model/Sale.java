@@ -4,32 +4,14 @@ public class Sale
 {
 
 	protected Product product;
+	protected Transaction transaction;
 	protected int id;
 	protected double price;
 
-	public Sale()
-	{
-		product = null;
-		id = 0;
-		price = 0;
-	}
-
-	public Sale(Product product)
+	public Sale(Product product, Transaction transaction, double price, int id)
 	{
 		this.product = product;
-		id = 0;
-		price = 0;
-	}
-
-	public Sale(Product product, double price)
-	{
-		this.product = product;
-		this.price = price;
-	}
-
-	public Sale(Product product, double price, int id)
-	{
-		this.product = product;
+		this.transaction = transaction;
 		this.price = price;
 		this.id = id;
 	}
@@ -39,25 +21,9 @@ public class Sale
 		return id;
 	}
 
-	public void setId(int id)
-	{
-		this.id = id;
-	}
-
-	public void setPrice(double p)
-	{
-		price = p;
-	}
-
 	public double getPrice()
 	{
 		return price;
-	}
-
-
-	public void setProduct(Product p)
-	{
-		product = p;
 	}
 
 	public Product getProduct()

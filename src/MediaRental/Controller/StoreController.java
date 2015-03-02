@@ -11,28 +11,26 @@ import java.util.HashMap;
  */
 public class StoreController
 {
+	private Store store;
 	static DatabaseSupport db = new DatabaseSupport();
-	
+
 	/**
-	 * @param name the name of the customer to add
+	 * @param name    the name of the customer to add
 	 * @param address the address of the customer to add
 	 * @return true on success, false otherwise
 	 */
-	public static boolean AddCustomer(String name, String address) {
-		DatabaseSupport db = new DatabaseSupport();
-		Customer customer = new Customer(name, address);
-		customer.setId(db.addCustomer(customer));
-		return db.addCustomer(customer) != 0;
-
+	public boolean addCustomer(String name, String address, int id)
+	{
+		return this.getStoreInstance().addCustomer(name, address, id);
 	}
 
 	/**
 	 * @param cid the ID of the customer to remove
 	 * @return true on success, false otherwise
 	 */
-	public static boolean RemoveCustomer(int cid) {
-		db.removeCustomer(cid);
-		return true;
+	public boolean removeCustomer(int cid)
+	{
+		return this.getStoreInstance().removeCustomer(cid);
 	}
 
 	/**
@@ -40,12 +38,9 @@ public class StoreController
 	 * @param type the type of the product to create
 	 * @return true on success, false otherwise
 	 */
-	public static boolean CreateProduct(String name, String type) {
-		Product product = new Product(name);
-		product.setType(type);
-		product.setId(db.addProductToCatalog(product));
-		
-		return db.addProductToCatalog(product) != 0;
+	public boolean createProduct(String name, String type, String genre, int id)
+	{
+		return getStoreInstance().createProduct(name, type, genre, id);
 	}
 
 	/**
@@ -53,70 +48,58 @@ public class StoreController
 	 * @param qty the amount of the product to add to the store
 	 * @return true on success, false otherwise
 	 */
-	public static boolean AddProduct(int pid, int qty) {
-		for (int i = 0; i < qty; i++)
-		{
-		    db.addProductToStore(pid);
-		}
-		
-		return db.addProductToStore(pid) != 0;
+	public boolean addProduct(int pid, int qty)
+	{
+		return getStoreInstance().addProduct(pid, qty);
 	}
 
 	/**
 	 * @param cid The ID of the customer who is doing the purchasing
 	 * @return true on success, false otherwise
 	 */
-	public static boolean CreateTransaction(int cid){
-		Transaction transaction = new Transaction();
-		transaction.setCustomer(db.getCustomer(cid));
-		transaction.setId(db.addTransactionToStore(transaction));
-		return db.addTransactionToStore(transaction) != 0;
+	public boolean createTransaction(int cid, int tid)
+	{
+		return getStoreInstance().createTransaction(cid, tid);
 	}
 
 	/**
-	 * @param productID The ID of the product to add to the transaction
+	 * @param productID     The ID of the product to add to the transaction
 	 * @param transactionID The ID of the transaction to be added to
 	 * @return true on success, false otherwise
 	 */
-	public static boolean AddSale(Transaction transaction, Product product) {
-		Sale sale = new Sale();
-		sale.setProduct(product);
-		transaction.addSale(sale);
-		sale.setId(db.addSaleToStore(sale));
-		db.addSaleToTransaction(sale.getId(),transaction);
-		
-		return db.addSaleToStore(sale) != 0;
+	public boolean addSale(int tid, int pid, double price, int id)
+	{
+		return getStoreInstance().addSale(tid, pid, price, id);
 	}
 
 	/**
-	 * @param product The product to add to the transaction
+	 * @param product     The product to add to the transaction
 	 * @param transaction The transaction to be added to
-	 * @param dueDate the date the Rental will be due
+	 * @param dueDate     the date the Rental will be due
 	 * @return true on success, false otherwise
 	 */
-	public static boolean AddRental(Product product, Transaction transaction, String dueDate) {
-		Rental rental = new Rental();
-		rental.setProduct(product);
-		rental.setDueDate(dueDate);
-		transaction.addRental(rental);
-		rental.setId(db.addRentalToStore(rental));
-		db.addRentalToTransaction(rental.getId(),rental.getDueDate(),transaction);
-		
-		return db.addRentalToStore(rental) != 0;
+	public boolean addRental(int tid, int pid, String dueDate, double price, int id)
+	{
+		return getStoreInstance().addRental(tid, pid, dueDate, price, id);
 	}
 
 	/**
 	 * @param title the title of the product you are looking for
-	 * @param type the type of the product you are looking for
+	 * @param type  the type of the product you are looking for
 	 * @return
 	 */
-	public static ArrayList<Product> FindProduct(String title, String type) {
-		return db.findProducts(title,type);
+	public ArrayList<Product> findProduct(String title, String type)
+	{
+		return getStoreInstance().findProducts(title, type);
 	}
 
-	public static Transaction getTransaction(int tid)
+	private Store getStoreInstance()
 	{
-		return db.getTransaction(tid);
+		if (store == null)
+		{
+			store = new Store();
+		}
+		return store;
 	}
 }
 

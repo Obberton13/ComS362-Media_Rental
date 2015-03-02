@@ -1,5 +1,7 @@
 package MediaRental.Model;
 
+import MediaRental.DatabaseSupport;
+
 import java.util.ArrayList;
 
 /**
@@ -7,59 +9,62 @@ import java.util.ArrayList;
  */
 public class Store
 {
-	protected int id;
-	protected String name;
-	protected ArrayList<Transaction> transactions;
-	protected ArrayList<Customer> customers;
-	protected ArrayList<Product> products;
+	private DatabaseSupport db = null;
 
-	public String getName()
+	public Store()
 	{
-		return name;
 	}
 
-	public void setName(String name)
+	public boolean addCustomer(String name, String address, int id)
 	{
-		this.name = name;
+		Customer c = new Customer(name, address, id);
+		return this.getDatabaseSupportInstance().addCustomer(c);
 	}
 
-	public int getId()
+	public boolean removeCustomer(int id)
 	{
-		return id;
+		return this.getDatabaseSupportInstance().removeCustomer(id);
 	}
 
-	public void setId(int id)
+	public boolean createProduct(String title, String type, String genre, int id)
 	{
-		this.id = id;
+		Product product = new Product(title, type, genre, id);
+		return getDatabaseSupportInstance().addProductToCatalog(product);
 	}
 
-	public ArrayList<Transaction> getTransactions()
+	public boolean addProduct(int productID, int qty)
 	{
-		return transactions;
+		return getDatabaseSupportInstance().addProductToStore(productID, qty);
 	}
 
-	public void setTransactions(ArrayList<Transaction> transactions)
+	public boolean addRental(int tid, int pid, String dueDate, double price, int id)
 	{
-		this.transactions = transactions;
+		Transaction transaction = getDatabaseSupportInstance().getTransaction(tid);
+		return transaction.addRental(pid, price, id, dueDate);
 	}
 
-	public ArrayList<Customer> getCustomers()
+	public boolean addSale(int tid, int pid, double price, int id)
 	{
-		return customers;
+		Transaction transaction = getDatabaseSupportInstance().getTransaction(tid);
+		return transaction.addSale(pid, price, id);
 	}
 
-	public void setCustomers(ArrayList<Customer> customers)
+	public boolean createTransaction(int cid, int tid)
 	{
-		this.customers = customers;
+		return getDatabaseSupportInstance().getCustomer(cid).addTransaction(tid);
 	}
 
-	public ArrayList<Product> getProducts()
+	public ArrayList<Product> findProducts(String title, String genre)
 	{
-		return products;
+		return getDatabaseSupportInstance().findProducts(title, genre);
 	}
 
-	public void setProducts(ArrayList<Product> products)
+	private DatabaseSupport getDatabaseSupportInstance()
 	{
-		this.products = products;
+		if (db == null)
+		{
+			db = new DatabaseSupport();
+		}
+		return db;
 	}
 }

@@ -20,9 +20,8 @@ public class DatabaseSupport
 	public static final String USER = "root";
 	public static final String PASSWORD = "pass";
 	public static final String DB_DRIVER = "com.mysql.jdbc.Driver";
-	private static Connection conn;
 
-	public DatabaseSupport()
+	private Connection getConnection()
 	{
 		try
 		{
@@ -34,13 +33,14 @@ public class DatabaseSupport
 		}
 		try
 		{
-			conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+			return DriverManager.getConnection(DB_URL, USER, PASSWORD);
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
 			System.out.println("SQLState: " + E.getSQLState());
 			System.out.println("VendorError: " + E.getErrorCode());
 		}
+		return null;
 	}
 
 	/**
@@ -67,18 +67,21 @@ public class DatabaseSupport
 		statement += whereClause + ";";
 		try
 		{
+			Connection conn = this.getConnection();
 			Statement stmt1 = conn.createStatement();
 			ResultSet rs1 = stmt1.executeQuery(statement);
 			while (rs1.next())
 			{
 				int id = rs1.getInt("id");
-				String t = rs1.getString("title");
-				String g = rs1.getString("genre");
-				Product prod = new Product(t);
-				prod.setGenre(g);
-				prod.setCatalogId(id);
+				title = rs1.getString("title");
+				String type = rs1.getString("type");
+				genre = rs1.getString("genre");
+				Product prod = new Product(title, type, genre, id);
 				products.add(prod);
 			}
+			rs1.close();
+			stmt1.close();
+			conn.close();
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
@@ -113,6 +116,7 @@ public class DatabaseSupport
 		statement += whereClause + ";";
 		try
 		{
+			Connection conn = this.getConnection();
 			Statement stmt1 = conn.createStatement();
 			ResultSet rs1 = stmt1.executeQuery(statement);
 			while (rs1.next())
@@ -120,10 +124,12 @@ public class DatabaseSupport
 				int id = rs1.getInt("id");
 				String n = rs1.getString("name");
 				String a = rs1.getString("address");
-				Customer cust = new Customer(name, address);
-				cust.setId(id);
+				Customer cust = new Customer(name, address, id);
 				customers.add(cust);
 			}
+			rs1.close();
+			stmt1.close();
+			conn.close();
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
@@ -145,12 +151,18 @@ public class DatabaseSupport
 		String statement = "Select name, address from Customer where id = " + id + ";";
 		try
 		{
+			Connection conn = this.getConnection();
 			Statement stmt1 = conn.createStatement();
 			ResultSet rs1 = stmt1.executeQuery(statement);
 			rs1.next();
-			String name = rs1.getString(1);
-			String address = rs1.getString(2);
-			return new Customer(name, address);
+			String name = rs1.getString("name");
+			String address = rs1.getString("address");
+			stmt1.close();
+			rs1.close();
+			conn.close();
+			Customer customer = new Customer(name, address, id);
+			getCustomerTransactions(customer);
+			return customer;
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
@@ -160,24 +172,59 @@ public class DatabaseSupport
 		}
 	}
 
+	private ArrayList<Transaction> getCustomerTransactions(Customer customer)
+	{
+		int cid = customer.getId();
+		String statement = "SELECT id FROM Transaction WHERE customerID = " + cid;
+		ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+		try
+		{
+			Connection conn = this.getConnection();
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(statement);
+			while(rs.next())
+			{
+				int id = rs.getInt("id");
+				customer.addTransaction(id);
+			}
+		}catch (SQLException e)
+		{
+			System.out.println("SQLException: " + e.getMessage());
+			System.out.println("SQLState: " + e.getSQLState());
+			System.out.println("VendorError: " + e.getErrorCode());
+			return null;
+		}
+		return transactions;
+	}
+
+	private ArrayList<Rental> getTransactionRentals(int tid)
+	{
+
+	}
+
 	/**
 	 * Remove a customer from the db
 	 *
 	 * @param id
 	 */
-	public void removeCustomer(int id)
+	public boolean removeCustomer(int id)
 	{
 		String statement = "delete from Customer where id = " + id + ";";
 		try
 		{
+			Connection conn = getConnection();
 			Statement stmt1 = conn.createStatement();
 			stmt1.execute(statement);
+			stmt1.close();
+			conn.close();
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
 			System.out.println("SQLState: " + E.getSQLState());
 			System.out.println("VendorError: " + E.getErrorCode());
+			return false;
 		}
+		return true;
 	}
 
 	/**
@@ -186,29 +233,25 @@ public class DatabaseSupport
 	 * @param customer object to add (id should not be set yet)
 	 * @return id of customer added
 	 */
-	public int addCustomer(Customer customer)
+	public boolean addCustomer(Customer customer)
 	{
-		String statement = "INSERT INTO Customer (Name, Address)" +
-				" VALUES ('" + customer.getName() + "', '" + customer.getAddress() + "');";
+		String statement = "INSERT INTO Customer (Id, Name, Address)" +
+				" VALUES (" + customer.getId() + "'" + customer.getName() + "', '" + customer.getAddress() + "');";
 		try
 		{
-			PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+			Connection conn = this.getConnection();
+			PreparedStatement stmt1 = conn.prepareStatement(statement);
 			stmt1.executeUpdate();
-			ResultSet rs = stmt1.getGeneratedKeys();
-			if (rs.next())
-			{
-				int id = rs.getInt(1);
-				customer.setId(id);
-				return (id);
-			}
-
+			stmt1.close();
+			conn.close();
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
 			System.out.println("SQLState: " + E.getSQLState());
 			System.out.println("VendorError: " + E.getErrorCode());
+			return false;
 		}
-		return 0;
+		return true;
 	}
 
 	/**
@@ -217,29 +260,24 @@ public class DatabaseSupport
 	 * @param product - should have a title and a type but no id
 	 * @return new id of product
 	 */
-	public int addProductToCatalog(Product product)
+	public boolean addProductToCatalog(Product product)
 	{
 		String statement = "INSERT INTO ProductCatalog (title, genre)" +
 				" VALUES ('" + product.getTitle() + "', '" + product.getType() + "');";
 		try
 		{
-			PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+			Connection conn = this.getConnection();
+			PreparedStatement stmt1 = conn.prepareStatement(statement);
 			stmt1.executeUpdate();
-			ResultSet rs = stmt1.getGeneratedKeys();
-			if (rs.next())
-			{
-				int id = rs.getInt(1);
-				product.setId(id);
-				return id;
-			}
-
+			conn.close();
+			return true;
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
 			System.out.println("SQLState: " + E.getSQLState());
 			System.out.println("VendorError: " + E.getErrorCode());
 		}
-		return 0;
+		return false;
 	}
 
 	/**
@@ -248,75 +286,69 @@ public class DatabaseSupport
 	 * @param catalog_id: Id of the catalog item
 	 * @return - id of the product from the product db
 	 */
-	public int addProductToStore(int catalog_id)
+	public boolean addProductToStore(int catalog_id, int qty)
 	{
 		String statement = "INSERT INTO Product (productCatalogID) VALUES (" + catalog_id + ");";
 		try
 		{
-			PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
-			stmt1.executeUpdate();
-			ResultSet rs = stmt1.getGeneratedKeys();
-			if (rs.next())
+			Connection conn = this.getConnection();
+			PreparedStatement stmt1 = conn.prepareStatement(statement);
+			for (int i = 0; i < qty; i++)
 			{
-				int id = rs.getInt(1);
-				return id;
+				stmt1.executeUpdate();
 			}
-
+			stmt1.close();
+			conn.close();
+			return true;
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
 			System.out.println("SQLState: " + E.getSQLState());
 			System.out.println("VendorError: " + E.getErrorCode());
 		}
-		return 0;
+		return false;
 	}
 
-	public int addRentalToStore(Rental rental)
+	public boolean addRentalToStore(Rental rental)
 	{
 		String statement = "INSERT INTO Rental (productID, price, dueDate) VALUES (" + rental.getProduct().getId() +
 				", " + rental.getPrice() + ", " + rental.getDueDate() + ");";
 		try
 		{
-			PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+			Connection conn = this.getConnection();
+			PreparedStatement stmt1 = conn.prepareStatement(statement);
 			stmt1.executeUpdate();
-			ResultSet rs = stmt1.getGeneratedKeys();
-			if (rs.next())
-			{
-				int id = rs.getInt(1);
-				return id;
-			}
-
+			stmt1.close();
+			conn.close();
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
 			System.out.println("SQLState: " + E.getSQLState());
 			System.out.println("VendorError: " + E.getErrorCode());
 		}
-		return 0;
+		return false;
 	}
 
-	public int addSaleToStore(Sale sale)
+	public boolean addSaleToStore(Sale sale)
 	{
 		String statement = "INSERT INTO Sale (productID, price) VALUES (" + sale.getProduct().getId() +
 				", " + sale.getPrice() + ");";
 		try
 		{
-			PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+			Connection conn = this.getConnection();
+			PreparedStatement stmt1 = conn.prepareStatement(statement);
 			stmt1.executeUpdate();
-			ResultSet rs = stmt1.getGeneratedKeys();
-			if (rs.next())
-			{
-				int id = rs.getInt(1);
-				return id;
-			}
-
+			;
+			stmt1.close();
+			conn.close();
+			return true;
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
 			System.out.println("SQLState: " + E.getSQLState());
 			System.out.println("VendorError: " + E.getErrorCode());
 		}
-		return 0;
+		return false;
 	}
 
 	/**
@@ -325,31 +357,25 @@ public class DatabaseSupport
 	 * @param transaction
 	 * @return id of transaction
 	 */
-	public int addTransactionToStore(Transaction transaction)
+	public boolean addTransactionToStore(Transaction transaction)
 	{
-
-
 		String statement = "INSERT INTO Transaction (customerID, paid) " +
 				"VALUES (" + transaction.getCustomer().getId() + ", 0);";
 		try
 		{
-			PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+			Connection conn = this.getConnection();
+			PreparedStatement stmt1 = conn.prepareStatement(statement);
 			stmt1.executeUpdate();
-			ResultSet rs = stmt1.getGeneratedKeys();
-			if (rs.next())
-			{
-				int id = rs.getInt(1);
-				transaction.setId(id);
-				return id;
-			}
-
+			conn.close();
+			stmt1.close();
+			return true;
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
 			System.out.println("SQLState: " + E.getSQLState());
 			System.out.println("VendorError: " + E.getErrorCode());
 		}
-		return 0;
+		return false;
 	}
 
 	/**
@@ -359,35 +385,45 @@ public class DatabaseSupport
 	 * @param duedate     - format YYYY-MM-DD
 	 * @param transaction The transaction to be added to
 	 */
-	public void addRentalToTransaction(int rental_id, String duedate, Transaction transaction)
+	public boolean addRentalToTransaction(int rental_id, String duedate, Transaction transaction)
 	{
 		String statement = "UPDATE Rental SET transactionID=" + transaction.getId() +
 				", dueDate=" + duedate + " WHERE id=" + rental_id;
 		try
 		{
+			Connection conn = this.getConnection();
 			Statement stmt1 = conn.createStatement();
 			stmt1.executeUpdate(statement);
+			stmt1.close();
+			conn.close();
+			return true;
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
 			System.out.println("SQLState: " + E.getSQLState());
 			System.out.println("VendorError: " + E.getErrorCode());
 		}
+		return false;
 	}
 
-	public void addSaleToTransaction(int sale_id, Transaction transaction)
+	public boolean addSaleToTransaction(int sale_id, Transaction transaction)
 	{
 		String statement = "UPDATE Sale SET transactionID=" + transaction.getId() + " WHERE id=" + sale_id;
 		try
 		{
+			Connection conn = this.getConnection();
 			Statement stmt1 = conn.createStatement();
 			stmt1.executeUpdate(statement);
+			stmt1.close();
+			conn.close();
+			return true;
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
 			System.out.println("SQLState: " + E.getSQLState());
 			System.out.println("VendorError: " + E.getErrorCode());
 		}
+		return false;
 	}
 
 	/**
@@ -445,6 +481,7 @@ public class DatabaseSupport
 
 		try
 		{
+			Connection conn = this.getConnection();
 			Statement stmt = conn.createStatement();
 			stmt.execute(statement);
 			stmt.execute(statement2);
@@ -453,6 +490,7 @@ public class DatabaseSupport
 			stmt.execute(statement5);
 			stmt.execute(statement6);
 			stmt.close();
+			conn.close();
 			return true;
 		} catch (SQLException E)
 		{

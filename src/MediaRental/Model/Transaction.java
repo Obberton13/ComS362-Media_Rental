@@ -1,5 +1,7 @@
 package MediaRental.Model;
 
+import MediaRental.DatabaseSupport;
+
 import java.util.ArrayList;
 
 /**
@@ -20,27 +22,11 @@ public class Transaction
 		id = 0;
 	}
 
-	public Transaction(Customer customer)
+	public Transaction(Customer customer, int id)
 	{
 		this.customer = customer;
 		rentals = new ArrayList<Rental>();
 		sales = new ArrayList<Sale>();
-		id = 0;
-	}
-
-	public Transaction(Customer customer, ArrayList<Rental> rentals, ArrayList<Sale> sales)
-	{
-		this.customer = customer;
-		this.rentals = rentals;
-		this.sales = sales;
-		id = 0;
-	}
-
-	public Transaction(Customer customer, ArrayList<Rental> rentals, ArrayList<Sale> sales, int id)
-	{
-		this.customer = customer;
-		this.rentals = rentals;
-		this.sales = sales;
 		this.id = id;
 	}
 
@@ -49,19 +35,9 @@ public class Transaction
 		return id;
 	}
 
-	public void setId(int id)
-	{
-		this.id = id;
-	}
-
 	public ArrayList<Rental> getRentals()
 	{
 		return rentals;
-	}
-
-	public void setRentals(ArrayList<Rental> rentals)
-	{
-		this.rentals = rentals;
 	}
 
 	public ArrayList<Sale> getSales()
@@ -69,28 +45,22 @@ public class Transaction
 		return sales;
 	}
 
-	public void setSales(ArrayList<Sale> sales)
-	{
-		this.sales = sales;
-	}
-
 	public Customer getCustomer()
 	{
 		return customer;
 	}
 
-	public void setCustomer(Customer customer)
+	public boolean addSale(int productID, double price, int id)
 	{
-		this.customer = customer;
+		Product product = new DatabaseSupport().getProduct(productID);
+		Sale sale = new Sale(product, this, price, id);
+		return sales.add(sale);
 	}
 
-	public void addSale(Sale sale)
+	public boolean addRental(int productID, double price, int id, String dueDate)
 	{
-		sales.add(sale);
-	}
-
-	public void addRental(Rental rental)
-	{
-		rentals.add(rental);
+		Product product = new DatabaseSupport().getProduct(productID);
+		Rental rental = new Rental(product, this, dueDate, price, id);
+		return rentals.add(rental);
 	}
 }
