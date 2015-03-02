@@ -49,11 +49,6 @@ public class Customer
 		return transactions;
 	}
 
-	public void setTransactions(ArrayList<Transaction> transactions)
-	{
-		this.transactions = transactions;
-	}
-
 	public boolean addTransaction(int tid)
 	{
 		Transaction t = new Transaction(tid);

@@ -49,7 +49,7 @@ public class DatabaseSupport
 		}
 	}
 
-	public boolean writeCustomer(Customer c)
+	private boolean writeCustomer(Customer c)
 	{
 		try
 		{
@@ -340,33 +340,6 @@ public class DatabaseSupport
 			Connection conn = getConnection();
 			Statement stmt1 = conn.createStatement();
 			stmt1.execute(statement);
-			stmt1.close();
-			conn.close();
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Add a customer to the database
-	 *
-	 * @param customer object to add (id should not be set yet)
-	 * @return id of customer added
-	 */
-	public boolean addCustomer(Customer customer)
-	{
-		String statement = "INSERT INTO customer (id, name, address)" +
-				" VALUES (" + customer.getId() + "'" + customer.getName() + "', '" + customer.getAddress() + "');";
-		try
-		{
-			Connection conn = this.getConnection();
-			PreparedStatement stmt1 = conn.prepareStatement(statement);
-			stmt1.executeUpdate();
 			stmt1.close();
 			conn.close();
 		} catch (SQLException E)

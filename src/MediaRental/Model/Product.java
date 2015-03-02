@@ -20,15 +20,6 @@ public class Product
 		this.id = id;
 	}
 
-	public Product(String title, String type, String genre, int quantity, int id)
-	{
-		this.title = title;
-		this.type = type;
-		this.genre = genre;
-		this.quantity = quantity;
-		this.id = id;
-	}
-
 	public int getId()
 	{
 		return id;
