@@ -15,7 +15,6 @@ import MediaRental.Model.Sale;
 import MediaRental.Model.Transaction;
 
 public class DatabaseSupport
-
 {
 	public static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/movie_rental";
 	public static final String USER = "root";
@@ -464,5 +463,4 @@ public class DatabaseSupport
 		}
 
 	}
-
 }

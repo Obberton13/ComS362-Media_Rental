@@ -89,9 +89,9 @@ public class StoreController
 	}
 
 	/**
-	 * @param productID The ID of the product to add to the transaction
-	 * @param transactionID The ID of the transaction to be added to
-	 * @param rentalLength The length that the specified product will be rented
+	 * @param product The product to add to the transaction
+	 * @param transaction The transaction to be added to
+	 * @param dueDate the date the Rental will be due
 	 * @return true on success, false otherwise
 	 */
 	public static boolean AddRental(Product product, Transaction transaction, String dueDate) {
@@ -106,11 +106,17 @@ public class StoreController
 	}
 
 	/**
-	 * @param arguments The arguments used to find the product(s).
-	 * @return an ArrayList of products containing all products found that match the arguments
+	 * @param title the title of the product you are looking for
+	 * @param type the type of the product you are looking for
+	 * @return
 	 */
 	public static ArrayList<Product> FindProduct(String title, String type) {
 		return db.findProducts(title,type);
+	}
+
+	public static Transaction getTransaction(int tid)
+	{
+		return DatabaseSupport.getTransaction(tid);
 	}
 }
 

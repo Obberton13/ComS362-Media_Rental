@@ -2,6 +2,11 @@ package MediaRental;
 
 import java.util.HashMap;
 import java.util.Scanner;
+<<<<<<<HEAD
+		=======
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+>>>>>>>origin/develop
 
 import MediaRental.Controller.*;
 import MediaRental.Model.Product;
@@ -11,6 +16,9 @@ import MediaRental.Model.Product;
  */
 public class mainClass
 {
+	private static Pattern isInt = Pattern.compile("/^([0-9]+)$/*");
+	private static Pattern isDate = Pattern.compile("/^([0-9]{4}-[0-9]{2}-[0-9]{2})$/");
+
 	public static void main(String args[])
 	{
 		//this is the main loop for the program.
@@ -24,33 +32,38 @@ public class mainClass
 				case 'q':
 					break;
 				case 'a':
-					Create(sc);
+					add(sc);
 					break;
 				case 'e':
-					Edit(sc);
+					edit(sc);
 					break;
 				case 'i':
-					Index(sc);
+					index(sc);
 					break;
 				case 'd':
-					Delete(sc);
+					delete(sc);
 					break;
 				case 'c':
-					BaseCommands();
+					switch (in.charAt(1))
+					{
+						case 'r':
+							create(sc);
+							break;
+						default:
+							baseCommands();
+							break;
+					}
 					break;
 				default:
 					System.out.println("Invalid command: " + in);
-			}
-			if (c == 'q')
-			{
-				break;
+					break;
 			}
 		}
 		System.out.println("G'bye!");
 		sc.close();
 	}
 
-	private static void Create(Scanner in)
+	private static void create(Scanner in)
 	{
 		System.out.println("<c|p|t|q>\n\n" +
 				"c adds a customer\n" +
@@ -61,13 +74,14 @@ public class mainClass
 		switch (input.charAt(0))//creates a customer
 		{
 			case 'c':
-				System.out.println("Adding a Customer.\nCustomer name: ");
+				System.out.println("Creating a Customer.\n\nCustomer name: ");
 				String name = in.nextLine();
 				System.out.println("Customer Address: ");
 				String address = in.nextLine();
 				StoreController.AddCustomer(name, address);
 				break;
 			case 'p':
+				System.out.println("Creating a product: \n");
 				System.out.println("Product Title: ");
 				String title = in.nextLine();
 				System.out.println("Product Type: ");
@@ -75,9 +89,19 @@ public class mainClass
 				StoreController.CreateProduct(title, type);
 				break;
 			case 't':
+				System.out.println("Creating a transaction: ");
 				System.out.println("Customer ID: ");
-				int id = Integer.parseInt(in.next());
-				StoreController.CreateTransaction(id);
+				int id;
+				Matcher m = isInt.matcher(in.next());
+				if (m.matches())
+				{
+					id = Integer.parseInt(m.group(1));
+				} else
+				{
+					System.out.println("Next time, try typing an integer as an ID.");
+					return;
+				}
+				System.out.println(StoreController.CreateTransaction(id));
 				break;
 			case 'q':
 				return;
@@ -87,13 +111,81 @@ public class mainClass
 		}
 	}
 
-	private static void Edit(Scanner in)
+	private static void add(Scanner in)
 	{
-		System.out.println("Editing items is not yet supported");
-		in.next();
+		String input = in.next();
+		switch (input.charAt(0))
+		{
+			case 'p':
+				System.out.println("Adding a product to the store");
+				System.out.println("Product ID: ");
+				int pid;
+				Matcher m = isInt.matcher(in.next());
+				if (m.matches())
+				{
+					pid = Integer.parseInt(m.group(1));
+				} else
+				{
+					System.out.println("Next time, try typing an integer as an ID.");
+					return;
+				}
+				System.out.println("Quantity: ");
+				int qty;
+				m = isInt.matcher(in.next());
+				if (m.matches())
+				{
+					qty = Integer.parseInt(m.group(1));
+				} else
+				{
+					System.out.println("Next time, try typing an integer as a quantity.");
+					return;
+				}
+				StoreController.AddProduct(pid, qty);
+				break;
+			case 'r':
+				System.out.println("Adding rental to transaction");
+				System.out.println("Product ID: ");
+				m = isInt.matcher(in.next());
+				if (m.matches())
+				{
+					pid = Integer.parseInt(m.group(1));
+				} else
+				{
+					System.out.println("Next time, try typing an integer as an ID.");
+					return;
+				}
+				System.out.println("Transaction ID: ");
+				int tid;
+				m = isInt.matcher(in.next());
+				if (m.matches())
+				{
+					tid = Integer.parseInt(m.group(1));
+				} else
+				{
+					System.out.println("Next time, try typing an integer as an ID.");
+					return;
+				}
+				String date;
+				m = isDate.matcher(in.next());
+				if (m.matches())
+				{
+					date = m.group(1);
+				} else
+				{
+					System.out.println("Make sure your date is in the format YYYY-MM-DD");
+					return;
+				}
+				StoreController.AddRental(pid, tid, date);
+		}
 	}
 
-	private static void Index(Scanner in)
+	private static void edit(Scanner in)
+	{
+		System.out.println("Editing items is not yet supported");
+		in.nextLine();
+	}
+
+	private static void index(Scanner in)
 	{
 		String input = in.next();
 		switch (input.charAt(0))
@@ -110,22 +202,28 @@ public class mainClass
 				}
 				break;
 			case 'c':
-				System.out.println("p");
+				System.out.println("<p>\n " +
+						"p indexes all products in the store.");
 				break;
 			default:
 				System.out.println("Invalid thing to index: " + input);
 		}
 	}
 
-	private static void Delete(Scanner in)
+	private static void delete(Scanner in)
 	{
 		System.out.println("Deletion is not yet available.");
 		in.next();
 	}
 
-	private static void BaseCommands()
+	private static void baseCommands()
 	{
 		System.out.println("Commands:");
-		System.out.println("a (add)\ne (edit)\ni (index)\nd (delete)");
+		System.out.println("a (add)\n" +
+				"e (edit)\n" +
+				"i (index)\n" +
+				"d (delete)\n" +
+				"c (commands)\n" +
+				"cr (create)");
 	}
 }
