@@ -116,7 +116,7 @@ public class StoreController
 
 	public static Transaction getTransaction(int tid)
 	{
-		return DatabaseSupport.getTransaction(tid);
+		return db.getTransaction(tid);
 	}
 }
 

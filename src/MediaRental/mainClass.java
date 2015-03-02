@@ -11,38 +11,59 @@ import MediaRental.Model.Product;
 /**
  * Created by Obberton13 on 2/20/2015.
  */
-public class mainClass {
+public class mainClass
+{
 	private static Pattern isInt = Pattern.compile("/^([0-9]+)$/*");
 	private static Pattern isDate = Pattern.compile("/^([0-9]{4}-[0-9]{2}-[0-9]{2})$/");
+
 	public static void main(String args[])
 	{
 		//this is the main loop for the program.
 		Scanner sc = new Scanner(System.in);
-		while(sc.hasNext())
+		while (sc.hasNext())
 		{
 			String in = sc.next().toLowerCase();
 			char c = in.charAt(0);
-			switch(c)
+			switch (c)
 			{
-				case 'q': break;
-				case 'a': add(sc); break;
-				case 'e': edit(sc); break;
-				case 'i': index(sc); break;
-				case 'd': delete(sc); break;
+				case 'q':
+					break;
+				case 'a':
+					add(sc);
+					break;
+				case 'e':
+					edit(sc);
+					break;
+				case 'i':
+					index(sc);
+					break;
+				case 'd':
+					delete(sc);
+					break;
 				case 'c':
-					switch(in.charAt(1))
+					switch (in.charAt(1))
 					{
-						case 'r': create(sc); break;
-						default: baseCommands(); break;
+						case 'r':
+							create(sc);
+							break;
+						default:
+							baseCommands();
+							break;
 					}
 					break;
-				default: System.out.println("Invalid command: " + in); break;
+				default:
+					System.out.println("Invalid command: " + in);
+					break;
 			}
-			if(c=='q') break;
+			if (c == 'q')
+			{
+				break;
+			}
 		}
 		System.out.println("G'bye!");
 		sc.close();
 	}
+
 	private static void create(Scanner in)
 	{
 		System.out.println("<c|p|t|q>\n\n" +
@@ -51,7 +72,7 @@ public class mainClass {
 				"t adds a transaction\n" +
 				"q returns to the previous menu");
 		String input = in.next();
-		switch(input.charAt(0))//creates a customer
+		switch (input.charAt(0))//creates a customer
 		{
 			case 'c':
 				System.out.println("Creating a Customer.\n\nCustomer name: ");
@@ -73,9 +94,10 @@ public class mainClass {
 				System.out.println("Customer ID: ");
 				int id;
 				Matcher m = isInt.matcher(in.next());
-				if(m.matches())
+				if (m.matches())
+				{
 					id = Integer.parseInt(m.group(1));
-				else
+				} else
 				{
 					System.out.println("Next time, try typing an integer as an ID.");
 					return;
@@ -93,15 +115,18 @@ public class mainClass {
 	private static void add(Scanner in)
 	{
 		String input = in.next();
-		switch(input.charAt(0)) {
+		switch (input.charAt(0))
+		{
 			case 'p':
 				System.out.println("Adding a product to the store");
 				System.out.println("Product ID: ");
 				int pid;
 				Matcher m = isInt.matcher(in.next());
 				if (m.matches())
+				{
 					pid = Integer.parseInt(m.group(1));
-				else {
+				} else
+				{
 					System.out.println("Next time, try typing an integer as an ID.");
 					return;
 				}
@@ -109,8 +134,10 @@ public class mainClass {
 				int qty;
 				m = isInt.matcher(in.next());
 				if (m.matches())
+				{
 					qty = Integer.parseInt(m.group(1));
-				else {
+				} else
+				{
 					System.out.println("Next time, try typing an integer as a quantity.");
 					return;
 				}
@@ -120,9 +147,10 @@ public class mainClass {
 				System.out.println("Adding rental to transaction");
 				System.out.println("Product ID: ");
 				m = isInt.matcher(in.next());
-				if(m.matches())
+				if (m.matches())
+				{
 					pid = Integer.parseInt(m.group(1));
-				else
+				} else
 				{
 					System.out.println("Next time, try typing an integer as an ID.");
 					return;
@@ -130,25 +158,25 @@ public class mainClass {
 				System.out.println("Transaction ID: ");
 				int tid;
 				m = isInt.matcher(in.next());
-				if(m.matches())
+				if (m.matches())
+				{
 					tid = Integer.parseInt(m.group(1));
-				else
+				} else
 				{
 					System.out.println("Next time, try typing an integer as an ID.");
 					return;
 				}
 				String date;
 				m = isDate.matcher(in.next());
-				if(m.matches())
+				if (m.matches())
 				{
 					date = m.group(1);
-				}
-				else
+				} else
 				{
 					System.out.println("Make sure your date is in the format YYYY-MM-DD");
 					return;
 				}
-				StoreController.AddRental(pid, tid, date);
+				//StoreController.AddRental(pid, tid, date);
 		}
 	}
 
@@ -161,14 +189,14 @@ public class mainClass {
 	private static void index(Scanner in)
 	{
 		String input = in.next();
-		switch(input.charAt(0))
+		switch (input.charAt(0))
 		{
 			case 'p':
 				System.out.println("Title (leave blank for all): ");
 				String title = in.nextLine().trim();
 				System.out.println("Type (leave blank for all): ");
 				String type = in.nextLine().trim();
-				for(Product p : StoreController.FindProduct(title, type))
+				for (Product p : StoreController.FindProduct(title, type))
 				{
 					System.out.println(p);
 				}
