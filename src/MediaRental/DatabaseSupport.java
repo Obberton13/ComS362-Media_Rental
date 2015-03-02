@@ -334,9 +334,8 @@ public class DatabaseSupport
         } 
     }
     
-    public void addSaleToTransaction(int sale_id, String duedate, Transaction transaction){
-        String statement = "UPDATE Sale SET transactionID=" + transaction.getId() + 
-                           ", dueDate=" + duedate + " WHERE id=" + sale_id;
+    public void addSaleToTransaction(int sale_id, Transaction transaction){
+        String statement = "UPDATE Sale SET transactionID=" + transaction.getId() + " WHERE id=" + sale_id;
         try {
             Statement stmt1 = conn.createStatement();
             stmt1.executeUpdate(statement);
@@ -347,6 +346,27 @@ public class DatabaseSupport
             System.out.println("VendorError: " + E.getErrorCode());
         } 
     }
+
+	public Transaction getTransaction(int transactionID)
+	{
+		String statement = "SELECT * FROM Transaction WHERE id = " + transactionID;
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs1 = stmt.executeQuery(statement);
+			if(!rs1.next())
+			{
+				return null;
+			}
+			Transaction t = new Transaction();
+			
+		}
+		catch (SQLException E){
+			System.out.println("SQLException: " + E.getMessage());
+			System.out.println("SQLState: " + E.getSQLState());
+			System.out.println("VendorError: " + E.getErrorCode());
+			return null;
+		}
+	}
     
     /**
      * Create db tables. Only run this if initializing db for the very first time

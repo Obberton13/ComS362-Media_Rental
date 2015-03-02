@@ -148,7 +148,7 @@ public class mainClass {
 					System.out.println("Make sure your date is in the format YYYY-MM-DD");
 					return;
 				}
-
+				StoreController.AddRental(pid, tid, date);
 		}
 	}
 
@@ -164,16 +164,11 @@ public class mainClass {
 		switch(input.charAt(0))
 		{
 			case 'p':
-				HashMap<String, String> args = new HashMap<String, String>();
 				System.out.println("Title (leave blank for all): ");
 				String title = in.nextLine().trim();
-				if(!title.isEmpty())
-					args.put("title", title);
 				System.out.println("Type (leave blank for all): ");
 				String type = in.nextLine().trim();
-				if(!title.isEmpty())
-					args.put("type", type);
-				for(Product p : StoreController.FindProduct(args))
+				for(Product p : StoreController.FindProduct(title, type))
 				{
 					System.out.println(p);
 				}
