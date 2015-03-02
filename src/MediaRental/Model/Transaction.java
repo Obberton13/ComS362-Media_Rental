@@ -12,22 +12,19 @@ public class Transaction
 	protected int id;
 	protected ArrayList<Rental> rentals;
 	protected ArrayList<Sale> sales;
-	protected Customer customer;
 
-	public Transaction()
+	public Transaction(int id)
 	{
-		rentals = new ArrayList<Rental>();
-		sales = new ArrayList<Sale>();
-		customer = null;
-		id = 0;
-	}
-
-	public Transaction(Customer customer, int id)
-	{
-		this.customer = customer;
 		rentals = new ArrayList<Rental>();
 		sales = new ArrayList<Sale>();
 		this.id = id;
+	}
+
+	public Transaction(int id, ArrayList<Sale> sales, ArrayList<Rental> rentals)
+	{
+		this.id = id;
+		this.sales = sales;
+		this.rentals = rentals;
 	}
 
 	public int getId()
@@ -45,22 +42,18 @@ public class Transaction
 		return sales;
 	}
 
-	public Customer getCustomer()
-	{
-		return customer;
-	}
 
 	public boolean addSale(int productID, double price, int id)
 	{
 		Product product = new DatabaseSupport().getProduct(productID);
-		Sale sale = new Sale(product, this, price, id);
+		Sale sale = new Sale(product, price, id);
 		return sales.add(sale);
 	}
 
 	public boolean addRental(int productID, double price, int id, String dueDate)
 	{
 		Product product = new DatabaseSupport().getProduct(productID);
-		Rental rental = new Rental(product, this, dueDate, price, id);
+		Rental rental = new Rental(product, dueDate, price, id);
 		return rentals.add(rental);
 	}
 }

@@ -18,7 +18,21 @@ public class Store
 	public boolean addCustomer(String name, String address, int id)
 	{
 		Customer c = new Customer(name, address, id);
-		return this.getDatabaseSupportInstance().addCustomer(c);
+		return this.getDatabaseSupportInstance().putCustomer(c);
+	}
+
+	public boolean createTransaction(int cid, int tid)
+	{
+		Customer c = this.getDatabaseSupportInstance().getCustomer(cid);
+		if(c!=null)
+		{
+			c.addTransaction(tid);
+			return this.getDatabaseSupportInstance().putCustomer(c);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	public boolean removeCustomer(int id)
@@ -47,11 +61,6 @@ public class Store
 	{
 		Transaction transaction = getDatabaseSupportInstance().getTransaction(tid);
 		return transaction.addSale(pid, price, id);
-	}
-
-	public boolean createTransaction(int cid, int tid)
-	{
-		return getDatabaseSupportInstance().getCustomer(cid).addTransaction(tid);
 	}
 
 	public ArrayList<Product> findProducts(String title, String genre)

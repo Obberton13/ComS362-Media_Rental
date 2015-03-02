@@ -1,6 +1,5 @@
 package MediaRental.Model;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -20,6 +19,14 @@ public class Customer
 		this.name = name;
 		this.address = address;
 		this.transactions = new ArrayList<Transaction>();
+	}
+
+	public Customer(String name, String address, int id, ArrayList<Transaction> transactions)
+	{
+		this.id = id;
+		this.name = name;
+		this.address = address;
+		this.transactions = transactions;
 	}
 
 	public String getName()
@@ -49,7 +56,7 @@ public class Customer
 
 	public boolean addTransaction(int tid)
 	{
-		Transaction t = new Transaction(this, tid);
+		Transaction t = new Transaction(tid);
 		return transactions.add(t);
 	}
 
