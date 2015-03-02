@@ -1,5 +1,7 @@
 package MediaRental.Model;
 
+import MediaRental.DatabaseSupport;
+
 import java.util.ArrayList;
 
 /**
@@ -10,38 +12,19 @@ public class Transaction
 	protected int id;
 	protected ArrayList<Rental> rentals;
 	protected ArrayList<Sale> sales;
-	protected Customer customer;
 
-	public Transaction()
+	public Transaction(int id)
 	{
 		rentals = new ArrayList<Rental>();
 		sales = new ArrayList<Sale>();
-		customer = null;
-		id = 0;
-	}
-
-	public Transaction(Customer customer)
-	{
-		this.customer = customer;
-		rentals = new ArrayList<Rental>();
-		sales = new ArrayList<Sale>();
-		id = 0;
-	}
-
-	public Transaction(Customer customer, ArrayList<Rental> rentals, ArrayList<Sale> sales)
-	{
-		this.customer = customer;
-		this.rentals = rentals;
-		this.sales = sales;
-		id = 0;
-	}
-
-	public Transaction(Customer customer, ArrayList<Rental> rentals, ArrayList<Sale> sales, int id)
-	{
-		this.customer = customer;
-		this.rentals = rentals;
-		this.sales = sales;
 		this.id = id;
+	}
+
+	public Transaction(int id, ArrayList<Sale> sales, ArrayList<Rental> rentals)
+	{
+		this.id = id;
+		this.sales = sales;
+		this.rentals = rentals;
 	}
 
 	public int getId()
@@ -49,19 +32,9 @@ public class Transaction
 		return id;
 	}
 
-	public void setId(int id)
-	{
-		this.id = id;
-	}
-
 	public ArrayList<Rental> getRentals()
 	{
 		return rentals;
-	}
-
-	public void setRentals(ArrayList<Rental> rentals)
-	{
-		this.rentals = rentals;
 	}
 
 	public ArrayList<Sale> getSales()
@@ -69,28 +42,18 @@ public class Transaction
 		return sales;
 	}
 
-	public void setSales(ArrayList<Sale> sales)
+
+	public boolean addSale(int productID, double price, int id)
 	{
-		this.sales = sales;
+		Product product = new DatabaseSupport().getProduct(productID);
+		Sale sale = new Sale(product, price, id);
+		return sales.add(sale);
 	}
 
-	public Customer getCustomer()
+	public boolean addRental(int productID, double price, int id, String dueDate)
 	{
-		return customer;
-	}
-
-	public void setCustomer(Customer customer)
-	{
-		this.customer = customer;
-	}
-
-	public void addSale(Sale sale)
-	{
-		sales.add(sale);
-	}
-
-	public void addRental(Rental rental)
-	{
-		rentals.add(rental);
+		Product product = new DatabaseSupport().getProduct(productID);
+		Rental rental = new Rental(product, dueDate, price, id);
+		return rentals.add(rental);
 	}
 }
