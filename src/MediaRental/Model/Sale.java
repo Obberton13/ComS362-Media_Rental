@@ -1,33 +1,60 @@
 package MediaRental.Model;
 
-public class Sale {
+public class Sale
+{
 
 	protected Product product;
 	protected int id;
-	protected int price;
-	
-	public int getId() {
+	protected double price;
+
+	public Sale()
+	{
+		product = null;
+		id = 0;
+		price = 0;
+	}
+
+	public Sale(Product product)
+	{
+		this.product = product;
+		id = 0;
+		price = 0;
+	}
+
+	public Sale(Product product, double price)
+	{
+		this.product = product;
+		this.price = price;
+	}
+
+	public int getId()
+	{
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(int id)
+	{
 		this.id = id;
 	}
-	
-	public void setPrice(int p) {
-	price = p;
+
+	public void setPrice(double p)
+	{
+		price = p;
 	}
-	
-	public int getPrice() {
+
+	public double getPrice()
+	{
 		return price;
 	}
-	
-	
-	public void setProduct(Product p) {
+
+
+	public void setProduct(Product p)
+	{
 		product = p;
 	}
 
-	public Product getProduct() {
+	public Product getProduct()
+	{
 		return product;
 	}
 }
