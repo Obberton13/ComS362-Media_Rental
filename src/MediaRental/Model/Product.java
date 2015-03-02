@@ -3,7 +3,8 @@ package MediaRental.Model;
 /**
  * Created by Obberton13 on 2/16/2015.
  */
-public class Product {
+public class Product
+{
 	protected int id;
 	protected String title;
 	protected String type;
@@ -21,7 +22,8 @@ public class Product {
 		this.id = 0;
 	}
 
-	public Product(String title) {
+	public Product(String title)
+	{
 		this.title = title;
 		this.type = "";
 		this.genre = "";
@@ -49,44 +51,54 @@ public class Product {
 		this.catalogId = 0;
 		this.id = 0;
 	}
-	
-	public int getId() {
+
+	public int getId()
+	{
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(int id)
+	{
 		this.id = id;
 	}
 
-	public String getTitle() {
+	public String getTitle()
+	{
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle(String title)
+	{
 		this.title = title;
 	}
 
-	public String getType() {
+	public String getType()
+	{
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(String type)
+	{
 		this.type = type;
 	}
-	
-	public int getCatalogId() {
+
+	public int getCatalogId()
+	{
 		return catalogId;
 	}
-	
-	public void setCatalogId(int id) {
+
+	public void setCatalogId(int id)
+	{
 		catalogId = id;
 	}
-	
-	public void setGenre(String genre) {
+
+	public void setGenre(String genre)
+	{
 		this.genre = genre;
 	}
 
-	public String getGenre() {
+	public String getGenre()
+	{
 		return genre;
 	}
 
