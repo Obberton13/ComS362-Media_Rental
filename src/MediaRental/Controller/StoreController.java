@@ -19,9 +19,9 @@ public class StoreController
 	 * @param address the address of the customer to add
 	 * @return true on success, false otherwise
 	 */
-	public boolean addCustomer(String name, String address, int id)
+	public boolean addCustomer(String name, String address)
 	{
-		return this.getStoreInstance().addCustomer(name, address, id);
+		return this.getStoreInstance().addCustomer(name, address);
 	}
 
 	/**
@@ -38,9 +38,9 @@ public class StoreController
 	 * @param type the type of the product to create
 	 * @return true on success, false otherwise
 	 */
-	public boolean createProduct(String name, String type, String genre, int id)
+	public boolean createProduct(String name, String type, String genre)
 	{
-		return getStoreInstance().createProduct(name, type, genre, id);
+		return getStoreInstance().createProduct(name, type, genre);
 	}
 
 	/**
@@ -57,9 +57,9 @@ public class StoreController
 	 * @param cid The ID of the customer who is doing the purchasing
 	 * @return true on success, false otherwise
 	 */
-	public boolean createTransaction(int cid, int tid)
+	public boolean createTransaction(int cid)
 	{
-		return getStoreInstance().createTransaction(cid, tid);
+		return getStoreInstance().createTransaction(cid);
 	}
 
 	/**
@@ -67,9 +67,9 @@ public class StoreController
 	 * @param transactionID The ID of the transaction to be added to
 	 * @return true on success, false otherwise
 	 */
-	public boolean addSale(int tid, int pid, double price, int id)
+	public boolean addSale(int tid, int pid, double price)
 	{
-		return getStoreInstance().addSale(tid, pid, price, id);
+		return getStoreInstance().addSale(tid, pid, price);
 	}
 
 	/**
@@ -78,9 +78,9 @@ public class StoreController
 	 * @param dueDate     the date the Rental will be due
 	 * @return true on success, false otherwise
 	 */
-	public boolean addRental(int tid, int pid, String dueDate, double price, int id)
+	public boolean addRental(int tid, int pid, String dueDate, double price)
 	{
-		return getStoreInstance().addRental(tid, pid, dueDate, price, id);
+		return getStoreInstance().addRental(tid, pid, dueDate, price);
 	}
 
 	/**
@@ -90,7 +90,9 @@ public class StoreController
 	 */
 	public ArrayList<Product> findProduct(String title, String type)
 	{
-		return getStoreInstance().findProducts(title, type);
+//		return getStoreInstance().findProducts(title, type);
+//      TODO
+	    return new ArrayList();
 	}
 
 	private Store getStoreInstance()

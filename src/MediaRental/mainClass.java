@@ -11,7 +11,7 @@ import MediaRental.Model.Product;
 /**
  * Created by Obberton13 on 2/20/2015.
  */
-public class MainClass
+public class mainClass
 {
 	private static Pattern isInt = Pattern.compile("/^([0-9]+)$/");
 	private static Pattern isDate = Pattern.compile("/^([0-9]{4}-[0-9]{2}-[0-9]{2})$/");
