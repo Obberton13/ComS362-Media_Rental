@@ -8,56 +8,86 @@ import java.util.ArrayList;
 public class Customer
 {
 
-	private int id;
-	private String name;
-	private String address;
-	private ArrayList<Transaction> transactions;
+    protected int id;
+    protected String name;
+    protected String address;
+    protected ArrayList<Transaction> transactions;
 
-	public Customer(String name, String address, int id)
-	{
-		this.id = id;
-		this.name = name;
-		this.address = address;
-		this.transactions = new ArrayList<Transaction>();
-	}
+    public Customer()
+    {
+        id = 0;
+        name = "";
+        address = "";
+        transactions = new ArrayList<Transaction>();
+    }
 
-	public Customer(String name, String address, int id, ArrayList<Transaction> transactions)
-	{
-		this.id = id;
-		this.name = name;
-		this.address = address;
-		this.transactions = transactions;
-	}
+    public Customer(String name, String address)
+    {
+        id = 0;
+        this.name = name;
+        this.address = address;
+        this.transactions = new ArrayList<Transaction>();
+    }
 
-	public String getName()
-	{
-		return name;
-	}
+    public Customer(String name, String address, ArrayList<Transaction> transactions)
+    {
+        id = 0;
+        this.name = name;
+        this.address = address;
+        this.transactions = transactions;
+    }
 
-	public String getAddress()
-	{
-		return address;
-	}
+    public Customer(String name, String address, ArrayList<Transaction> transactions, int id)
+    {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.transactions = transactions;
+    }
 
-	public int getId()
-	{
-		return id;
-	}
+    public String getName()
+    {
+        return name;
+    }
 
-	public ArrayList<Transaction> getTransactions()
-	{
-		return transactions;
-	}
+    public void setName(String name)
+    {
+        this.name = name;
+    }
 
-	public boolean addTransaction(int tid)
-	{
-		Transaction t = new Transaction(tid);
-		return transactions.add(t);
-	}
+    public String getAddress()
+    {
+        return address;
+    }
 
-	@Override
-	public String toString()
-	{
-		return "" + id + ", " + name + ", " + address;
-	}
+    public void setAddress(String address)
+    {
+        this.address = address;
+    }
+
+    public int getId()
+    {
+        return id;
+    }
+
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+
+    public ArrayList<Transaction> getTransactions()
+    {
+        return transactions;
+    }
+
+    public void setTransactions(ArrayList<Transaction> transactions)
+    {
+        this.transactions = transactions;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "" + id + ", " + name + ", " + address;
+    }
 }

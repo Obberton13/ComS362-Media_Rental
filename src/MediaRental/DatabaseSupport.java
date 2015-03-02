@@ -1,6 +1,5 @@
 package MediaRental;
 
-import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -17,527 +16,451 @@ import MediaRental.Model.Transaction;
 
 public class DatabaseSupport
 {
-	public static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/movie_rental";
-	public static final String USER = "root";
-	public static final String PASSWORD = "pass";
-	public static final String DB_DRIVER = "com.mysql.jdbc.Driver";
+    public static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/movie_rental";
+    public static final String USER = "root";
+    public static final String PASSWORD = "pass";
+    public static final String DB_DRIVER = "com.mysql.jdbc.Driver";
+    private static Connection conn;
 
-	private Connection getConnection() throws SQLException
-	{
-		try
-		{
-			Class.forName(DB_DRIVER);
-		} catch (Exception E)
-		{
-			System.err.println("Unable to load driver.");
-			E.printStackTrace();
-		}
-		return DriverManager.getConnection(DB_URL, USER, PASSWORD);
-	}
+    public DatabaseSupport()
+    {
+        try
+        {
+            Class.forName(DB_DRIVER);
+        } catch (Exception E)
+        {
+            System.err.println("Unable to load driver.");
+            E.printStackTrace();
+        }
+        try
+        {
+            conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+    }
 
-	public boolean putCustomer(Customer c)
-	{
-		if (this.getCustomer(c.getId()) == null)
-		{
-			return writeCustomer(c);
-		} else if (c.getTransactions().size() > 0)
-		{
-			return addTransaction(c);
-		} else
-		{
-			return false;
-		}
-	}
+    /**
+     * @param title - can be null
+     * @param genre - can be null
+     * @return customers that have a name or address similar to the passed in values
+     */
+    public ArrayList<Product> findProducts(String title, String genre)
+    {
+        String statement = "Select id, title, genre from ProductCatalog";
+        String whereClause = "";
+        ArrayList<Product> products = new ArrayList<Product>();
+        if (title != null && !title.isEmpty())
+        {
+            whereClause += "where title like %'" + title + "%'";
+            if (genre != null && !genre.isEmpty())
+            {
+                whereClause += "and genre like %'" + genre + "%'";
+            }
+        } else if (genre != null && !genre.isEmpty())
+        {
+            whereClause += "where genre like %'" + genre + "%'";
+        }
+        statement += whereClause + ";";
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            ResultSet rs1 = stmt1.executeQuery(statement);
+            while (rs1.next())
+            {
+                int id = rs1.getInt("id");
+                String t = rs1.getString("title");
+                String g = rs1.getString("genre");
+                Product prod = new Product(t);
+                prod.setGenre(g);
+                prod.setCatalogId(id);
+                products.add(prod);
+            }
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+        return products;
 
-	private boolean writeCustomer(Customer c)
-	{
-		try
-		{
-			Connection conn = this.getConnection();
-			String query = "INSERT INTO customer(id, name, address) VALUES (" + c.getId() + ", '" + c.getName() + "', '" + c.getAddress() + "')";
-			Statement stmt = conn.createStatement();
-			stmt.executeUpdate(query);
-			for (Transaction t : c.getTransactions())
-			{
-				query = "INSERT INTO transaction(customer_id, id) VALUES (" + c.getId() + ", " + t.getId() + ")";
-				stmt.executeUpdate(query);
-				for (Rental r : t.getRentals())
-				{
-					query = "INSERT INTO rental(id, product_id, price, due_date, transaction_id) VALUES(" +
-							r.getId() + ", " + r.getProduct().getId() + ", " + r.getPrice() + ", '" + r.getDueDate() + "', " + t.getId()
-							+ ")";
-					stmt.executeUpdate(query);
-				}
-				for (Sale s : t.getSales())
-				{
-					query = "INSERT INTO rental(id, product_id, price, transaction_id) VALUES(" +
-							s.getId() + ", " + s.getProduct().getId() + ", " + s.getPrice() + ", " + t.getId() + ")";
-					stmt.executeUpdate(query);
-				}
-			}
-			stmt.close();
-			conn.commit();
-			conn.close();
-			return true;
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-			return false;
-		}
-	}
+    }
 
-	private boolean addTransaction(Customer c)
-	{
-		try
-		{
-			String query = "INSERT INTO transaction(id, customer_id) VALUES(" +
-					c.getTransactions().get(c.getTransactions().size() - 1).getId()
-					+ ", " + c.getId() + ")";
-			Connection conn = this.getConnection();
-			Statement stmt = conn.createStatement();
-			stmt.executeUpdate(query);
-			Transaction t = c.getTransactions().get(c.getTransactions().size() - 1);
-			for (Rental r : t.getRentals())
-			{
-				query = "INSERT INTO rental(id, product_id, price, due_date, transaction_id) VALUES (" +
-						r.getId() + ", " + r.getProduct().getId() + ", " + r.getPrice() + ", " + r.getDueDate() + ", " + t.getId() + ")";
-				stmt.executeUpdate(query);
-			}
-			for(Sale s : t.getSales())
-			{
-				query = "INSERT INTO sale(id, product_id, price, transaction_id) VALUES (" +
-						s.getId() + ", " + s.getProduct().getId() + ", " + s.getPrice() + ", " + t.getId() + ")";
-				stmt.executeUpdate(query);
-			}
-			stmt.close();
-			conn.commit();
-			conn.close();
-			return true;
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-			return false;
-		}
-	}
+    /**
+     * @param name    - can be null
+     * @param address - can be null
+     * @return customers that have a name or address similar to the passed in values
+     */
+    public ArrayList<Customer> findCustomers(String name, String address)
+    {
+        String statement = "Select id, name, address from Customer";
+        String whereClause = "";
+        ArrayList<Customer> customers = new ArrayList<Customer>();
+        if (name != null && !name.isEmpty())
+        {
+            whereClause += "where name like %'" + name + "%'";
+            if (address != null && !address.isEmpty())
+            {
+                whereClause += "and address like %'" + address + "%'";
+            }
+        } else if (address != null && !address.isEmpty())
+        {
+            whereClause += "where address like %'" + address + "%'";
+        }
+        statement += whereClause + ";";
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            ResultSet rs1 = stmt1.executeQuery(statement);
+            while (rs1.next())
+            {
+                int id = rs1.getInt("id");
+                String n = rs1.getString("name");
+                String a = rs1.getString("address");
+                Customer cust = new Customer(name, address);
+                cust.setId(id);
+                customers.add(cust);
+            }
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+        return customers;
 
-	public Customer getCustomer(int id)
-	{
-		String statement = "SELECT * FROM customer WHERE id = " + id + ";";
-		try
-		{
-			Connection conn = this.getConnection();
-			Statement stmt1 = conn.createStatement();
-			ResultSet rs1 = stmt1.executeQuery(statement);
-			Customer customer = null;
-			if (rs1.next())
-			{
-				String name = rs1.getString("name");
-				String address = rs1.getString("address");
-				ResultSet rst = stmt1.executeQuery("SELECT * FROM transaction WHERE customer_id = " + id);
-				ArrayList<Transaction> transactions = new ArrayList<Transaction>();
-				while(rst.next())
-				{
-					int tid = rst.getInt("id");
-					transactions.add(this.getTransaction(tid));
-				}
-				customer = new Customer(name, address, id, transactions);
-			}
-			stmt1.close();
-			rs1.close();
-			conn.close();
+    }
 
-			return customer;
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-			return null;
-		}
-	}
+    /**
+     * Get a customer from the database by id
+     *
+     * @param id
+     * @return a customer object
+     */
+    public Customer getCustomer(int id)
+    {
+        String statement = "Select name, address from Customer where id = " + id + ";";
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            ResultSet rs1 = stmt1.executeQuery(statement);
+            rs1.next();
+            String name = rs1.getString(1);
+            String address = rs1.getString(2);
+            return new Customer(name, address);
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return null;
+        }
+    }
 
-	public Transaction getTransaction(int tid)
-	{
-		try
-		{
-			Connection conn = this.getConnection();
-			Statement stmt1 = conn.createStatement();
-			ResultSet rss = stmt1.executeQuery("SELECT * FROM sale WHERE transaction_id = " + tid);
-			ResultSet rsr = stmt1.executeQuery("SELECT * FROM rental WHERE transaction_id = " + tid);
-			ArrayList<Rental> rentals = new ArrayList<Rental>();
-			ArrayList<Sale> sales = new ArrayList<Sale>();
-			while (rsr.next())
-			{
-				int rid = rsr.getInt("id");
-				rentals.add(this.getRental(rid));
-			}
-			while (rss.next())
-			{
-				int sid = rss.getInt("id");
-				sales.add(this.getSale(sid));
-			}
-			return new Transaction(tid, sales, rentals);
-		}catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-			return null;
-		}
-	}
+    /**
+     * Remove a customer from the db
+     *
+     * @param id
+     */
+    public void removeCustomer(int id)
+    {
+        String statement = "delete from Customer where id = " + id + ";";
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            stmt1.execute(statement);
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+    }
 
-	public Rental getRental(int rid)
-	{
-		Rental rental = null;
-		try
-		{
-			Connection conn = this.getConnection();
-			Statement stmt1 = conn.createStatement();
-			ResultSet rsr = stmt1.executeQuery("SELECT * FROM rental WHERE transaction_id = " + rid);
-			if(rsr.next())
-			{
-				String due_date = rsr.getString("due_date");
-				double price = rsr.getDouble("price");
-				Product product = this.getProduct(rsr.getInt("product_id"));
-				rental = new Rental(product, due_date, price, rid);
-			}
-			conn.close();
-			stmt1.close();
-			rsr.close();
-		}catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-			return null;
-		}
-		return rental;
-	}
+    /**
+     * Add a customer to the database
+     *
+     * @param customer object to add (id should not be set yet)
+     * @return id of customer added
+     */
+    public int addCustomer(Customer customer)
+    {
+        String statement = "INSERT INTO Customer (Name, Address)" +
+                " VALUES ('" + customer.getName() + "', '" + customer.getAddress() + "');";
+        try
+        {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next())
+            {
+                int id = rs.getInt(1);
+                customer.setId(id);
+                return (id);
+            }
 
-	public Sale getSale(int sid)
-	{
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+        return 0;
+    }
 
-		Sale sale = null;
-		try
-		{
-			Connection conn = this.getConnection();
-			Statement stmt1 = conn.createStatement();
-			ResultSet rsr = stmt1.executeQuery("SELECT * FROM sale WHERE transaction_id = " + sid);
-			if(rsr.next())
-			{
-				double price = rsr.getDouble("price");
-				Product product = this.getProduct(rsr.getInt("product_id"));
-				sale = new Sale(product, price, sid);
-			}
-			conn.close();
-			stmt1.close();
-			rsr.close();
-		}catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-			return null;
-		}
-		return sale;
-	}
+    /**
+     * Used when creating a completely new product in the store
+     *
+     * @param product - should have a title and a type but no id
+     * @return new id of product
+     */
+    public int addProductToCatalog(Product product)
+    {
+        String statement = "INSERT INTO ProductCatalog (title, genre)" +
+                " VALUES ('" + product.getTitle() + "', '" + product.getType() + "');";
+        try
+        {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next())
+            {
+                int id = rs.getInt(1);
+                product.setId(id);
+                return id;
+            }
 
-//======================================================================================================================
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+        return 0;
+    }
 
-	/**
-	 * @param title - can be null
-	 * @param genre - can be null
-	 * @return customers that have a name or address similar to the passed in values
-	 */
-	public ArrayList<Product> findProducts(String title, String genre)
-	{
-		String statement = "Select id, title, genre from ProductCatalog";
-		String whereClause = "";
-		ArrayList<Product> products = new ArrayList<Product>();
-		if (title != null && !title.isEmpty())
-		{
-			whereClause += "where title like %'" + title + "%'";
-			if (genre != null && !genre.isEmpty())
-			{
-				whereClause += "and genre like %'" + genre + "%'";
-			}
-		} else if (genre != null && !genre.isEmpty())
-		{
-			whereClause += "where genre like %'" + genre + "%'";
-		}
-		statement += whereClause + ";";
-		try
-		{
-			Connection conn = this.getConnection();
-			Statement stmt1 = conn.createStatement();
-			ResultSet rs1 = stmt1.executeQuery(statement);
-			while (rs1.next())
-			{
-				int id = rs1.getInt("id");
-				title = rs1.getString("title");
-				String type = rs1.getString("type");
-				genre = rs1.getString("genre");
-				Product prod = new Product(title, type, genre, id);
-				products.add(prod);
-			}
-			rs1.close();
-			stmt1.close();
-			conn.close();
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-		}
-		return products;
+    /**
+     * Add a product to the database.
+     *
+     * @param catalog_id: Id of the catalog item
+     * @return - id of the product from the product db
+     */
+    public int addProductToStore(int catalog_id)
+    {
+        String statement = "INSERT INTO Product (productCatalogID) VALUES (" + catalog_id + ");";
+        try
+        {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next())
+            {
+                int id = rs.getInt(1);
+                return id;
+            }
 
-	}
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+        return 0;
+    }
 
-	public Product getProduct(int pid)
-	{
-		String statement = "SELECT * FROM product_catalog WHERE id = " + pid;
-		Product product = null;
-		try
-		{
-			Connection conn = this.getConnection();
-			Statement stmt1 = conn.createStatement();
-			ResultSet rs = stmt1.executeQuery(statement);
-			if (rs.next())
-			{
-				String title = rs.getString("title");
-				String type = rs.getString("type");
-				String genre = rs.getString("genre");
-				int id = rs.getInt("id");
-				product = new Product(title, type, genre, id);
-			}
-			rs.close();
-			stmt1.close();
-			conn.close();
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-			return null;
-		}
-		return product;
-	}
+    public int addRentalToStore(Rental rental)
+    {
+        String statement = "INSERT INTO Rental (productID, price, dueDate) VALUES (" + rental.getProduct().getId() +
+                ", " + rental.getPrice() + ", " + rental.getDueDate() + ");";
+        try
+        {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next())
+            {
+                int id = rs.getInt(1);
+                return id;
+            }
 
-	/**
-	 * Remove a customer from the db
-	 *
-	 * @param id
-	 */
-	public boolean removeCustomer(int id)
-	{
-		String statement = "DELETE FROM customer WHERE id = " + id;
-		try
-		{
-			Connection conn = getConnection();
-			Statement stmt1 = conn.createStatement();
-			stmt1.execute(statement);
-			stmt1.close();
-			conn.close();
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-			return false;
-		}
-		return true;
-	}
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+        return 0;
+    }
 
-	/**
-	 * Used when creating a completely new product in the store
-	 *
-	 * @param product - should have a title and a type but no id
-	 * @return new id of product
-	 */
-	public boolean addProductToCatalog(Product product)
-	{
-		String statement = "INSERT INTO product_catalog (title, genre)" +
-				" VALUES ('" + product.getTitle() + "', '" + product.getType() + "');";
-		try
-		{
-			Connection conn = this.getConnection();
-			PreparedStatement stmt1 = conn.prepareStatement(statement);
-			stmt1.executeUpdate();
-			conn.close();
-			return true;
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-		}
-		return false;
-	}
+    public int addSaleToStore(Sale sale)
+    {
+        String statement = "INSERT INTO Sale (productID, price) VALUES (" + sale.getProduct().getId() +
+                ", " + sale.getPrice() + ");";
+        try
+        {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next())
+            {
+                int id = rs.getInt(1);
+                return id;
+            }
 
-	/**
-	 * Add a product to the database.
-	 *
-	 * @param catalog_id: Id of the catalog item
-	 * @return - id of the product from the product db
-	 */
-	public boolean addProductToStore(int catalog_id, int qty)
-	{
-		String statement = "INSERT INTO product (product_catalog_id) VALUES (" + catalog_id + ");";
-		try
-		{
-			Connection conn = this.getConnection();
-			PreparedStatement stmt1 = conn.prepareStatement(statement);
-			for (int i = 0; i < qty; i++)
-			{
-				stmt1.executeUpdate();
-			}
-			stmt1.close();
-			conn.close();
-			return true;
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-		}
-		return false;
-	}
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+        return 0;
+    }
 
-	/**
-	 * Add a product to a transaction in the db
-	 *
-	 * @param rental_id   The ID of the product to add to the transaction.
-	 * @param duedate     - format YYYY-MM-DD
-	 * @param transaction The transaction to be added to
-	 */
-	public boolean addRentalToTransaction(int rental_id, String duedate, Transaction transaction)
-	{
-		String statement = "UPDATE Rental SET transaction_id=" + transaction.getId() +
-				", due_date=" + duedate + " WHERE id=" + rental_id;
-		try
-		{
-			Connection conn = this.getConnection();
-			Statement stmt1 = conn.createStatement();
-			stmt1.executeUpdate(statement);
-			stmt1.close();
-			conn.close();
-			return true;
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-		}
-		return false;
-	}
+    /**
+     * Add a transaction to the database
+     *
+     * @param transaction
+     * @return id of transaction
+     */
+    public int addTransactionToStore(Transaction transaction)
+    {
 
-	public boolean addSaleToTransaction(int sale_id, Transaction transaction)
-	{
-		String statement = "UPDATE sale SET transaction_id=" + transaction.getId() + " WHERE id=" + sale_id;
-		try
-		{
-			Connection conn = this.getConnection();
-			Statement stmt1 = conn.createStatement();
-			stmt1.executeUpdate(statement);
-			stmt1.close();
-			conn.close();
-			return true;
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-		}
-		return false;
-	}
 
-	/**
-	 * Create db tables. Only run this if initializing db for the very first time
-	 *
-	 * @return boolean indicating success
-	 */
-	public boolean createTables()
-	{
-		String[] statements = new String[12];
-		statements[0] = "DROP TABLE rental";
-		statements[1] = "DROP TABLE sale";
-		statements[2] = "DROP TABLE transaction";
-		statements[3] = "DROP TABLE product";
-		statements[4] = "DROP TABLE product_catalog";
-		statements[5] = "DROP TABLE customer";
-		statements[6] = "CREATE TABLE customer ( " +
-				"id INT NOT NULL, " +
-				"name VARCHAR(45) NULL, " +
-				"address VARCHAR(120) NULL, " +
-				"PRIMARY KEY (id)); ";
+        String statement = "INSERT INTO Transaction (customerID, paid) " +
+                "VALUES (" + transaction.getCustomer().getId() + ", 0);";
+        try
+        {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            ResultSet rs = stmt1.getGeneratedKeys();
+            if (rs.next())
+            {
+                int id = rs.getInt(1);
+                transaction.setId(id);
+                return id;
+            }
 
-		statements[7] = "CREATE TABLE product_catalog ( " +
-				"id INT NOT NULL, " +
-				"title VARCHAR(45) NULL, " +
-				"genre VARCHAR(45) NULL, " +
-				"PRIMARY KEY (id)); ";
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+        return 0;
+    }
 
-		statements[8] = "CREATE TABLE product ( " +
-				"id INT NOT NULL AUTO_INCREMENT, " +
-				"product_catalog_id INT NOT NULL, " +
-				"PRIMARY KEY (id), " +
-				"FOREIGN KEY (productCatalogID) REFERENCES product_catalog(id) ON DELETE CASCADE);";
+    /**
+     * Add a product to a transaction in the db
+     *
+     * @param rental_id   The ID of the product to add to the transaction.
+     * @param duedate     - format YYYY-MM-DD
+     * @param transaction The transaction to be added to
+     */
+    public void addRentalToTransaction(int rental_id, String duedate, Transaction transaction)
+    {
+        String statement = "UPDATE Rental SET transactionID=" + transaction.getId() +
+                ", dueDate=" + duedate + " WHERE id=" + rental_id;
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            stmt1.executeUpdate(statement);
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+    }
 
-		statements[9] = "CREATE TABLE transaction ( " +
-				"id INT NOT NULL, " +
-				"customer_id INT NOT NULL, " +
-				"PRIMARY KEY (id), " +
-				"FOREIGN KEY (customerID) REFERENCES customer(id) ON DELETE CASCADE); ";
+    public void addSaleToTransaction(int sale_id, Transaction transaction)
+    {
+        String statement = "UPDATE Sale SET transactionID=" + transaction.getId() + " WHERE id=" + sale_id;
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            stmt1.executeUpdate(statement);
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+    }
 
-		statements[10] = "CREATE TABLE sale (" +
-				"id INT NOT NULL, " +
-				"product_id INT NOT NULL, " +
-				"price FLOAT 0.0, " +
-				"transaction_id INT NULL, " +
-				"PRIMARY KEY (id), " +
-				"FOREIGN KEY (transactionID) REFERENCES transaction(id) ON DELETE CASCADE, " +
-				"FOREIGN KEY (productID) REFERENCES product(id) ON DELETE CASCADE);";
+    /**
+     * Create db tables. Only run this if initializing db for the very first time
+     *
+     * @return boolean indicating success
+     */
+    public boolean createTables()
+    {
+        String statement = "CREATE TABLE Customer ( " +
+                "id INT NOT NULL AUTO_INCREMENT, " +
+                "Name VARCHAR(45) NULL, " +
+                "Address VARCHAR(120) NULL, " +
+                "PRIMARY KEY (id)); ";
 
-		statements[12] = "CREATE TABLE rental (" +
-				"id INT NOT NULL, " +
-				"product_id INT NOT NULL," +
-				"price FLOAT 0.0, " +
-				"due_date DATE NULL, " +
-				"transaction_id INT NULL, " +
-				"PRIMARY KEY (id), " +
-				"FOREIGN KEY (transactionID) REFERENCES transaction(id) ON DELETE CASCADE, " +
-				"FOREIGN KEY (productID) REFERENCES product(id) ON DELETE CASCADE);";
-		boolean toReturn = true;
-		for (String stmt : statements)
-		{
-			if (!update(stmt))
-			{
-				toReturn = false;
-			}
-		}
-		return toReturn;
-	}
+        String statement2 = "CREATE TABLE ProductCatalog ( " +
+                "id INT NOT NULL AUTO_INCREMENT, " +
+                "title VARCHAR(45) NULL, " +
+                "description VARCHAR(120) NULL, " +
+                "genre VARCHAR(45) NULL, " +
+                "PRIMARY KEY (id)); ";
 
-	private boolean update(String sql)
-	{
-		try
-		{
-			Connection conn = this.getConnection();
-			Statement stmt = conn.createStatement();
-			stmt.execute(sql);
-			stmt.close();
-			conn.close();
-			return true;
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-		}
-		return false;
-	}
+        String statement3 = "CREATE TABLE Product ( " +
+                "id INT NOT NULL AUTO_INCREMENT, " +
+                "productCatalogID INT NOT NULL, " +
+                "PRIMARY KEY (id), " +
+                "FOREIGN KEY (productCatalogID) REFERENCES ProductCatalog(id));";
+
+        String statement4 = "CREATE TABLE Transaction ( " +
+                "id INT NOT NULL AUTO_INCREMENT, " +
+                "customerID INT NOT NULL, " +
+                "statement VARCHAR(2000) NULL, " +
+                "paid TINYINT(1) NULL DEFAULT 0, " +
+                "PRIMARY KEY (id), " +
+                "FOREIGN KEY (customerID) REFERENCES Customer(id)); ";
+
+        String statement5 = "CREATE TABLE Sale (" +
+                "id INT NOT NULL, " +
+                "productID INT NOT NULL, " +
+                "price FLOAT 0.0, " +
+                "transactionID INT NULL, " +
+                "PRIMARY KEY (id), " +
+                "FOREIGN KEY (transactionID) REFERENCES Transaction(id), " +
+                "FOREIGN KEY (productID) REFERENCES Product(id));";
+
+        String statement6 = "CREATE TABLE Rental (" +
+                "id INT NOT NULL, " +
+                "productID INT NOT NULL," +
+                "price FLOAT 0.0, " +
+                "dueDate DATE NULL, " +
+                "transactionID INT NULL, " +
+                "PRIMARY KEY (id), " +
+                "FOREIGN KEY (transactionID) REFERENCES Transaction(id), " +
+                "FOREIGN KEY (productID) REFERENCES Product(id));";
+
+        try
+        {
+            Statement stmt = conn.createStatement();
+            stmt.execute(statement);
+            stmt.execute(statement2);
+            stmt.execute(statement3);
+            stmt.execute(statement4);
+            stmt.execute(statement5);
+            stmt.execute(statement6);
+            stmt.close();
+            return true;
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return false;
+        }
+
+    }
 }
