@@ -15,13 +15,12 @@ import MediaRental.Model.Sale;
 import MediaRental.Model.Transaction;
 
 public class DatabaseSupport
-
 {
 	public static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/movie_rental";
 	public static final String USER = "root";
 	public static final String PASSWORD = "pass";
 	public static final String DB_DRIVER = "com.mysql.jdbc.Driver";
-	private Connection conn;
+	private static Connection conn;
 
 	public DatabaseSupport()
 	{
@@ -36,6 +35,143 @@ public class DatabaseSupport
 		try
 		{
 			conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+		} catch (SQLException E)
+		{
+			System.out.println("SQLException: " + E.getMessage());
+			System.out.println("SQLState: " + E.getSQLState());
+			System.out.println("VendorError: " + E.getErrorCode());
+		}
+	}
+
+	/**
+	 * @param title - can be null
+	 * @param genre - can be null
+	 * @return customers that have a name or address similar to the passed in values
+	 */
+	public ArrayList<Product> findProducts(String title, String genre)
+	{
+		String statement = "Select id, title, genre from ProductCatalog";
+		String whereClause = "";
+		ArrayList<Product> products = new ArrayList<Product>();
+		if (title != null && !title.isEmpty())
+		{
+			whereClause += "where title like %'" + title + "%'";
+			if (genre != null && !genre.isEmpty())
+			{
+				whereClause += "and genre like %'" + genre + "%'";
+			}
+		} else if (genre != null && !genre.isEmpty())
+		{
+			whereClause += "where genre like %'" + genre + "%'";
+		}
+		statement += whereClause + ";";
+		try
+		{
+			Statement stmt1 = conn.createStatement();
+			ResultSet rs1 = stmt1.executeQuery(statement);
+			while (rs1.next())
+			{
+				int id = rs1.getInt("id");
+				String t = rs1.getString("title");
+				String g = rs1.getString("genre");
+				Product prod = new Product(t);
+				prod.setGenre(g);
+				prod.setCatalogId(id);
+				products.add(prod);
+			}
+		} catch (SQLException E)
+		{
+			System.out.println("SQLException: " + E.getMessage());
+			System.out.println("SQLState: " + E.getSQLState());
+			System.out.println("VendorError: " + E.getErrorCode());
+		}
+		return products;
+
+	}
+
+	/**
+	 * @param name    - can be null
+	 * @param address - can be null
+	 * @return customers that have a name or address similar to the passed in values
+	 */
+	public ArrayList<Customer> findCustomers(String name, String address)
+	{
+		String statement = "Select id, name, address from Customer";
+		String whereClause = "";
+		ArrayList<Customer> customers = new ArrayList<Customer>();
+		if (name != null && !name.isEmpty())
+		{
+			whereClause += "where name like %'" + name + "%'";
+			if (address != null && !address.isEmpty())
+			{
+				whereClause += "and address like %'" + address + "%'";
+			}
+		} else if (address != null && !address.isEmpty())
+		{
+			whereClause += "where address like %'" + address + "%'";
+		}
+		statement += whereClause + ";";
+		try
+		{
+			Statement stmt1 = conn.createStatement();
+			ResultSet rs1 = stmt1.executeQuery(statement);
+			while (rs1.next())
+			{
+				int id = rs1.getInt("id");
+				String n = rs1.getString("name");
+				String a = rs1.getString("address");
+				Customer cust = new Customer(name, address);
+				cust.setId(id);
+				customers.add(cust);
+			}
+		} catch (SQLException E)
+		{
+			System.out.println("SQLException: " + E.getMessage());
+			System.out.println("SQLState: " + E.getSQLState());
+			System.out.println("VendorError: " + E.getErrorCode());
+		}
+		return customers;
+
+	}
+
+	/**
+	 * Get a customer from the database by id
+	 *
+	 * @param id
+	 * @return a customer object
+	 */
+	public Customer getCustomer(int id)
+	{
+		String statement = "Select name, address from Customer where id = " + id + ";";
+		try
+		{
+			Statement stmt1 = conn.createStatement();
+			ResultSet rs1 = stmt1.executeQuery(statement);
+			rs1.next();
+			String name = rs1.getString(1);
+			String address = rs1.getString(2);
+			return new Customer(name, address);
+		} catch (SQLException E)
+		{
+			System.out.println("SQLException: " + E.getMessage());
+			System.out.println("SQLState: " + E.getSQLState());
+			System.out.println("VendorError: " + E.getErrorCode());
+			return null;
+		}
+	}
+
+	/**
+	 * Remove a customer from the db
+	 *
+	 * @param id
+	 */
+	public void removeCustomer(int id)
+	{
+		String statement = "delete from Customer where id = " + id + ";";
+		try
+		{
+			Statement stmt1 = conn.createStatement();
+			stmt1.execute(statement);
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
@@ -219,13 +355,14 @@ public class DatabaseSupport
 	/**
 	 * Add a product to a transaction in the db
 	 *
-	 * @param rental_id The ID of the product to add to the transaction.
-	 * @param dueDate   - format YYYY-MM-DD
+	 * @param rental_id   The ID of the product to add to the transaction.
+	 * @param duedate     - format YYYY-MM-DD
+	 * @param transaction The transaction to be added to
 	 */
-	public void addRentalToTransaction(int rental_id, String dueDate, Transaction transaction)
+	public void addRentalToTransaction(int rental_id, String duedate, Transaction transaction)
 	{
 		String statement = "UPDATE Rental SET transactionID=" + transaction.getId() +
-				", dueDate=" + dueDate + " WHERE id=" + rental_id;
+				", dueDate=" + duedate + " WHERE id=" + rental_id;
 		try
 		{
 			Statement stmt1 = conn.createStatement();
@@ -245,165 +382,6 @@ public class DatabaseSupport
 		{
 			Statement stmt1 = conn.createStatement();
 			stmt1.executeUpdate(statement);
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-		}
-	}
-
-	public Transaction getTransaction(int transactionID)
-	{
-		String tStatement = "SELECT * FROM Transaction WHERE id = " + transactionID;
-		try
-		{
-			Statement stmt = conn.createStatement();
-			ResultSet rs1 = stmt.executeQuery(tStatement);
-			if (!rs1.next())
-			{
-				return null;
-			}
-			Transaction t = new Transaction();
-
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-			return null;
-		}
-	}
-
-	/**
-	 * Get a customer from the database by id
-	 *
-	 * @param id
-	 * @return a customer object
-	 */
-	public Customer getCustomer(int id)
-	{
-		String statement = "Select name, address from Customer where id = " + id + ";";
-		try
-		{
-			Statement stmt1 = conn.createStatement();
-			ResultSet rs1 = stmt1.executeQuery(statement);
-			rs1.next();
-			String name = rs1.getString(1);
-			String address = rs1.getString(2);
-			return new Customer(name, address);
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-			return null;
-		}
-	}
-
-	/**
-	 * @param name    - can be null
-	 * @param address - can be null
-	 * @return customers that have a name or address similar to the passed in values
-	 */
-	public ArrayList<Product> findProducts(String title, String genre)
-	{
-		String statement = "Select id, title, genre from ProductCatalog";
-		String whereClause = "";
-		ArrayList<Product> products = new ArrayList<Product>();
-		if (title != null && !title.isEmpty())
-		{
-			whereClause += "where title like %'" + title + "%'";
-			if (genre != null && !genre.isEmpty())
-			{
-				whereClause += "and genre like %'" + genre + "%'";
-			}
-		} else if (genre != null && !genre.isEmpty())
-		{
-			whereClause += "where genre like %'" + genre + "%'";
-		}
-		statement += whereClause + ";";
-		try
-		{
-			Statement stmt1 = conn.createStatement();
-			ResultSet rs1 = stmt1.executeQuery(statement);
-			while (rs1.next())
-			{
-				int id = rs1.getInt("id");
-				String t = rs1.getString("title");
-				String g = rs1.getString("genre");
-				Product prod = new Product(t);
-				prod.setGenre(g);
-				prod.setCatalogId(id);
-				products.add(prod);
-			}
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-		}
-		return products;
-
-	}
-
-	/**
-	 * @param name    - can be null
-	 * @param address - can be null
-	 * @return customers that have a name or address similar to the passed in values
-	 */
-	public ArrayList<Customer> findCustomers(String name, String address)
-	{
-		String statement = "Select id, name, address from Customer";
-		String whereClause = "";
-		ArrayList<Customer> customers = new ArrayList<Customer>();
-		if (name != null && !name.isEmpty())
-		{
-			whereClause += "where name like %'" + name + "%'";
-			if (address != null && !address.isEmpty())
-			{
-				whereClause += "and address like %'" + address + "%'";
-			}
-		} else if (address != null && !address.isEmpty())
-		{
-			whereClause += "where address like %'" + address + "%'";
-		}
-		statement += whereClause + ";";
-		try
-		{
-			Statement stmt1 = conn.createStatement();
-			ResultSet rs1 = stmt1.executeQuery(statement);
-			while (rs1.next())
-			{
-				int id = rs1.getInt("id");
-				String n = rs1.getString("name");
-				String a = rs1.getString("address");
-				Customer cust = new Customer(name, address);
-				cust.setId(id);
-				customers.add(cust);
-			}
-		} catch (SQLException E)
-		{
-			System.out.println("SQLException: " + E.getMessage());
-			System.out.println("SQLState: " + E.getSQLState());
-			System.out.println("VendorError: " + E.getErrorCode());
-		}
-		return customers;
-
-	}
-
-	/**
-	 * Remove a customer from the db
-	 *
-	 * @param id
-	 */
-	public void removeCustomer(int id)
-	{
-		String statement = "delete from Customer where id = " + id + ";";
-		try
-		{
-			Statement stmt1 = conn.createStatement();
-			stmt1.execute(statement);
 		} catch (SQLException E)
 		{
 			System.out.println("SQLException: " + E.getMessage());
@@ -485,5 +463,4 @@ public class DatabaseSupport
 		}
 
 	}
-
 }

@@ -1,7 +1,7 @@
 package MediaRental;
 
-import java.util.HashMap;
 import java.util.Scanner;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,10 +54,6 @@ public class mainClass
 				default:
 					System.out.println("Invalid command: " + in);
 					break;
-			}
-			if (c == 'q')
-			{
-				break;
 			}
 		}
 		System.out.println("G'bye!");
@@ -192,10 +188,11 @@ public class mainClass
 		switch (input.charAt(0))
 		{
 			case 'p':
-				System.out.println("Title (leave blank for all): ");
-				String title = in.nextLine().trim();
-				System.out.println("Type (leave blank for all): ");
-				String type = in.nextLine().trim();
+				System.out.println("Indexing Products: \n");
+				System.out.println("Title (Leave blank to get all): ");
+				String title = in.nextLine();
+				System.out.println("Type (Leave blank to get all): ");
+				String type = in.nextLine();
 				for (Product p : StoreController.FindProduct(title, type))
 				{
 					System.out.println(p);
