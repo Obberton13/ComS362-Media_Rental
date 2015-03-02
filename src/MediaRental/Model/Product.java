@@ -11,8 +11,43 @@ public class Product {
 	protected int quantity;
 	protected int catalogId;
 
+	public Product()
+	{
+		this.title = "";
+		this.type = "";
+		this.genre = "";
+		this.quantity = 0;
+		this.catalogId = 0;
+		this.id = 0;
+	}
+
 	public Product(String title) {
 		this.title = title;
+		this.type = "";
+		this.genre = "";
+		this.quantity = 0;
+		this.catalogId = 0;
+		this.id = 0;
+	}
+
+	public Product(String title, String type)
+	{
+		this.title = title;
+		this.type = type;
+		this.genre = "";
+		this.quantity = 0;
+		this.catalogId = 0;
+		this.id = 0;
+	}
+
+	public Product(String title, String type, String genre)
+	{
+		this.title = title;
+		this.type = type;
+		this.genre = genre;
+		this.quantity = 0;
+		this.catalogId = 0;
+		this.id = 0;
 	}
 	
 	public int getId() {
