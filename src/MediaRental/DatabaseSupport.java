@@ -1,6 +1,7 @@
 package MediaRental;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,11 +9,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import MediaRental.Model.Customer;
-import MediaRental.Model.Product;
-import MediaRental.Model.Rental;
-import MediaRental.Model.Sale;
-import MediaRental.Model.Transaction;
 
 public class DatabaseSupport
 {
@@ -50,7 +46,7 @@ public class DatabaseSupport
      */
     public ArrayList<Product> findProducts(String title, String genre)
     {
-        String statement = "Select id, title, genre from ProductCatalog";
+        String statement = "Select id, title, genre, description, catalogID from ProductCatalog";
         String whereClause = "";
         ArrayList<Product> products = new ArrayList<Product>();
         if (title != null && !title.isEmpty())
@@ -74,7 +70,8 @@ public class DatabaseSupport
                 int id = rs1.getInt("id");
                 String t = rs1.getString("title");
                 String g = rs1.getString("genre");
-                Product prod = new Product(t);
+                String desc = rs1.getString("description");
+                Product prod = new Product(title, "", g, desc, id);
                 prod.setGenre(g);
                 prod.setCatalogId(id);
                 products.add(prod);
@@ -133,6 +130,119 @@ public class DatabaseSupport
         return customers;
 
     }
+    
+    public static Transaction getTransaction(int id)
+    {
+        String statement = "Select id, customerID, statement, paid, from Transaction where id = " + id + ";";
+        ArrayList<Rental> rentals = new ArrayList();
+        ArrayList<Sale> sales = new ArrayList();
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            ResultSet rs1 = stmt1.executeQuery(statement);
+            rs1.next();
+            int customerID = rs1.getInt("customerID");
+            Customer customer = getCustomer(customerID);
+            String transactionStatement = rs1.getString("statement");
+            Boolean paid = rs1.getBoolean("paid");
+            String statement2 = "Select id from Rental where transactionID = " + id + ";";
+            ResultSet rs2 = stmt1.executeQuery(statement2);
+            while (rs2.next())
+            {
+                int rentalID = rs2.getInt("id");
+                Rental rental = getRental(rentalID);
+                rentals.add(rental);
+            }
+            String statement3 = "Select id from Sale where transactionID = " + id + ";";
+            ResultSet rs3 = stmt1.executeQuery(statement3);
+            while (rs3.next())
+            {
+                int saleID = rs3.getInt("id");
+                Sale sale = getSale(saleID);
+                sales.add(sale);
+            }
+
+            return new Transaction(customer, rentals, sales, paid, statement, id);
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return null;
+        }
+    }
+    
+    public static Sale getSale(int id)
+    {
+        String statement = "Select id, productID, price, transactionID, from Sale where id = " + id + ";";
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            ResultSet rs1 = stmt1.executeQuery(statement);
+            rs1.next();
+            int productID = rs1.getInt("productID");
+            double price = rs1.getFloat("price");
+            int transactionID = rs1.getInt("transactionID");
+            Product product = getProduct(productID);
+            return new Sale(product, price, id);
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return null;
+        }
+    }
+    
+    public static Rental getRental(int id)
+    {
+        String statement = "Select id, productID, price, dueDate, from Sale where id = " + id + ";";
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            ResultSet rs1 = stmt1.executeQuery(statement);
+            rs1.next();
+            int productID = rs1.getInt("productID");
+            double price = rs1.getFloat("price");
+            Date dueDate = rs1.getDate("dueDate");
+            String dueDateString = dueDate.toString();
+            Product product = getProduct(productID);
+            return new Rental(product, dueDateString, price, id);
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return null;
+        }
+    }
+    
+    public static Product getProduct(int id)
+    {
+        String statement = "Select id, productCatalogID from Product where id = " + id + ";";
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            ResultSet rs1 = stmt1.executeQuery(statement);
+            rs1.next();
+            int catalogID = rs1.getInt("productCatalogID");
+            String statement2 = "Select id, title, description, genre from ProductCatalog where id = " + catalogID + ";";
+            Statement stmt2 = conn.createStatement();
+            ResultSet rs2 = stmt1.executeQuery(statement2);
+            rs2.next();
+            String title = rs2.getString("title");
+            String description = rs2.getString("description");
+            String genre = rs2.getString("genre");
+            
+            return new Product(title, "", genre, description, id, catalogID);
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return null;
+        }
+    }
 
     /**
      * Get a customer from the database by id
@@ -140,7 +250,7 @@ public class DatabaseSupport
      * @param id
      * @return a customer object
      */
-    public Customer getCustomer(int id)
+    public static Customer getCustomer(int id)
     {
         String statement = "Select name, address from Customer where id = " + id + ";";
         try
