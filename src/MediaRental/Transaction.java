@@ -1,4 +1,4 @@
-package MediaRental.Model;
+package MediaRental;
 
 import java.util.ArrayList;
 
@@ -11,14 +11,8 @@ public class Transaction
 	protected ArrayList<Rental> rentals;
 	protected ArrayList<Sale> sales;
 	protected Customer customer;
-
-	public Transaction()
-	{
-		rentals = new ArrayList<Rental>();
-		sales = new ArrayList<Sale>();
-		customer = null;
-		id = 0;
-	}
+	protected Boolean paid;
+	protected String statement;
 
 	public Transaction(Customer customer)
 	{
@@ -36,12 +30,14 @@ public class Transaction
 		id = 0;
 	}
 
-	public Transaction(Customer customer, ArrayList<Rental> rentals, ArrayList<Sale> sales, int id)
+	public Transaction(Customer customer, ArrayList<Rental> rentals, ArrayList<Sale> sales, Boolean paid, String statement, int id)
 	{
 		this.customer = customer;
 		this.rentals = rentals;
 		this.sales = sales;
 		this.id = id;
+		this.paid = paid;
+		this.statement = statement;
 	}
 
 	public int getId()

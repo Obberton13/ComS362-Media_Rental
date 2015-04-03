@@ -1,23 +1,20 @@
 package MediaRental;
 
-import java.util.HashMap;
 import java.util.Scanner;
-<<<<<<<HEAD
-		=======
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
->>>>>>>origin/develop
 
-import MediaRental.Controller.*;
-import MediaRental.Model.Product;
+import MediaRental.StoreController;
 
 /**
  * Created by Obberton13 on 2/20/2015.
  */
 public class mainClass
 {
-	private static Pattern isInt = Pattern.compile("/^([0-9]+)$/*");
+	private static Pattern isInt = Pattern.compile("/^([0-9]+)$/");
 	private static Pattern isDate = Pattern.compile("/^([0-9]{4}-[0-9]{2}-[0-9]{2})$/");
+	private static Pattern isDouble = Pattern.compile("/^([0-9\\.]+)$/");
 
 	public static void main(String args[])
 	{
@@ -78,7 +75,9 @@ public class mainClass
 				String name = in.nextLine();
 				System.out.println("Customer Address: ");
 				String address = in.nextLine();
-				StoreController.AddCustomer(name, address);
+				System.out.println("Customer ID: ");
+				boolean b = new StoreController().addCustomer(name, address);
+				System.out.println("Operation success boolean is " + b);
 				break;
 			case 'p':
 				System.out.println("Creating a product: \n");
@@ -86,22 +85,30 @@ public class mainClass
 				String title = in.nextLine();
 				System.out.println("Product Type: ");
 				String type = in.nextLine();
-				StoreController.CreateProduct(title, type);
+				System.out.println("Product Genre: ");
+				String genre = in.nextLine();
+				System.out.println("Product ID: ");
+				String description = "";
+				b = new StoreController().createProduct(title, type, genre, description);
+				System.out.println("Operation success boolean is " + b);
 				break;
 			case 't':
 				System.out.println("Creating a transaction: ");
 				System.out.println("Customer ID: ");
-				int id;
-				Matcher m = isInt.matcher(in.next());
+				int cid;
+                Matcher m = isInt.matcher(in.next());
+
+                m = isInt.matcher(in.next());
 				if (m.matches())
 				{
-					id = Integer.parseInt(m.group(1));
+					cid = Integer.parseInt(m.group(1));
 				} else
 				{
 					System.out.println("Next time, try typing an integer as an ID.");
 					return;
 				}
-				System.out.println(StoreController.CreateTransaction(id));
+				b = new StoreController().createTransaction(cid);
+				System.out.println("Operation success boolean is " + b);
 				break;
 			case 'q':
 				return;
@@ -140,7 +147,8 @@ public class mainClass
 					System.out.println("Next time, try typing an integer as a quantity.");
 					return;
 				}
-				StoreController.AddProduct(pid, qty);
+				boolean b = new StoreController().addProduct(pid, qty);
+				System.out.println("Operation success boolean is " + b);
 				break;
 			case 'r':
 				System.out.println("Adding rental to transaction");
@@ -165,6 +173,7 @@ public class mainClass
 					System.out.println("Next time, try typing an integer as an ID.");
 					return;
 				}
+				System.out.println("Due Date (YYYY-MM-DD): ");
 				String date;
 				m = isDate.matcher(in.next());
 				if (m.matches())
@@ -175,7 +184,10 @@ public class mainClass
 					System.out.println("Make sure your date is in the format YYYY-MM-DD");
 					return;
 				}
-				StoreController.AddRental(pid, tid, date);
+				System.out.println("Transaction ID: ");
+				int id;
+				b = new StoreController().addRental(tid, pid, date);
+				System.out.println("Operation success boolean is " + b);
 		}
 	}
 
@@ -194,9 +206,9 @@ public class mainClass
 				System.out.println("Indexing Products: \n");
 				System.out.println("Title (Leave blank to get all): ");
 				String title = in.nextLine();
-				System.out.println("Type (Leave blank to get all): ");
-				String type = in.nextLine();
-				for (Product p : StoreController.FindProduct(title, type))
+				System.out.println("Genre (Leave blank to get all): ");
+				String genre = in.nextLine();
+				for (Product p : new StoreController().findProduct(title, genre))
 				{
 					System.out.println(p);
 				}
@@ -212,6 +224,25 @@ public class mainClass
 
 	private static void delete(Scanner in)
 	{
+		String input = in.next();
+		switch(input.charAt(0))
+		{
+			case 'c':
+				System.out.println("Removing customer");
+				System.out.println("Customer ID: ");
+				int cid;
+				Matcher m = isInt.matcher(in.next());
+				if (m.matches())
+				{
+					cid = Integer.parseInt(m.group(1));
+				} else
+				{
+					System.out.println("Next time, try typing an integer as an ID.");
+					return;
+				}
+				boolean b = new StoreController().removeCustomer(cid);
+				System.out.println("Operation success boolean is " + b);
+		}
 		System.out.println("Deletion is not yet available.");
 		in.next();
 	}
