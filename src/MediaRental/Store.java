@@ -59,7 +59,7 @@ public class Store
      * @return true on success, false otherwise
      */
     public static boolean createTransaction(int cid){
-        Transaction transaction = new Transaction(db.getCustomer(cid));
+        Transaction transaction = new Transaction(DatabaseSupport.getCustomer(cid));
         transaction.setId(db.addTransactionToStore(transaction));
         return db.addTransactionToStore(transaction) != 0;
     }
@@ -104,8 +104,19 @@ public class Store
         return db.findProducts(title,type);
     }
 
-    public static Transaction getTransaction(int tid)
+    public Transaction getTransaction(int tid)
     {
-        return DatabaseSupport.getTransaction(tid);
+        return db.getTransaction(tid);
+    }
+    
+    public String getTransactionStatement(int tid){
+        Transaction transaction = db.getTransaction(tid);
+        return transaction.getStatement();
+    }
+        
+    
+    public static boolean createRentalPricingStrategy(double standardRentalCharge, int standardRentalLength, double dailyOverdueCharge, String name) {
+        RentalPricingStrategy pricing = new RentalPricingStrategy(standardRentalCharge, standardRentalLength, dailyOverdueCharge, name);
+        return db.addRentalPricingStrategy(pricing);
     }
 }

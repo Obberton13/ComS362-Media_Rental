@@ -39,6 +39,47 @@ public class Transaction
 		this.paid = paid;
 		this.statement = statement;
 	}
+	
+	public String getStatement(){
+	    double      totalAmount          = 0;
+        int         frequentRenterPoints = 0;
+        String      result               = "<html>\n"; 
+        result += "Rental Record for " + customer.getName() + "<br>\n" +
+                "<p style='padding-left:5em'>\n";
+        
+       for (Rental rental : rentals) {
+            
+            double thisAmount = 0;
+            
+            thisAmount += rental.getPrice();
+           
+            // show figures for this rental
+            String className = rental.product.getType();
+            result += "\t" + className + " - " + rental.getProduct().getTitle() +
+                      "\t" + String.valueOf(thisAmount) + "<br>\n";
+            totalAmount += thisAmount;
+        }
+       if (sales.size() > 0){
+           result += "</p>\nSale Record for " + customer.getName() + "<br>\n" +
+                    "<p style='padding-left:5em'>\n";
+               for (Sale sale : sales) {
+                   
+                   double thisAmount = sale.getPrice();
+                  
+                   // show figures for this sale
+                   String className = sale.getClass().getName();
+                   result += "\t" + className + " - " + sale.getProduct().getTitle() +
+                             "\t" + String.valueOf(thisAmount) + "<br>\n";
+                   totalAmount += thisAmount;
+               }
+       }
+       
+        
+        // add footer lines
+        result += "</p>\nAmount owed is " + String.valueOf(totalAmount) + "<br>\n";
+        result += "</html>";
+        return result;
+	}
 
 	public int getId()
 	{

@@ -38,6 +38,10 @@ public class DatabaseSupport
             System.out.println("VendorError: " + E.getErrorCode());
         }
     }
+    
+    public boolean addRentalPricingStrategy(RentalPricingStrategy pricing){
+        return true;
+    }
 
     /**
      * @param title - can be null

@@ -10,6 +10,14 @@ public class StoreController
 {
 	private Store store = new Store();
 	static DatabaseSupport db = new DatabaseSupport();
+	
+	public boolean createRentalPricingStrategy(double standardRentalCharge, int standardRentalLength, double dailyOverdueCharge, String name){
+	    return this.store.createRentalPricingStrategy(standardRentalCharge, standardRentalLength, dailyOverdueCharge, name);
+	}
+	
+	public String getTransactionStatement(int tid){
+        return this.store.getTransactionStatement(tid);
+    }
 
 	/**
 	 * @param name    the name of the customer to add
