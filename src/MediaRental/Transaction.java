@@ -40,6 +40,14 @@ public class Transaction
 		this.statement = statement;
 	}
 	
+	public void setPaid(boolean paid){
+	    this.paid = paid;
+	}
+	
+	public boolean getPaid(){
+	    return this.paid;
+	}
+	
 	public String getStatement(){
 	    double      totalAmount          = 0;
         int         frequentRenterPoints = 0;

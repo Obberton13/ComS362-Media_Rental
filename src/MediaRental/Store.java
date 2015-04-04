@@ -60,8 +60,9 @@ public class Store
      */
     public static boolean createTransaction(int cid){
         Transaction transaction = new Transaction(DatabaseSupport.getCustomer(cid));
-        transaction.setId(db.addTransactionToStore(transaction));
-        return db.addTransactionToStore(transaction) != 0;
+        int id = db.putTransaction(transaction);
+        transaction.setId(id);
+        return id != 0;
     }
 
     /**
@@ -74,9 +75,7 @@ public class Store
         Product product = DatabaseSupport.getProduct(productID);
         Sale sale = new Sale(product, 0);
         transaction.addSale(sale);
-        sale.setId(db.addSaleToStore(sale));
-        db.addSaleToTransaction(sale.getId(),transaction);
-        return db.addSaleToStore(sale) != 0;
+        return (db.putTransaction(transaction) > 0);
     }
 
     /**
@@ -90,9 +89,8 @@ public class Store
         Product product = DatabaseSupport.getProduct(productID);
         Rental rental = new Rental(product, dueDate, 0);
         transaction.addRental(rental);
-        rental.setId(db.addRentalToStore(rental));
-        db.addRentalToTransaction(rental.getId(),rental.getDueDate(),transaction);    
-        return db.addRentalToStore(rental) != 0;
+        return (db.putTransaction(transaction) > 0);
+
     }
 
     /**
