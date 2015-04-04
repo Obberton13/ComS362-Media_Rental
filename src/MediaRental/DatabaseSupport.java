@@ -40,7 +40,21 @@ public class DatabaseSupport
     }
     
     public boolean addRentalPricingStrategy(RentalPricingStrategy pricing){
-        return true;
+        String statement = "INSERT INTO RentalPricingStrategy (name, standardRentalLength, dailyOverdueCharge, standardRentalCharge) VALUES " +
+                           "(" + pricing.getName() + ", " + pricing.getStandardRentalLength() + ", " + pricing.getDailyOverdueCharge() + ", " + pricing.getStandardRentalCharge() + ");";
+        try
+        {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            return true;
+
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return false;
+        }
     }
 
     /**
@@ -556,6 +570,13 @@ public class DatabaseSupport
                 "PRIMARY KEY (id), " +
                 "FOREIGN KEY (transactionID) REFERENCES Transaction(id), " +
                 "FOREIGN KEY (productID) REFERENCES Product(id));";
+       
+        String statement7 = "CREATE TABLE RentalPricingStrategy (" +
+                "name String NOT NULL, " +
+                "standardRentalLength INT NOT NULL," +
+                "dailyOverdueCharge DOUBLE NOT NULL, " +
+                "standardRentalCharge DOUBLE NOT NULL, " +
+                "PRIMARY KEY (name));";
 
         try
         {
@@ -566,6 +587,7 @@ public class DatabaseSupport
             stmt.execute(statement4);
             stmt.execute(statement5);
             stmt.execute(statement6);
+            stmt.execute(statement7);
             stmt.close();
             return true;
         } catch (SQLException E)

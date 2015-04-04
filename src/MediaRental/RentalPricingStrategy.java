@@ -33,6 +33,9 @@ public class RentalPricingStrategy {
     public double getDailyOverdueCharge(){
         return _dailyOverdueCharge;
     }
+    public String getName(){
+        return _name;
+    }
     
     public double getRentalCharge(int daysRented){
         double charge = _standardRentalCharge;
