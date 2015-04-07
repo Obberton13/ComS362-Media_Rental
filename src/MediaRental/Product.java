@@ -11,6 +11,7 @@ public class Product
     protected String genre;
     protected int catalogId;
     protected String description;
+    protected FrequentCustomerStrategy s;
 
 
     public Product(String title, String type, String genre, String description)
@@ -89,6 +90,11 @@ public class Product
     public String getGenre()
     {
         return genre;
+    }
+    
+    public void setCustomerStrategy(FrequentCustomerStrategy strategy)
+    {
+    	s = strategy;
     }
 
 
