@@ -95,9 +95,7 @@ public class StoreController
 	 */
 	public ArrayList<Product> findProduct(String title, String type)
 	{
-//		return getStoreInstance().findProducts(title, type);
-//      TODO
-	    return new ArrayList();
+	    return this.store.findProducts(title, type);
 	}
 	
 	public boolean payForTransaction(int tid)
@@ -110,9 +108,9 @@ public class StoreController
 		return this.store.createFrequentCustomerStrategy(fixedPoints, pointsPerDay, name);
 	}
 	
-	public boolean setFrequentCustomerStrategy(FrequentCustomerStrategy strategy, int pid)
+	public boolean setFrequentCustomerStrategy(FrequentCustomerStrategy strategy, int catalogID)
 	{
-		return this.store.setFrequentCustoerStrategy(strategy, pid);
+		return this.store.setFrequentCustomerStrategy(strategy, catalogID);
 	}
 }
 

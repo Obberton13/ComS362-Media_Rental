@@ -12,6 +12,12 @@ public class Product
     protected int catalogId;
     protected String description;
     protected FrequentCustomerStrategy s;
+    
+    
+    public Product(int catalogId)
+    {
+        this.catalogId = catalogId;
+    }
 
 
     public Product(String title, String type, String genre, String description)
@@ -95,6 +101,10 @@ public class Product
     public void setCustomerStrategy(FrequentCustomerStrategy strategy)
     {
     	s = strategy;
+    }
+    
+    public FrequentCustomerStrategy getCustomerStrategy(){
+        return s;
     }
 
 

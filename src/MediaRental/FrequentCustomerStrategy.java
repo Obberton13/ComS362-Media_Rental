@@ -32,5 +32,10 @@ public class FrequentCustomerStrategy {
 		return pointsPerDay;
 	}
 	
+	public String getName()
+	{
+	    return name;
+	}
+	
 
 }
