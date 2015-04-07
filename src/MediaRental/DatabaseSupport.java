@@ -371,6 +371,20 @@ public class DatabaseSupport
         }  
     }
     
+    private void removeProductCatalog(int catalog_id){
+        String statement = "delete from ProductCatalog where ID = " + catalog_id + ";";
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            stmt1.execute(statement);
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }  
+    }
+    
     
     /**
      * Remove a customer from the db
@@ -431,8 +445,21 @@ public class DatabaseSupport
      */
     public int addProductToCatalog(Product product)
     {
-        String statement = "INSERT INTO ProductCatalog (title, genre)" +
-                " VALUES ('" + product.getTitle() + "', '" + product.getType() + "');";
+        String statement;
+        String strategyName = "";
+        FrequentCustomerStrategy strategy = product.getCustomerStrategy();
+        if (strategy != null){
+            strategyName = strategy.getName();
+        }
+        if (product.getCatalogId() > 0){
+            statement = "INSERT INTO ProductCatalog (id, title, genre, customerStrategyName)" +
+                    " VALUES ('" + product.getCatalogId() + "', '" + product.getTitle() + "', '" + product.getType() + "', '" + strategyName + "');";
+        }
+        else {
+            statement = "INSERT INTO ProductCatalog (title, genre, customerStrategyName)" +
+                    " VALUES ('" + product.getTitle() + "', '" + product.getType() + "', '" + product.getType() + "');";
+        }
+        
         try
         {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -460,31 +487,35 @@ public class DatabaseSupport
      * @param catalog_id: Id of the catalog item
      * @return - id of the product from the product db
      */
-    public int putProduct(Product product)
+    public boolean putProduct(Product product, int numberToAdd)
     {
-        if (product.getId() > 0) {
-            removeProduct(product.getId());
+        if (product.getCatalogId() > 0) {
+            removeProductCatalog(product.getCatalogId());
+            addProductToCatalog(product);
         }
-        String statement = "INSERT INTO Product (productCatalogID) VALUES (" + product.getCatalogId() + ");";
-        try
-        {
-            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
-            stmt1.executeUpdate();
-            ResultSet rs = stmt1.getGeneratedKeys();
-            if (rs.next())
+        for (int i=0; i < numberToAdd; i++){
+            String statement = "INSERT INTO Product (productCatalogID) VALUES (" + product.getCatalogId() + ");";
+            try
             {
-                int id = rs.getInt(1);
-                product.id = id;
-                return id;
-            }
+                PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+                stmt1.executeUpdate();
+                ResultSet rs = stmt1.getGeneratedKeys();
+                if (rs.next())
+                {
+                    int id = rs.getInt(1);
+                    product.id = id;
+                }
 
-        } catch (SQLException E)
-        {
-            System.out.println("SQLException: " + E.getMessage());
-            System.out.println("SQLState: " + E.getSQLState());
-            System.out.println("VendorError: " + E.getErrorCode());
+            } catch (SQLException E)
+            {
+                System.out.println("SQLException: " + E.getMessage());
+                System.out.println("SQLState: " + E.getSQLState());
+                System.out.println("VendorError: " + E.getErrorCode());
+                return false;
+            }
         }
-        return 0;
+        return true;
+        
     }
 
     private int addRentalToStore(Rental rental)
@@ -645,6 +676,7 @@ public class DatabaseSupport
                 "title VARCHAR(45) NULL, " +
                 "description VARCHAR(120) NULL, " +
                 "genre VARCHAR(45) NULL, " +
+                "customerStrategyName VARCHAR(45) NOT NULL, " +
                 "PRIMARY KEY (id)); ";
 
         String statement3 = "CREATE TABLE Product ( " +

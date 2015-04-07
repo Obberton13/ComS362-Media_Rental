@@ -108,9 +108,9 @@ public class StoreController
 		return this.store.createFrequentCustomerStrategy(fixedPoints, pointsPerDay, name);
 	}
 	
-	public boolean setFrequentCustomerStrategy(FrequentCustomerStrategy strategy, int pid)
+	public boolean setFrequentCustomerStrategy(FrequentCustomerStrategy strategy, int catalogID)
 	{
-		return this.store.setFrequentCustoerStrategy(strategy, pid);
+		return this.store.setFrequentCustomerStrategy(strategy, catalogID);
 	}
 }
 

@@ -36,8 +36,9 @@ public class Store
      */
     public boolean createProduct(String name, String type, String genre, String description) {
         Product product = new Product(name,type, genre, description);
-        product.setId(db.addProductToCatalog(product));
-        return db.addProductToCatalog(product) != 0;
+        int catalogID = db.addProductToCatalog(product);
+        product.setCatalogId(catalogID);
+        return catalogID != 0;
     }
 
     /**
@@ -46,13 +47,8 @@ public class Store
      * @return true on success, false otherwise
      */
     public boolean addProduct(int catalogId, int qty) {
-        for (int i = 0; i < qty; i++)
-        {
-            Product product = new Product(catalogId);
-            db.putProduct(product);
-        }
-        return true;
-       
+        Product product = new Product(catalogId);
+        return db.putProduct(product, qty);
     }
 
     /**
@@ -119,26 +115,24 @@ public class Store
         return db.addRentalPricingStrategy(pricing);
     }
     
-    public static boolean payForTransaction(int tid)
+    public boolean payForTransaction(int tid)
     {
     	Transaction transaction = DatabaseSupport.getTransaction(tid);
     	transaction.pay();
     	return transaction.paid == true; 
     }
     
-    public static boolean createFrequentCustomerStrategy(int fixedPoints, int pointsPerDay, String name)
+    public boolean createFrequentCustomerStrategy(int fixedPoints, int pointsPerDay, String name)
     {
     	FrequentCustomerStrategy customerStrategy = new FrequentCustomerStrategy(fixedPoints,pointsPerDay,name);
-    	//DatabaseSupport.addFrequentCustomerStrategy(customerStrategy);
-    	return true;
+    	return db.addFrequentCustomerStrategy(customerStrategy);
     }
     
-    public static boolean setFrequentCustoerStrategy(FrequentCustomerStrategy strategy, int pid)
+    public boolean setFrequentCustomerStrategy(FrequentCustomerStrategy strategy, int catalogID)
     {
-    	Product p = DatabaseSupport.getProduct(pid);
+    	Product p = DatabaseSupport.getProduct(catalogID);
     	p.setCustomerStrategy(strategy);
-    	
-    	return db.putProduct(p) != 0;
+    	return db.putProduct(p, 0);
     }
     
 }

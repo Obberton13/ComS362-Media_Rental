@@ -102,6 +102,10 @@ public class Product
     {
     	s = strategy;
     }
+    
+    public FrequentCustomerStrategy getCustomerStrategy(){
+        return s;
+    }
 
 
     @Override
