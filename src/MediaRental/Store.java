@@ -36,9 +36,7 @@ public class Store
      */
     public boolean createProduct(String name, String type, String genre, String description) {
         Product product = new Product(name,type, genre, description);
-        int catalogID = db.addProductToCatalog(product);
-        product.setCatalogId(catalogID);
-        return catalogID != 0;
+        return db.putProduct(product, 0);
     }
 
     /**

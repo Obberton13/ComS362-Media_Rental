@@ -443,7 +443,7 @@ public class DatabaseSupport
      * @param product - should have a title and a type but no id
      * @return new id of product
      */
-    public int addProductToCatalog(Product product)
+    private int addProductToCatalog(Product product)
     {
         String statement;
         String strategyName = "";
@@ -468,7 +468,7 @@ public class DatabaseSupport
             if (rs.next())
             {
                 int id = rs.getInt(1);
-                product.setId(id);
+                product.setCatalogId(id);
                 return id;
             }
 
@@ -491,8 +491,8 @@ public class DatabaseSupport
     {
         if (product.getCatalogId() > 0) {
             removeProductCatalog(product.getCatalogId());
-            addProductToCatalog(product);
         }
+        addProductToCatalog(product);
         for (int i=0; i < numberToAdd; i++){
             String statement = "INSERT INTO Product (productCatalogID) VALUES (" + product.getCatalogId() + ");";
             try
