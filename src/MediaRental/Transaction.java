@@ -89,4 +89,9 @@ public class Transaction
 	{
 		rentals.add(rental);
 	}
+	public boolean pay()
+	{
+		paid = true;
+		return paid == true;
+	}
 }

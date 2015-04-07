@@ -108,4 +108,27 @@ public class Store
     {
         return DatabaseSupport.getTransaction(tid);
     }
+    
+    public static boolean payForTransaction(int tid)
+    {
+    	Transaction transaction = DatabaseSupport.getTransaction(tid);
+    	transaction.pay();
+    	return transaction.paid == true; 
+    }
+    
+    public static boolean createFrequentCustomerStrategy(int fixedPoints, int pointsPerDay, String name)
+    {
+    	FrequentCustomerStrategy customerStrategy = new FrequentCustomerStrategy(fixedPoints,pointsPerDay,name);
+    	//DatabaseSupport.addFrequentCustomerStrategy(customerStrategy);
+    	return true;
+    }
+    
+    public static boolean setFrequentCustoerStrategy(FrequentCustomerStrategy strategy, int pid)
+    {
+    	Product p = DatabaseSupport.getProduct(pid);
+    	p.setCustomerStrategy(strategy);
+    	db.addProductToStore(pid);
+    	return db.addProductToStore(pid) != 0;
+    }
+    
 }

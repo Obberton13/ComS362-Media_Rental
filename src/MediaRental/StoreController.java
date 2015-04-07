@@ -91,6 +91,21 @@ public class StoreController
 //      TODO
 	    return new ArrayList();
 	}
+	
+	public boolean payForTransaction(int tid)
+	{
+		return this.store.payForTransaction(tid);
+	}
+	
+	public boolean createFrequentCustomerStrategy(int fixedPoints, int pointsPerDay, String name)
+	{
+		return this.store.createFrequentCustomerStrategy(fixedPoints, pointsPerDay, name);
+	}
+	
+	public boolean setFrequentCustomerStrategy(FrequentCustomerStrategy strategy, int pid)
+	{
+		return this.store.setFrequentCustoerStrategy(strategy, pid);
+	}
 }
 
 
