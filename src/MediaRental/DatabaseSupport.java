@@ -78,11 +78,6 @@ public class DatabaseSupport
         }
     }
     
-    
-
-    
-    
-    
     public boolean addRentalPricingStrategy(RentalPricingStrategy pricing){
         String statement = "INSERT INTO RentalPricingStrategy (name, standardRentalLength, dailyOverdueCharge, standardRentalCharge) VALUES " +
                            "(" + pricing.getName() + ", " + pricing.getStandardRentalLength() + ", " + pricing.getDailyOverdueCharge() + ", " + pricing.getStandardRentalCharge() + ");";
@@ -359,8 +354,21 @@ public class DatabaseSupport
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
-        }
-        
+        }  
+    }
+    
+    private void removeProduct(int pid){
+        String statement = "delete from Product where ID = " + pid + ";";
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            stmt1.execute(statement);
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }  
     }
     
     
@@ -452,9 +460,12 @@ public class DatabaseSupport
      * @param catalog_id: Id of the catalog item
      * @return - id of the product from the product db
      */
-    public int addProductToStore(int catalog_id)
+    public int putProduct(Product product)
     {
-        String statement = "INSERT INTO Product (productCatalogID) VALUES (" + catalog_id + ");";
+        if (product.getId() > 0) {
+            removeProduct(product.getId());
+        }
+        String statement = "INSERT INTO Product (productCatalogID) VALUES (" + product.getCatalogId() + ");";
         try
         {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -463,6 +474,7 @@ public class DatabaseSupport
             if (rs.next())
             {
                 int id = rs.getInt(1);
+                product.id = id;
                 return id;
             }
 

@@ -45,13 +45,14 @@ public class Store
      * @param qty the amount of the product to add to the store
      * @return true on success, false otherwise
      */
-    public boolean addProduct(int pid, int qty) {
+    public boolean addProduct(int catalogId, int qty) {
         for (int i = 0; i < qty; i++)
         {
-            db.addProductToStore(pid);
+            Product product = new Product(catalogId);
+            db.putProduct(product);
         }
-        
-        return db.addProductToStore(pid) != 0;
+        return true;
+       
     }
 
     /**
@@ -136,8 +137,8 @@ public class Store
     {
     	Product p = DatabaseSupport.getProduct(pid);
     	p.setCustomerStrategy(strategy);
-    	db.addProductToStore(pid);
-    	return db.addProductToStore(pid) != 0;
+    	
+    	return db.putProduct(p) != 0;
     }
     
 }
