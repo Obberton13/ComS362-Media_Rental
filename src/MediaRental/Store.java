@@ -14,7 +14,7 @@ public class Store
 	{
 	}
 
-	public static boolean addCustomer(String name, String address) {
+	public boolean addCustomer(String name, String address) {
         Customer customer = new Customer(name, address);
         customer.setId(db.addCustomer(customer));
         return db.addCustomer(customer) != 0;
@@ -24,7 +24,7 @@ public class Store
      * @param cid the ID of the customer to remove
      * @return true on success, false otherwise
      */
-    public static boolean removeCustomer(int cid) {
+    public boolean removeCustomer(int cid) {
         db.removeCustomer(cid);
         return true;
     }
@@ -34,7 +34,7 @@ public class Store
      * @param type the type of the product to create
      * @return true on success, false otherwise
      */
-    public static boolean createProduct(String name, String type, String genre, String description) {
+    public boolean createProduct(String name, String type, String genre, String description) {
         Product product = new Product(name,type, genre, description);
         product.setId(db.addProductToCatalog(product));
         return db.addProductToCatalog(product) != 0;
@@ -45,7 +45,7 @@ public class Store
      * @param qty the amount of the product to add to the store
      * @return true on success, false otherwise
      */
-    public static boolean addProduct(int pid, int qty) {
+    public boolean addProduct(int pid, int qty) {
         for (int i = 0; i < qty; i++)
         {
             db.addProductToStore(pid);
@@ -58,7 +58,7 @@ public class Store
      * @param cid The ID of the customer who is doing the purchasing
      * @return true on success, false otherwise
      */
-    public static boolean createTransaction(int cid){
+    public boolean createTransaction(int cid){
         Transaction transaction = new Transaction(DatabaseSupport.getCustomer(cid));
         int id = db.putTransaction(transaction);
         transaction.setId(id);
@@ -70,7 +70,7 @@ public class Store
      * @param transactionID The ID of the transaction to be added to
      * @return true on success, false otherwise
      */
-    public static boolean addSale(int transactionID, int productID) {
+    public boolean addSale(int transactionID, int productID) {
         Transaction transaction = DatabaseSupport.getTransaction(transactionID);
         Product product = DatabaseSupport.getProduct(productID);
         Sale sale = new Sale(product, 0);
@@ -84,7 +84,7 @@ public class Store
      * @param dueDate the date the Rental will be due
      * @return true on success, false otherwise
      */
-    public static boolean addRental(int transactionID, int productID, String dueDate) {
+    public boolean addRental(int transactionID, int productID, String dueDate) {
         Transaction transaction = DatabaseSupport.getTransaction(transactionID);
         Product product = DatabaseSupport.getProduct(productID);
         Rental rental = new Rental(product, dueDate, 0);
@@ -98,7 +98,7 @@ public class Store
      * @param type the type of the product you are looking for
      * @return
      */
-    public static ArrayList<Product> findProduct(String title, String type) {
+    public ArrayList<Product> findProducts(String title, String type) {
         return db.findProducts(title,type);
     }
 
@@ -113,7 +113,7 @@ public class Store
     }
         
     
-    public static boolean createRentalPricingStrategy(double standardRentalCharge, int standardRentalLength, double dailyOverdueCharge, String name) {
+    public boolean createRentalPricingStrategy(double standardRentalCharge, int standardRentalLength, double dailyOverdueCharge, String name) {
         RentalPricingStrategy pricing = new RentalPricingStrategy(standardRentalCharge, standardRentalLength, dailyOverdueCharge, name);
         return db.addRentalPricingStrategy(pricing);
     }

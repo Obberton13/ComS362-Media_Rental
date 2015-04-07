@@ -95,9 +95,7 @@ public class StoreController
 	 */
 	public ArrayList<Product> findProduct(String title, String type)
 	{
-//		return getStoreInstance().findProducts(title, type);
-//      TODO
-	    return new ArrayList();
+	    return this.store.findProducts(title, type);
 	}
 }
 
