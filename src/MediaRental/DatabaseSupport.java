@@ -39,6 +39,50 @@ public class DatabaseSupport
         }
     }
     
+    public boolean addFrequentCustomerStrategy(FrequentCustomerStrategy strategy){
+        String statement = "INSERT INTO FrequentCustomerStratey (name, fixedPoints, pointsPerDay) VALUES " +
+                           "(" + strategy.getName() + ", " + strategy.getFixedPoints() + ", " + strategy.getPointsPerDay() + ");";
+        try
+        {
+            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+            stmt1.executeUpdate();
+            return true;
+
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return false;
+        }
+    }
+    
+    public FrequentCustomerStrategy getFrequentCustomerStrategy(String name)
+    {
+        String statement = "Select name, fixedPoints, pointsPerDay from FrequentCustomerStrategy where name = " + name + ";";
+        try
+        {
+            Statement stmt1 = conn.createStatement();
+            ResultSet rs1 = stmt1.executeQuery(statement);
+            rs1.next();
+            int fixedPoints = rs1.getInt("fixedPoints");
+            int ppd = rs1.getInt("pointsPerDay");
+            FrequentCustomerStrategy strategy = new FrequentCustomerStrategy(fixedPoints, ppd, name);
+            return strategy;
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return null;
+        }
+    }
+    
+    
+
+    
+    
+    
     public boolean addRentalPricingStrategy(RentalPricingStrategy pricing){
         String statement = "INSERT INTO RentalPricingStrategy (name, standardRentalLength, dailyOverdueCharge, standardRentalCharge) VALUES " +
                            "(" + pricing.getName() + ", " + pricing.getStandardRentalLength() + ", " + pricing.getDailyOverdueCharge() + ", " + pricing.getStandardRentalCharge() + ");";
@@ -629,6 +673,12 @@ public class DatabaseSupport
                 "standardRentalLength INT NOT NULL," +
                 "dailyOverdueCharge DOUBLE NOT NULL, " +
                 "standardRentalCharge DOUBLE NOT NULL, " +
+                "PRIMARY KEY (name));";
+       
+        String statement8 = "CREATE TABLE FrequentCustomerStrategy (" +
+                "name String NOT NULL, " +
+                "fixedPoints INT," +
+                "pointsPerDay INT, " +
                 "PRIMARY KEY (name));";
 
         try
