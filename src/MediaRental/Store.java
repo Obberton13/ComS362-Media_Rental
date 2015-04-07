@@ -59,9 +59,10 @@ public class Store
      * @return true on success, false otherwise
      */
     public static boolean createTransaction(int cid){
-        Transaction transaction = new Transaction(db.getCustomer(cid));
-        transaction.setId(db.addTransactionToStore(transaction));
-        return db.addTransactionToStore(transaction) != 0;
+        Transaction transaction = new Transaction(DatabaseSupport.getCustomer(cid));
+        int id = db.putTransaction(transaction);
+        transaction.setId(id);
+        return id != 0;
     }
 
     /**
@@ -74,9 +75,7 @@ public class Store
         Product product = DatabaseSupport.getProduct(productID);
         Sale sale = new Sale(product, 0);
         transaction.addSale(sale);
-        sale.setId(db.addSaleToStore(sale));
-        db.addSaleToTransaction(sale.getId(),transaction);
-        return db.addSaleToStore(sale) != 0;
+        return (db.putTransaction(transaction) > 0);
     }
 
     /**
@@ -90,9 +89,8 @@ public class Store
         Product product = DatabaseSupport.getProduct(productID);
         Rental rental = new Rental(product, dueDate, 0);
         transaction.addRental(rental);
-        rental.setId(db.addRentalToStore(rental));
-        db.addRentalToTransaction(rental.getId(),rental.getDueDate(),transaction);    
-        return db.addRentalToStore(rental) != 0;
+        return (db.putTransaction(transaction) > 0);
+
     }
 
     /**
@@ -104,9 +102,20 @@ public class Store
         return db.findProducts(title,type);
     }
 
-    public static Transaction getTransaction(int tid)
+    public Transaction getTransaction(int tid)
     {
-        return DatabaseSupport.getTransaction(tid);
+        return db.getTransaction(tid);
+    }
+    
+    public String getTransactionStatement(int tid){
+        Transaction transaction = db.getTransaction(tid);
+        return transaction.getStatement();
+    }
+        
+    
+    public static boolean createRentalPricingStrategy(double standardRentalCharge, int standardRentalLength, double dailyOverdueCharge, String name) {
+        RentalPricingStrategy pricing = new RentalPricingStrategy(standardRentalCharge, standardRentalLength, dailyOverdueCharge, name);
+        return db.addRentalPricingStrategy(pricing);
     }
     
     public static boolean payForTransaction(int tid)
