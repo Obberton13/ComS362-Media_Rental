@@ -14,6 +14,11 @@ public class StoreController
 	public boolean createRentalPricingStrategy(double standardRentalCharge, int standardRentalLength, double dailyOverdueCharge, String name){
 	    return this.store.createRentalPricingStrategy(standardRentalCharge, standardRentalLength, dailyOverdueCharge, name);
 	}
+
+	public boolean setRentalPricingStrategy(RentalPricingStrategy strategy, int catalogID)
+	{
+		return this.store.setRentalPricingStrategy(strategy, catalogID);
+	}
 	
 	public String getTransactionStatement(int tid){
         return this.store.getTransactionStatement(tid);

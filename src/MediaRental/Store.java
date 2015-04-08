@@ -91,7 +91,7 @@ public class Store
     /**
      * @param title the title of the product you are looking for
      * @param type the type of the product you are looking for
-     * @return
+     * @return the products found with the given title and type
      */
     public ArrayList<Product> findProducts(String title, String type) {
         return db.findProducts(title,type);
@@ -131,6 +131,13 @@ public class Store
     	Product p = DatabaseSupport.getProduct(catalogID);
     	p.setCustomerStrategy(strategy);
     	return db.putProduct(p, 0);
+    }
+
+    public boolean setRentalPricingStrategy(RentalPricingStrategy strategy, int catalogID)
+    {
+        Product p = DatabaseSupport.getProduct(catalogID);
+        p.setRentalPricingStrategy(strategy);
+        return db.putProduct(p, 0);
     }
     
 }

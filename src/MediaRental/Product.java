@@ -12,6 +12,7 @@ public class Product
     protected int catalogId;
     protected String description;
     protected FrequentCustomerStrategy s;
+    protected RentalPricingStrategy rs;
     
     
     public Product(int catalogId)
@@ -106,6 +107,10 @@ public class Product
     public FrequentCustomerStrategy getCustomerStrategy(){
         return s;
     }
+
+    public void setRentalPricingStrategy(RentalPricingStrategy strategy){ rs = strategy; }
+
+    public RentalPricingStrategy getRentalPricingStrategy() {return rs; }
 
 
     @Override
