@@ -96,6 +96,27 @@ public class DatabaseSupport
         }
     }
 
+    public RentalPricingStrategy getRentalPricingStrategy(String name)
+    {
+        String statement = "SELECT name, standardRentalLength, dailyOverdueCharge, standardRentalCharge FROM RentalPricingStrategy WHERE name = " + name + ";";
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs1 = stmt.executeQuery(statement);
+            rs1.next();
+            double stdCharge = rs1.getDouble("standardRentalCharge");
+            int rentalLength = rs1.getInt("standardRentalLength");
+            double dailyCharge = rs1.getDouble("dailyOverdueCharge");
+            return new RentalPricingStrategy(stdCharge, rentalLength, dailyCharge, name);
+        }
+        catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return null;
+        }
+    }
+
     /**
      * @param title - can be null
      * @param genre - can be null
@@ -191,8 +212,8 @@ public class DatabaseSupport
     public static Transaction getTransaction(int id)
     {
         String statement = "Select id, customerID, statement, paid, from Transaction where id = " + id + ";";
-        ArrayList<Rental> rentals = new ArrayList();
-        ArrayList<Sale> sales = new ArrayList();
+        ArrayList<Rental> rentals = new ArrayList<Rental>();
+        ArrayList<Sale> sales = new ArrayList<Sale>();
         try
         {
             Statement stmt1 = conn.createStatement();
@@ -219,7 +240,7 @@ public class DatabaseSupport
                 sales.add(sale);
             }
 
-            return new Transaction(customer, rentals, sales, paid, statement, id);
+            return new Transaction(customer, rentals, sales, paid, transactionStatement, id);
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
@@ -676,7 +697,8 @@ public class DatabaseSupport
                 "title VARCHAR(45) NULL, " +
                 "description VARCHAR(120) NULL, " +
                 "genre VARCHAR(45) NULL, " +
-                "customerStrategyName VARCHAR(45) NOT NULL, " +
+                "customerStrategyName VARCHAR(45) NOT NULL REFERENCES FrequentCustomerStrategy(name), " +
+                "rentalStrategyname VARCHAR(45) NOT NULL REFERENCES RentalPricingStrategy(name)," +
                 "PRIMARY KEY (id)); ";
 
         String statement3 = "CREATE TABLE Product ( " +
@@ -713,14 +735,14 @@ public class DatabaseSupport
                 "FOREIGN KEY (productID) REFERENCES Product(id));";
        
         String statement7 = "CREATE TABLE RentalPricingStrategy (" +
-                "name String NOT NULL, " +
+                "name VARCHAR(255) NOT NULL, " +
                 "standardRentalLength INT NOT NULL," +
                 "dailyOverdueCharge DOUBLE NOT NULL, " +
                 "standardRentalCharge DOUBLE NOT NULL, " +
                 "PRIMARY KEY (name));";
        
         String statement8 = "CREATE TABLE FrequentCustomerStrategy (" +
-                "name String NOT NULL, " +
+                "name VARCHAR(255) NOT NULL, " +
                 "fixedPoints INT," +
                 "pointsPerDay INT, " +
                 "PRIMARY KEY (name));";
@@ -735,6 +757,7 @@ public class DatabaseSupport
             stmt.execute(statement5);
             stmt.execute(statement6);
             stmt.execute(statement7);
+            stmt.execute(statement8);
             stmt.close();
             return true;
         } catch (SQLException E)
