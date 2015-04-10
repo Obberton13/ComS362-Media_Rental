@@ -48,6 +48,16 @@ public class Product
         this.id = id;
     }
 
+    public Product (String title, String type, String genre, String description, int id, int catalogID, FrequentCustomerStrategy f, RentalPricingStrategy r)
+    {
+        this.title = title;
+        this.type = type;
+        this.genre = genre;
+        this.catalogId = catalogID;
+        this.id = id;
+        this.rs = r;
+        this.s = f;
+    }
 
     public int getId()
     {

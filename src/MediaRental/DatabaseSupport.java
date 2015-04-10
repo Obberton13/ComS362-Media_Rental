@@ -57,7 +57,7 @@ public class DatabaseSupport
         }
     }
     
-    public FrequentCustomerStrategy getFrequentCustomerStrategy(String name)
+    public static FrequentCustomerStrategy getFrequentCustomerStrategy(String name)
     {
         String statement = "Select name, fixedPoints, pointsPerDay from FrequentCustomerStrategy where name = " + name + ";";
         try
@@ -96,7 +96,7 @@ public class DatabaseSupport
         }
     }
 
-    public RentalPricingStrategy getRentalPricingStrategy(String name)
+    public static RentalPricingStrategy getRentalPricingStrategy(String name)
     {
         String statement = "SELECT name, standardRentalLength, dailyOverdueCharge, standardRentalCharge FROM RentalPricingStrategy WHERE name = " + name + ";";
         try {
@@ -169,7 +169,7 @@ public class DatabaseSupport
      * @param address - can be null
      * @return customers that have a name or address similar to the passed in values
      */
-    public ArrayList<Customer> findCustomers(String name, String address)
+    public static ArrayList<Customer> findCustomers(String name, String address)
     {
         String statement = "Select id, name, address from Customer";
         String whereClause = "";
@@ -304,15 +304,15 @@ public class DatabaseSupport
             ResultSet rs1 = stmt1.executeQuery(statement);
             rs1.next();
             int catalogID = rs1.getInt("productCatalogID");
-            String statement2 = "Select id, title, description, genre from ProductCatalog where id = " + catalogID + ";";
-            Statement stmt2 = conn.createStatement();
+            String statement2 = "Select id, title, description, genre,  from ProductCatalog where id = " + catalogID + ";";
             ResultSet rs2 = stmt1.executeQuery(statement2);
             rs2.next();
             String title = rs2.getString("title");
             String description = rs2.getString("description");
             String genre = rs2.getString("genre");
-            
-            return new Product(title, "", genre, description, id, catalogID);
+            FrequentCustomerStrategy cs = getFrequentCustomerStrategy(rs2.getString("customerStrategyName"));
+            RentalPricingStrategy rs = getRentalPricingStrategy(rs2.getString("rentalStrategyName"));
+            return new Product(title, "", genre, description, id, catalogID, cs, rs);
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
@@ -698,7 +698,7 @@ public class DatabaseSupport
                 "description VARCHAR(120) NULL, " +
                 "genre VARCHAR(45) NULL, " +
                 "customerStrategyName VARCHAR(45) NOT NULL REFERENCES FrequentCustomerStrategy(name), " +
-                "rentalStrategyname VARCHAR(45) NOT NULL REFERENCES RentalPricingStrategy(name)," +
+                "rentalStrategyName VARCHAR(45) NOT NULL REFERENCES RentalPricingStrategy(name)," +
                 "PRIMARY KEY (id)); ";
 
         String statement3 = "CREATE TABLE Product ( " +
@@ -735,14 +735,14 @@ public class DatabaseSupport
                 "FOREIGN KEY (productID) REFERENCES Product(id));";
        
         String statement7 = "CREATE TABLE RentalPricingStrategy (" +
-                "name VARCHAR(255) NOT NULL, " +
+                "name VARCHAR(45) NOT NULL, " +
                 "standardRentalLength INT NOT NULL," +
                 "dailyOverdueCharge DOUBLE NOT NULL, " +
                 "standardRentalCharge DOUBLE NOT NULL, " +
                 "PRIMARY KEY (name));";
        
         String statement8 = "CREATE TABLE FrequentCustomerStrategy (" +
-                "name VARCHAR(255) NOT NULL, " +
+                "name VARCHAR(45) NOT NULL, " +
                 "fixedPoints INT," +
                 "pointsPerDay INT, " +
                 "PRIMARY KEY (name));";
