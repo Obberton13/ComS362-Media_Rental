@@ -24,12 +24,12 @@ public class mainClass
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNext())
 		{
-			String in = sc.next().toLowerCase();
+			String in = sc.nextLine().toLowerCase();
 			char c = in.charAt(0);
 			switch (c)
 			{
 				case 'q':
-					break;
+					return;
 				case 'a':
 					add(sc);
 					break;
@@ -43,6 +43,11 @@ public class mainClass
 					delete(sc);
 					break;
 				case 'c':
+					if(in.length()<2)
+					{
+						System.out.println("Please distinguish between co(mmands) and cr(eate)");
+						break;
+					}
 					switch (in.charAt(1))
 					{
 						case 'r':
@@ -69,13 +74,15 @@ public class mainClass
 				"p adds a product\n" +
 				"t adds a transaction\n" +
 				"q returns to the previous menu");
-		String input = in.next();
+		String input = in.nextLine();
 		switch (input.charAt(0))//creates a customer
 		{
 			case 'c':
-				System.out.println("Creating a Customer.\nCustomer name: ");
-				in.nextLine();
+				System.out.println("Creating a Customer.");
+				System.out.println("Customer name: ");
+				//in.nextLine();
 				String name = in.nextLine();
+				System.out.println(name);
 				System.out.println("Customer Address: ");
 				String address = in.nextLine();
 				System.out.println("Customer ID: ");
@@ -83,10 +90,11 @@ public class mainClass
 				System.out.println("Operation success boolean is " + b);
 				break;
 			case 'p':
-				System.out.println("Creating a product: \n");
-				in.nextLine();
+				System.out.println("Creating a product.");
+				//in.nextLine();
 				System.out.println("Product Title: ");
 				String title = in.nextLine();
+				System.out.println(title);
 				System.out.println("Product Type: ");
 				String type = in.nextLine();
 				System.out.println("Product Genre: ");
@@ -100,9 +108,7 @@ public class mainClass
 				System.out.println("Creating a transaction: ");
 				System.out.println("Customer ID: ");
 				int cid;
-                Matcher m = isInt.matcher(in.next());
-
-                m = isInt.matcher(in.next());
+                Matcher m = isInt.matcher(in.nextLine());
 				if (m.matches())
 				{
 					cid = Integer.parseInt(m.group(1));
@@ -124,14 +130,14 @@ public class mainClass
 
 	private static void add(Scanner in)
 	{
-		String input = in.next();
+		String input = in.nextLine();
 		switch (input.charAt(0))
 		{
 			case 'p':
 				System.out.println("Adding a product to the store");
 				System.out.println("Product ID: ");
 				int pid;
-				Matcher m = isInt.matcher(in.next());
+				Matcher m = isInt.matcher(in.nextLine());
 				if (m.matches())
 				{
 					pid = Integer.parseInt(m.group(1));
@@ -142,7 +148,7 @@ public class mainClass
 				}
 				System.out.println("Quantity: ");
 				int qty;
-				m = isInt.matcher(in.next());
+				m = isInt.matcher(in.nextLine());
 				if (m.matches())
 				{
 					qty = Integer.parseInt(m.group(1));
@@ -157,7 +163,7 @@ public class mainClass
 			case 'r':
 				System.out.println("Adding rental to transaction");
 				System.out.println("Product ID: ");
-				m = isInt.matcher(in.next());
+				m = isInt.matcher(in.nextLine());
 				if (m.matches())
 				{
 					pid = Integer.parseInt(m.group(1));
@@ -168,7 +174,7 @@ public class mainClass
 				}
 				System.out.println("Transaction ID: ");
 				int tid;
-				m = isInt.matcher(in.next());
+				m = isInt.matcher(in.nextLine());
 				if (m.matches())
 				{
 					tid = Integer.parseInt(m.group(1));
@@ -179,7 +185,7 @@ public class mainClass
 				}
 				System.out.println("Due Date (YYYY-MM-DD): ");
 				String date;
-				m = isDate.matcher(in.next());
+				m = isDate.matcher(in.nextLine());
 				if (m.matches())
 				{
 					date = m.group(1);
@@ -203,7 +209,7 @@ public class mainClass
 
 	private static void index(Scanner in)
 	{
-		String input = in.next();
+		String input = in.nextLine();
 		switch (input.charAt(0))
 		{
 			case 'p':
@@ -228,14 +234,14 @@ public class mainClass
 
 	private static void delete(Scanner in)
 	{
-		String input = in.next();
+		String input = in.nextLine();
 		switch(input.charAt(0))
 		{
 			case 'c':
 				System.out.println("Removing customer");
 				System.out.println("Customer ID: ");
 				int cid;
-				Matcher m = isInt.matcher(in.next());
+				Matcher m = isInt.matcher(in.nextLine());
 				if (m.matches())
 				{
 					cid = Integer.parseInt(m.group(1));
@@ -248,7 +254,7 @@ public class mainClass
 				System.out.println("Operation success boolean is " + b);
 		}
 		System.out.println("Deletion is not yet available.");
-		in.next();
+		in.nextLine();
 	}
 
 	private static void baseCommands()
