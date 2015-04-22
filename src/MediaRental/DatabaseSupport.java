@@ -482,7 +482,7 @@ public class DatabaseSupport
                     " VALUES ('" + product.getCatalogId() + "', '" + product.getTitle() + "', '" + product.getType() + "', '" + strategyName +  "', '" + rentalStrategyName + "');";
         }
         else {
-            statement = "INSERT INTO ProductCatalog (title, genre, customerStrategyName)" +
+            statement = "INSERT INTO ProductCatalog (title, genre, customerStrategyName, rentalStrategyName)" +
                     " VALUES ('" + product.getTitle() + "', '" + product.getType() + "', '" + strategyName +  "', '" + rentalStrategyName + "');";
         }
         
