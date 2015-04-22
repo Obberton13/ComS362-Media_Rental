@@ -468,17 +468,22 @@ public class DatabaseSupport
     {
         String statement;
         String strategyName = "";
+        String rentalStrategyName = "";
         FrequentCustomerStrategy strategy = product.getCustomerStrategy();
+        RentalPricingStrategy rental_pricing_strategy = product.getRentalPricingStrategy();
         if (strategy != null){
             strategyName = strategy.getName();
         }
+        if (rental_pricing_strategy != null){
+            rentalStrategyName = rental_pricing_strategy.getName();
+        }
         if (product.getCatalogId() > 0){
-            statement = "INSERT INTO ProductCatalog (id, title, genre, customerStrategyName)" +
-                    " VALUES ('" + product.getCatalogId() + "', '" + product.getTitle() + "', '" + product.getType() + "', '" + strategyName + "');";
+            statement = "INSERT INTO ProductCatalog (id, title, genre, customerStrategyName, rentalStrategyName)" +
+                    " VALUES ('" + product.getCatalogId() + "', '" + product.getTitle() + "', '" + product.getType() + "', '" + strategyName +  "', '" + rentalStrategyName + "');";
         }
         else {
             statement = "INSERT INTO ProductCatalog (title, genre, customerStrategyName)" +
-                    " VALUES ('" + product.getTitle() + "', '" + product.getType() + "', '" + product.getType() + "');";
+                    " VALUES ('" + product.getTitle() + "', '" + product.getType() + "', '" + strategyName +  "', '" + rentalStrategyName + "');";
         }
         
         try
@@ -718,7 +723,7 @@ public class DatabaseSupport
         String statement5 = "CREATE TABLE Sale (" +
                 "id INT NOT NULL, " +
                 "productID INT NOT NULL, " +
-                "price FLOAT 0.0, " +
+                "price FLOAT default 0.0, " +
                 "transactionID INT NULL, " +
                 "PRIMARY KEY (id), " +
                 "FOREIGN KEY (transactionID) REFERENCES Transaction(id), " +
@@ -727,7 +732,7 @@ public class DatabaseSupport
         String statement6 = "CREATE TABLE Rental (" +
                 "id INT NOT NULL, " +
                 "productID INT NOT NULL," +
-                "price FLOAT 0.0, " +
+                "price FLOAT default 0.0, " +
                 "dueDate DATE NULL, " +
                 "transactionID INT NULL, " +
                 "PRIMARY KEY (id), " +

@@ -16,8 +16,8 @@ public class Store
 
 	public boolean addCustomer(String name, String address) {
         Customer customer = new Customer(name, address);
-        customer.setId(db.addCustomer(customer));
-        return db.addCustomer(customer) != 0;
+        int id =  db.addCustomer(customer);
+        return id != 0;
     }
 
     /**

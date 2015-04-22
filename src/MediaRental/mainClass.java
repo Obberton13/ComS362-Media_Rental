@@ -19,6 +19,8 @@ public class mainClass
 	public static void main(String args[])
 	{
 		//this is the main loop for the program.
+//	    DatabaseSupport db = new DatabaseSupport();
+//	    db.createTables();
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNext())
 		{
@@ -71,7 +73,8 @@ public class mainClass
 		switch (input.charAt(0))//creates a customer
 		{
 			case 'c':
-				System.out.println("Creating a Customer.\n\nCustomer name: ");
+				System.out.println("Creating a Customer.\nCustomer name: ");
+				in.nextLine();
 				String name = in.nextLine();
 				System.out.println("Customer Address: ");
 				String address = in.nextLine();
@@ -81,6 +84,7 @@ public class mainClass
 				break;
 			case 'p':
 				System.out.println("Creating a product: \n");
+				in.nextLine();
 				System.out.println("Product Title: ");
 				String title = in.nextLine();
 				System.out.println("Product Type: ");
