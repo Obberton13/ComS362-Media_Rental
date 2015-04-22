@@ -20,7 +20,7 @@ public class mainClass
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNext())
 		{
-			String in = sc.next().toLowerCase();
+			String in = sc.nextLine().toLowerCase();
 			char c = in.charAt(0);
 			switch (c)
 			{
@@ -83,14 +83,13 @@ public class mainClass
 				"r adds a rentalPricingStrategy\n" + 
                 "f adds a frequentRenterStrategy\n" + 
 				"q returns to the previous menu");
-		String input = in.next();
+		String input = in.nextLine();
 		switch (input.charAt(0))//creates a customer
 		{
 			case 'c':
 				System.out.println("Creating a Customer.");
 				System.out.println("Customer name: ");
-				//in.next();
-				String name = in.next();
+				String name = in.nextLine();
 				System.out.println(name);
 				System.out.println("Customer Address: ");
 				String address = in.next();
@@ -100,9 +99,8 @@ public class mainClass
 				break;
 			case 'p':
 				System.out.println("Creating a product.");
-				//in.next();
 				System.out.println("Product Title: ");
-				String title = in.next();
+				String title = in.nextLine();
 				System.out.println(title);
 				System.out.println("Product Type: ");
 				String type = in.next();
@@ -231,7 +229,7 @@ public class mainClass
 
 	private static void add(Scanner in)
 	{
-		String input = in.next();
+		String input = in.nextLine();
 		switch (input.charAt(0))
 		{
 			case 'p':
@@ -279,7 +277,7 @@ public class mainClass
 
 	private static void index(Scanner in)
 	{
-		String input = in.next();
+		String input = in.nextLine();
 		switch (input.charAt(0))
 		{
 			case 'p':
@@ -306,7 +304,7 @@ public class mainClass
 	{
 		System.out.println("<c>\n" +
 				"c deletes a customer");
-		String input = in.next();
+		String input = in.nextLine();
 		switch(input.charAt(0))
 		{
 			case 'c':
@@ -316,7 +314,6 @@ public class mainClass
 				boolean b = new StoreController().removeCustomer(cid);
 				System.out.println("Operation success boolean is " + b);
 		}
-		in.next();
 	}
 
 	private static void baseCommands()
