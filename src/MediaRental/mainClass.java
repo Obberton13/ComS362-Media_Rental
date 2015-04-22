@@ -5,13 +5,12 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import MediaRental.Controller.*;
-import MediaRental.Model.Product;
+import MediaRental.StoreController;
 
 /**
  * Created by Obberton13 on 2/20/2015.
  */
-public class MainClass
+public class mainClass
 {
 	private static Pattern isInt = Pattern.compile("/^([0-9]+)$/");
 	private static Pattern isDate = Pattern.compile("/^([0-9]{4}-[0-9]{2}-[0-9]{2})$/");
@@ -20,6 +19,8 @@ public class MainClass
 	public static void main(String args[])
 	{
 		//this is the main loop for the program.
+//	    DatabaseSupport db = new DatabaseSupport();
+//	    db.createTables();
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNext())
 		{
@@ -72,26 +73,18 @@ public class MainClass
 		switch (input.charAt(0))//creates a customer
 		{
 			case 'c':
-				System.out.println("Creating a Customer.\n\nCustomer name: ");
+				System.out.println("Creating a Customer.\nCustomer name: ");
+				in.nextLine();
 				String name = in.nextLine();
 				System.out.println("Customer Address: ");
 				String address = in.nextLine();
 				System.out.println("Customer ID: ");
-				int id;
-				Matcher m = isInt.matcher(in.next());
-				if (m.matches())
-				{
-					id = Integer.parseInt(m.group(1));
-				} else
-				{
-					System.out.println("Next time, try typing an integer as an ID.");
-					return;
-				}
-				boolean b = new StoreController().addCustomer(name, address, id);
+				boolean b = new StoreController().addCustomer(name, address);
 				System.out.println("Operation success boolean is " + b);
 				break;
 			case 'p':
 				System.out.println("Creating a product: \n");
+				in.nextLine();
 				System.out.println("Product Title: ");
 				String title = in.nextLine();
 				System.out.println("Product Type: ");
@@ -99,23 +92,17 @@ public class MainClass
 				System.out.println("Product Genre: ");
 				String genre = in.nextLine();
 				System.out.println("Product ID: ");
-				m = isInt.matcher(in.next());
-				if (m.matches())
-				{
-					id = Integer.parseInt(m.group(1));
-				} else
-				{
-					System.out.println("Next time, try typing an integer as an ID.");
-					return;
-				}
-				b = new StoreController().createProduct(title, type, genre, id);
+				String description = "";
+				b = new StoreController().createProduct(title, type, genre, description);
 				System.out.println("Operation success boolean is " + b);
 				break;
 			case 't':
 				System.out.println("Creating a transaction: ");
 				System.out.println("Customer ID: ");
 				int cid;
-				m = isInt.matcher(in.next());
+                Matcher m = isInt.matcher(in.next());
+
+                m = isInt.matcher(in.next());
 				if (m.matches())
 				{
 					cid = Integer.parseInt(m.group(1));
@@ -124,18 +111,7 @@ public class MainClass
 					System.out.println("Next time, try typing an integer as an ID.");
 					return;
 				}
-				System.out.println("Transaction ID: ");
-				int tid;
-				m = isInt.matcher(in.next());
-				if (m.matches())
-				{
-					tid = Integer.parseInt(m.group(1));
-				} else
-				{
-					System.out.println("Next time, try typing an integer as an ID.");
-					return;
-				}
-				b = new StoreController().createTransaction(cid, tid);
+				b = new StoreController().createTransaction(cid);
 				System.out.println("Operation success boolean is " + b);
 				break;
 			case 'q':
@@ -212,29 +188,9 @@ public class MainClass
 					System.out.println("Make sure your date is in the format YYYY-MM-DD");
 					return;
 				}
-				double price;
-				m = isDouble.matcher(in.next());
-				if(m.matches())
-				{
-					price = Double.parseDouble(m.group(1));
-				}
-				else
-				{
-					System.out.println("Next time, try typing a decimal as a price.");
-					return;
-				}
 				System.out.println("Transaction ID: ");
 				int id;
-				m = isInt.matcher(in.next());
-				if (m.matches())
-				{
-					id = Integer.parseInt(m.group(1));
-				} else
-				{
-					System.out.println("Next time, try typing an integer as an ID.");
-					return;
-				}
-				b = new StoreController().addRental(tid, pid, date, price, id);
+				b = new StoreController().addRental(tid, pid, date);
 				System.out.println("Operation success boolean is " + b);
 		}
 	}
