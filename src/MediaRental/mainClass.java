@@ -13,7 +13,7 @@ import MediaRental.StoreController;
 public class mainClass
 {
 	private static Pattern isInt = Pattern.compile("/^([0-9]+)$/");
-	private static Pattern isDate = Pattern.compile("/^([0-9]{4}-[0-9]{2}-[0-9]{2})$/");
+	private static Pattern isDate = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}$");
 	private static Pattern isDouble = Pattern.compile("/^([0-9\\.]+)$/");
 
 	public static void main(String args[])
@@ -120,66 +120,24 @@ public class mainClass
 			case 'p':
 				System.out.println("Adding a product to the store");
 				System.out.println("Product ID: ");
-				int pid;
-				Matcher m = isInt.matcher(in.next());
-				if (m.matches())
-				{
-					pid = Integer.parseInt(m.group(1));
-				} else
-				{
-					System.out.println("Next time, try typing an integer as an ID.");
-					return;
-				}
+				int pid = in.nextInt();
 				System.out.println("Quantity: ");
-				int qty;
-				m = isInt.matcher(in.next());
-				if (m.matches())
-				{
-					qty = Integer.parseInt(m.group(1));
-				} else
-				{
-					System.out.println("Next time, try typing an integer as a quantity.");
-					return;
-				}
+				int qty = in.nextInt();
+				
 				boolean b = new StoreController().addProduct(pid, qty);
 				System.out.println("Operation success boolean is " + b);
 				break;
 			case 'r':
 				System.out.println("Adding rental to transaction");
 				System.out.println("Product ID: ");
-				m = isInt.matcher(in.next());
-				if (m.matches())
-				{
-					pid = Integer.parseInt(m.group(1));
-				} else
-				{
-					System.out.println("Next time, try typing an integer as an ID.");
-					return;
-				}
+                pid = in.nextInt();
+
 				System.out.println("Transaction ID: ");
 				int tid;
-				m = isInt.matcher(in.next());
-				if (m.matches())
-				{
-					tid = Integer.parseInt(m.group(1));
-				} else
-				{
-					System.out.println("Next time, try typing an integer as an ID.");
-					return;
-				}
+				tid = in.nextInt();
 				System.out.println("Due Date (YYYY-MM-DD): ");
-				String date;
-				m = isDate.matcher(in.next());
-				if (m.matches())
-				{
-					date = m.group(1);
-				} else
-				{
-					System.out.println("Make sure your date is in the format YYYY-MM-DD");
-					return;
-				}
+				String date = in.next(isDate);
 				System.out.println("Transaction ID: ");
-				int id;
 				b = new StoreController().addRental(tid, pid, date);
 				System.out.println("Operation success boolean is " + b);
 		}

@@ -23,12 +23,11 @@ public class Customer
     }
 
 
-    public Customer(String name, String address, ArrayList<Transaction> transactions, int id)
+    public Customer(String name, String address, int id)
     {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.transactions = transactions;
     }
 
     public String getName()
