@@ -209,9 +209,30 @@ public class DatabaseSupport
 
     }
     
-    public static Transaction getTransaction(int id)
+    public static Transaction getTransaction(int id){
+        try {
+            String statement = "Select customerID from Transaction where id = " + id + ";";
+            Statement stmt1 = conn.createStatement();
+            ResultSet rs1 = stmt1.executeQuery(statement);
+            rs1.next();
+            int customerID = rs1.getInt("customerID");
+            Customer customer = getCustomer(customerID);
+            Transaction transaction = getTransactionWithoutCustomer(id);
+            transaction.setCustomer(customer);
+            return transaction;
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return null;
+        }
+        
+    }
+    
+    private static Transaction getTransactionWithoutCustomer(int id)
     {
-        String statement = "Select id, customerID, statement, paid, from Transaction where id = " + id + ";";
+        String statement = "Select id, customerID, statement, paid from Transaction where id = " + id + ";";
         ArrayList<Rental> rentals = new ArrayList<Rental>();
         ArrayList<Sale> sales = new ArrayList<Sale>();
         try
@@ -220,7 +241,6 @@ public class DatabaseSupport
             ResultSet rs1 = stmt1.executeQuery(statement);
             rs1.next();
             int customerID = rs1.getInt("customerID");
-            Customer customer = getCustomer(customerID);
             String transactionStatement = rs1.getString("statement");
             Boolean paid = rs1.getBoolean("paid");
             String statement2 = "Select id from Rental where transactionID = " + id + ";";
@@ -240,7 +260,7 @@ public class DatabaseSupport
                 sales.add(sale);
             }
 
-            return new Transaction(customer, rentals, sales, paid, transactionStatement, id);
+            return new Transaction(rentals, sales, paid, transactionStatement, id);
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
@@ -252,7 +272,7 @@ public class DatabaseSupport
     
     private static Sale getSale(int id)
     {
-        String statement = "Select id, productID, price, transactionID, from Sale where id = " + id + ";";
+        String statement = "Select id, productID, price, transactionID from Sale where id = " + id + ";";
         try
         {
             Statement stmt1 = conn.createStatement();
@@ -274,7 +294,7 @@ public class DatabaseSupport
     
     private static Rental getRental(int id)
     {
-        String statement = "Select id, productID, price, dueDate, from Sale where id = " + id + ";";
+        String statement = "Select id, productID, price, dueDate from Sale where id = " + id + ";";
         try
         {
             Statement stmt1 = conn.createStatement();
@@ -304,14 +324,22 @@ public class DatabaseSupport
             ResultSet rs1 = stmt1.executeQuery(statement);
             rs1.next();
             int catalogID = rs1.getInt("productCatalogID");
-            String statement2 = "Select id, title, description, genre,  from ProductCatalog where id = " + catalogID + ";";
+            String statement2 = "Select id, title, description, genre, rentalStrategyName, customerStrategyName from ProductCatalog where id = " + catalogID + ";";
             ResultSet rs2 = stmt1.executeQuery(statement2);
             rs2.next();
             String title = rs2.getString("title");
             String description = rs2.getString("description");
             String genre = rs2.getString("genre");
-            FrequentCustomerStrategy cs = getFrequentCustomerStrategy(rs2.getString("customerStrategyName"));
-            RentalPricingStrategy rs = getRentalPricingStrategy(rs2.getString("rentalStrategyName"));
+            String rentalPricingStrategyName = rs2.getString("rentalStrategyName");
+            String customerStrategyName = rs2.getString("customerStrategyName");
+            FrequentCustomerStrategy cs = null;
+            RentalPricingStrategy rs = null;
+            if (!rentalPricingStrategyName.equals("")){
+                rs = getRentalPricingStrategy(rentalPricingStrategyName);
+            }
+            if (!customerStrategyName.equals("")){
+                cs = getFrequentCustomerStrategy(customerStrategyName);
+            }
             return new Product(title, "", genre, description, id, catalogID, cs, rs);
         } catch (SQLException E)
         {
@@ -331,7 +359,6 @@ public class DatabaseSupport
     public static Customer getCustomer(int id)
     {
         String statement = "Select name, address from Customer where id = " + id + ";";
-        ArrayList<Transaction> transactions = new ArrayList<Transaction>();
         try
         {
             Statement stmt1 = conn.createStatement();
@@ -339,15 +366,9 @@ public class DatabaseSupport
             rs1.next();
             String name = rs1.getString(1);
             String address = rs1.getString(2);
-            String statement2 = "Select id from Transaction where customerID = " + id + ";";
-            ResultSet rs2 = stmt1.executeQuery(statement2);
-            while (rs2.next())
-            {
-                int transactionID = rs2.getInt("id");
-                Transaction transaction = getTransaction(transactionID);
-                transactions.add(transaction);
-            }
-            return new Customer(name, address, transactions, id);
+            Customer customer = new Customer(name, address, id);
+            setTransactionsOnCustomer(customer);
+            return customer;
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
@@ -355,6 +376,30 @@ public class DatabaseSupport
             System.out.println("VendorError: " + E.getErrorCode());
             return null;
         }
+    }
+    
+    private static void setTransactionsOnCustomer(Customer customer){
+        try {
+            ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+            Statement stmt1 = conn.createStatement();
+            String statement = "Select id from Transaction where customerID = " + customer.getId() + ";";
+            ResultSet rs2 = stmt1.executeQuery(statement);
+            while (rs2.next())
+            {
+                int transactionID = rs2.getInt("id");
+                Transaction transaction = getTransactionWithoutCustomer(transactionID);
+                transaction.setCustomer(customer);
+                transactions.add(transaction);
+            }
+            customer.setTransactions(transactions);
+        }
+        catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+        }
+       
     }
    
     
@@ -541,7 +586,7 @@ public class DatabaseSupport
     private int addRentalToStore(Rental rental)
     {
         String statement = "INSERT INTO Rental (productID, price, dueDate) VALUES (" + rental.getProduct().getId() +
-                ", " + rental.getPrice() + ", " + rental.getDueDate() + ");";
+                ", " + rental.getPrice() + ", '" + rental.getDueDate() + "');";
         try
         {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -598,8 +643,8 @@ public class DatabaseSupport
         try
         {
             if (transaction.getId() > 0){
-                String statement = "UPDATE Transaction SET statement=" + transaction.getStatement() +
-                        ",paid=" + transaction.getPaid() + " WHERE id=" + transaction.getId();
+                String statement = "UPDATE Transaction SET statement='" + transaction.getStatement() +
+                        "',paid=" + transaction.getPaid() + " WHERE id=" + transaction.getId();
                 PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
                 stmt1.executeUpdate();
                 removeRentals(transaction.getId());
@@ -611,7 +656,8 @@ public class DatabaseSupport
                 }
                 ArrayList<Rental> rentals = transaction.getRentals();
                 for (int i=0; i < rentals.size(); i++){
-                    addRentalToStore(rentals.get(i));
+                    int id = addRentalToStore(rentals.get(i));
+                    rentals.get(i).setId(id);
                     addRentalToTransaction(rentals.get(i).getId(), rentals.get(i).getDueDate(), transaction);
                 }
                 
@@ -631,7 +677,7 @@ public class DatabaseSupport
                 }
             }
             
-
+        return 1;
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
@@ -651,7 +697,7 @@ public class DatabaseSupport
     private void addRentalToTransaction(int rental_id, String duedate, Transaction transaction)
     {
         String statement = "UPDATE Rental SET transactionID=" + transaction.getId() +
-                ", dueDate=" + duedate + " WHERE id=" + rental_id;
+                ", dueDate='" + duedate + "' WHERE id=" + rental_id;
         try
         {
             Statement stmt1 = conn.createStatement();
@@ -716,7 +762,7 @@ public class DatabaseSupport
                 "FOREIGN KEY (customerID) REFERENCES Customer(id)); ";
 
         String statement5 = "CREATE TABLE Sale (" +
-                "id INT NOT NULL, " +
+                "id INT NOT NULL AUTO_INCREMENT, " +
                 "productID INT NOT NULL, " +
                 "price FLOAT default 0.0, " +
                 "transactionID INT NULL, " +
@@ -725,7 +771,7 @@ public class DatabaseSupport
                 "FOREIGN KEY (productID) REFERENCES Product(id));";
 
         String statement6 = "CREATE TABLE Rental (" +
-                "id INT NOT NULL, " +
+                "id INT NOT NULL AUTO_INCREMENT, " +
                 "productID INT NOT NULL," +
                 "price FLOAT default 0.0, " +
                 "dueDate DATE NULL, " +

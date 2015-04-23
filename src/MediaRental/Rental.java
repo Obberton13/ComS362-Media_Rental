@@ -13,7 +13,7 @@ public class Rental
     public Rental(Product product, String dueDate, double price)
     {
         this.product = product;
-        this.dueDate = isDate(dueDate) ? dueDate : "1990-01-01";
+        this.dueDate = dueDate;
         id = 0;
         this.price = price;
     }
@@ -21,7 +21,7 @@ public class Rental
     public Rental(Product product, String dueDate, double price, int id)
     {
         this.product = product;
-        this.dueDate = isDate(dueDate) ? dueDate : "1990-01-01";
+        this.dueDate = dueDate;
         this.id = id;
         this.price = price;
     }
