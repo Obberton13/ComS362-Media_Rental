@@ -182,16 +182,7 @@ public class mainClass
 			case 'c':
 				System.out.println("Removing customer");
 				System.out.println("Customer ID: ");
-				int cid;
-				Matcher m = isInt.matcher(in.next());
-				if (m.matches())
-				{
-					cid = Integer.parseInt(m.group(1));
-				} else
-				{
-					System.out.println("Next time, try typing an integer as an ID.");
-					return;
-				}
+				int cid = in.nextInt();
 				boolean b = new StoreController().removeCustomer(cid);
 				System.out.println("Operation success boolean is " + b);
 		}
