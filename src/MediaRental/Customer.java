@@ -13,13 +13,6 @@ public class Customer
     protected String address;
     protected ArrayList<Transaction> transactions;
 
-    public Customer()
-    {
-        id = 0;
-        name = "";
-        address = "";
-        transactions = new ArrayList<Transaction>();
-    }
 
     public Customer(String name, String address)
     {
@@ -29,13 +22,6 @@ public class Customer
         this.transactions = new ArrayList<Transaction>();
     }
 
-    public Customer(String name, String address, ArrayList<Transaction> transactions)
-    {
-        id = 0;
-        this.name = name;
-        this.address = address;
-        this.transactions = transactions;
-    }
 
     public Customer(String name, String address, ArrayList<Transaction> transactions, int id)
     {

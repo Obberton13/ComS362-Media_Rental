@@ -100,17 +100,7 @@ public class mainClass
 				System.out.println("Creating a transaction: ");
 				System.out.println("Customer ID: ");
 				int cid;
-                Matcher m = isInt.matcher(in.next());
-
-                m = isInt.matcher(in.next());
-				if (m.matches())
-				{
-					cid = Integer.parseInt(m.group(1));
-				} else
-				{
-					System.out.println("Next time, try typing an integer as an ID.");
-					return;
-				}
+                cid = in.nextInt();
 				b = new StoreController().createTransaction(cid);
 				System.out.println("Operation success boolean is " + b);
 				break;
