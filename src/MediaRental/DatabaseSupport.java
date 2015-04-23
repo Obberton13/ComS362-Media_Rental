@@ -331,6 +331,7 @@ public class DatabaseSupport
     public static Customer getCustomer(int id)
     {
         String statement = "Select name, address from Customer where id = " + id + ";";
+        ArrayList<Transaction> transactions = new ArrayList<Transaction>();
         try
         {
             Statement stmt1 = conn.createStatement();
@@ -338,7 +339,15 @@ public class DatabaseSupport
             rs1.next();
             String name = rs1.getString(1);
             String address = rs1.getString(2);
-            return new Customer(name, address);
+            String statement2 = "Select id from Transaction where customerID = " + id + ";";
+            ResultSet rs2 = stmt1.executeQuery(statement2);
+            while (rs2.next())
+            {
+                int transactionID = rs2.getInt("id");
+                Transaction transaction = getTransaction(transactionID);
+                transactions.add(transaction);
+            }
+            return new Customer(name, address, transactions, id);
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
@@ -377,21 +386,6 @@ public class DatabaseSupport
             System.out.println("VendorError: " + E.getErrorCode());
         }  
     }
-    
-    private void removeProduct(int pid){
-        String statement = "delete from Product where ID = " + pid + ";";
-        try
-        {
-            Statement stmt1 = conn.createStatement();
-            stmt1.execute(statement);
-        } catch (SQLException E)
-        {
-            System.out.println("SQLException: " + E.getMessage());
-            System.out.println("SQLState: " + E.getSQLState());
-            System.out.println("VendorError: " + E.getErrorCode());
-        }  
-    }
-    
     private void removeProductCatalog(int catalog_id){
         String statement = "delete from ProductCatalog where ID = " + catalog_id + ";";
         try
@@ -623,6 +617,7 @@ public class DatabaseSupport
                 
             }
             else {
+                System.out.println(transaction.getCustomer().getId());
                 String statement = "INSERT INTO Transaction (customerID, paid) " +
                         "VALUES (" + transaction.getCustomer().getId() + ", 0);";
                 PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);

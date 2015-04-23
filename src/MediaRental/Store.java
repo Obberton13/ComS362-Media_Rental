@@ -54,9 +54,10 @@ public class Store
      * @return true on success, false otherwise
      */
     public boolean createTransaction(int cid){
+        System.out.println(cid);
+        System.out.println(DatabaseSupport.getCustomer(cid));
         Transaction transaction = new Transaction(DatabaseSupport.getCustomer(cid));
         int id = db.putTransaction(transaction);
-        transaction.setId(id);
         return id != 0;
     }
 
