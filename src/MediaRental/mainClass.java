@@ -42,6 +42,9 @@ public class mainClass
 				case 'd':
 					delete(sc);
 					break;
+				case 'o':
+                    other(sc);
+                    break;
 				case 'c':
 					switch (in.charAt(1))
 					{
@@ -53,6 +56,9 @@ public class mainClass
 							break;
 					}
 					break;
+				case 'g':
+                    get(sc);
+                    break;
 				default:
 					System.out.println("Invalid command: " + in);
 					break;
@@ -111,6 +117,36 @@ public class mainClass
 				break;
 		}
 	}
+	
+	private static void get(Scanner in){
+	    String input = in.next();
+        switch (input.charAt(0))
+        {
+            case 't':
+                System.out.println("Getting transaction statement");
+                System.out.println("Transaction ID: ");
+                int tid = in.nextInt();
+                
+                String s = new StoreController().getTransactionStatement(tid);
+                System.out.println(s);
+                break;
+        }
+	}
+	
+	private static void other(Scanner in){
+        String input = in.next();
+        switch (input.charAt(0))
+        {
+            case 'p':
+                System.out.println("Paying for transaction");
+                System.out.println("Transaction ID: ");
+                int tid = in.nextInt();
+                
+                boolean b = new StoreController().payForTransaction(tid);
+                System.out.println("Operation success boolean is " + b);
+                break;
+        }
+    }
 
 	private static void add(Scanner in)
 	{
@@ -119,7 +155,7 @@ public class mainClass
 		{
 			case 'p':
 				System.out.println("Adding a product to the store");
-				System.out.println("Product ID: ");
+				System.out.println("Product Catalog ID: ");
 				int pid = in.nextInt();
 				System.out.println("Quantity: ");
 				int qty = in.nextInt();
@@ -140,6 +176,7 @@ public class mainClass
 				System.out.println("Transaction ID: ");
 				b = new StoreController().addRental(tid, pid, date);
 				System.out.println("Operation success boolean is " + b);
+				break;
 			case 's':
                 System.out.println("Adding Sale to transaction");
                 System.out.println("Product ID: ");
