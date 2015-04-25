@@ -122,6 +122,7 @@ public class Store
     {
     	Transaction transaction = DatabaseSupport.getTransaction(tid);
     	transaction.pay();
+    	db.putTransaction(transaction);
     	return transaction.paid == true; 
     }
     

@@ -42,6 +42,9 @@ public class mainClass
 				case 'd':
 					delete(sc);
 					break;
+				case 'o':
+                    other(sc);
+                    break;
 				case 'c':
 					switch (in.charAt(1))
 					{
@@ -129,6 +132,21 @@ public class mainClass
                 break;
         }
 	}
+	
+	private static void other(Scanner in){
+        String input = in.next();
+        switch (input.charAt(0))
+        {
+            case 'p':
+                System.out.println("Paying for transaction");
+                System.out.println("Transaction ID: ");
+                int tid = in.nextInt();
+                
+                boolean b = new StoreController().payForTransaction(tid);
+                System.out.println("Operation success boolean is " + b);
+                break;
+        }
+    }
 
 	private static void add(Scanner in)
 	{
