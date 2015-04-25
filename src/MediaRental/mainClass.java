@@ -21,6 +21,14 @@ public class mainClass
 		//this is the main loop for the program.
 //	    DatabaseSupport db = new DatabaseSupport();
 //	    db.createTables();
+       System.out.println("<cr|a|e|i|d|o|q>\n\n" +
+                "cr - create\n" +
+                "a - add\n" +
+                "e - edit\n" +
+                "i - index\n" +
+                "d - delete\n" +
+                "o - other\n" +
+                "q returns to the previous menu");
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNext())
 		{
@@ -74,6 +82,8 @@ public class mainClass
 				"c adds a customer\n" +
 				"p adds a product\n" +
 				"t adds a transaction\n" +
+				"r adds a rentalPricingStrategy\n" + 
+                "f adds a frequentRenterStrategy\n" + 
 				"q returns to the previous menu");
 		String input = in.next();
 		switch (input.charAt(0))//creates a customer
@@ -110,10 +120,37 @@ public class mainClass
 				b = new StoreController().createTransaction(cid);
 				System.out.println("Operation success boolean is " + b);
 				break;
+			case 'r':
+                System.out.println("Creating a rental strategy: ");
+                System.out.println("Strategy Name: ");
+                in.nextLine();
+                name = in.nextLine();
+                System.out.println("Standard Rental Charge: ");
+                double standardRentalCharge = in.nextDouble();
+                System.out.println("StandardRentalLength: ");
+                int standardRentalLength = in.nextInt();
+                System.out.println("Daily overdue charge: ");
+                double dailyOverdueCharge = in.nextDouble();
+                b = new StoreController().createRentalPricingStrategy(standardRentalCharge, standardRentalLength, dailyOverdueCharge, name);
+                System.out.println("Operation success boolean is " + b);
+                break;
+			case 'f':
+			    System.out.println("Creating a frequent renter strategy: ");
+                System.out.println("Strategy Name: ");
+                in.nextLine();
+                name = in.nextLine();
+                System.out.println("Fixed Points: ");
+                int fixedPoints = in.nextInt();
+                System.out.println("Points Per day: ");
+                int ppd = in.nextInt();
+                b = new StoreController().createFrequentCustomerStrategy(fixedPoints, ppd, name);
+
+                System.out.println("Operation success boolean is " + b);
+                break;
 			case 'q':
 				return;
 			default:
-				System.out.println("Invalid thing to add: " + input);
+				System.out.println("Invalid thing to create: " + input);
 				break;
 		}
 	}

@@ -40,8 +40,8 @@ public class DatabaseSupport
     }
     
     public boolean addFrequentCustomerStrategy(FrequentCustomerStrategy strategy){
-        String statement = "INSERT INTO FrequentCustomerStratey (name, fixedPoints, pointsPerDay) VALUES " +
-                           "(" + strategy.getName() + ", " + strategy.getFixedPoints() + ", " + strategy.getPointsPerDay() + ");";
+        String statement = "INSERT INTO FrequentCustomerStrategy (name, fixedPoints, pointsPerDay) VALUES " +
+                           "('" + strategy.getName() + "', '" + strategy.getFixedPoints() + "', '" + strategy.getPointsPerDay() + "');";
         try
         {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -80,7 +80,7 @@ public class DatabaseSupport
     
     public boolean addRentalPricingStrategy(RentalPricingStrategy pricing){
         String statement = "INSERT INTO RentalPricingStrategy (name, standardRentalLength, dailyOverdueCharge, standardRentalCharge) VALUES " +
-                           "(" + pricing.getName() + ", " + pricing.getStandardRentalLength() + ", " + pricing.getDailyOverdueCharge() + ", " + pricing.getStandardRentalCharge() + ");";
+                           "('" + pricing.getName() + "', '" + pricing.getStandardRentalLength() + "', '" + pricing.getDailyOverdueCharge() + "', '" + pricing.getStandardRentalCharge() + "');";
         try
         {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
