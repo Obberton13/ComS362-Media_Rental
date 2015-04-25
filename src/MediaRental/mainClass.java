@@ -28,6 +28,7 @@ public class mainClass
                 "i - index\n" +
                 "d - delete\n" +
                 "o - other\n" +
+                "s - set\n" +
                 "q returns to the previous menu");
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNext())
@@ -52,6 +53,9 @@ public class mainClass
 					break;
 				case 'o':
                     other(sc);
+                    break;
+				case 's':
+                    set(sc);
                     break;
 				case 'c':
 					switch (in.charAt(1))
@@ -169,6 +173,35 @@ public class mainClass
                 break;
         }
 	}
+	
+	private static void set(Scanner in){
+        String input = in.next();
+        switch (input.charAt(0))
+        {
+            case 'f':
+                System.out.println("Set frequent customer strategy on product");
+                System.out.println("Product ID: ");
+                int pid = in.nextInt();
+                System.out.println("Strategy Name");
+                in.nextLine();
+                String strategyName = in.nextLine();
+                
+                boolean b = new StoreController().setFrequentCustomerStrategy(strategyName, pid);
+                System.out.println("Operation success boolean is " + b);
+                break;
+            case 'r':
+                System.out.println("Set rental pricing strategy on product");
+                System.out.println("Product ID: ");
+                pid = in.nextInt();
+                System.out.println("Strategy Name");
+                in.nextLine();
+                strategyName = in.nextLine();
+                
+                b = new StoreController().setRentalPricingStrategy(strategyName, pid);
+                System.out.println("Operation success boolean is " + b);
+                break;
+        }
+    }
 	
 	private static void other(Scanner in){
         String input = in.next();

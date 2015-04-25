@@ -15,9 +15,9 @@ public class StoreController
 	    return this.store.createRentalPricingStrategy(standardRentalCharge, standardRentalLength, dailyOverdueCharge, name);
 	}
 
-	public boolean setRentalPricingStrategy(RentalPricingStrategy strategy, int catalogID)
+	public boolean setRentalPricingStrategy(String strategyName, int productID)
 	{
-		return this.store.setRentalPricingStrategy(strategy, catalogID);
+		return this.store.setRentalPricingStrategy(strategyName, productID);
 	}
 	
 	public String getTransactionStatement(int tid){
@@ -113,9 +113,9 @@ public class StoreController
 		return this.store.createFrequentCustomerStrategy(fixedPoints, pointsPerDay, name);
 	}
 	
-	public boolean setFrequentCustomerStrategy(FrequentCustomerStrategy strategy, int catalogID)
+	public boolean setFrequentCustomerStrategy(String strategyName, int productID)
 	{
-		return this.store.setFrequentCustomerStrategy(strategy, catalogID);
+		return this.store.setFrequentCustomerStrategy(strategyName, productID);
 	}
 }
 
