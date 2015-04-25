@@ -431,19 +431,6 @@ public class DatabaseSupport
             System.out.println("VendorError: " + E.getErrorCode());
         }  
     }
-    private void removeProductCatalog(int catalog_id){
-        String statement = "delete from ProductCatalog where ID = " + catalog_id + ";";
-        try
-        {
-            Statement stmt1 = conn.createStatement();
-            stmt1.execute(statement);
-        } catch (SQLException E)
-        {
-            System.out.println("SQLException: " + E.getMessage());
-            System.out.println("SQLState: " + E.getSQLState());
-            System.out.println("VendorError: " + E.getErrorCode());
-        }  
-    }
     
     
     /**
@@ -517,8 +504,7 @@ public class DatabaseSupport
             rentalStrategyName = rental_pricing_strategy.getName();
         }
         if (product.getCatalogId() > 0){
-            statement = "INSERT INTO ProductCatalog (id, title, genre, customerStrategyName, rentalStrategyName)" +
-                    " VALUES ('" + product.getCatalogId() + "', '" + product.getTitle() + "', '" + product.getType() + "', '" + strategyName +  "', '" + rentalStrategyName + "');";
+            statement = "Update ProductCatalog set title = '" + product.getTitle() + "', genre = '" + product.getGenre() + "', customerStrategyName = '" + strategyName + "', rentalStrategyName = '" + rentalStrategyName + "' where id = " + product.getCatalogId() + ";";
         }
         else {
             statement = "INSERT INTO ProductCatalog (title, genre, customerStrategyName, rentalStrategyName)" +
@@ -554,9 +540,6 @@ public class DatabaseSupport
      */
     public boolean putProduct(Product product, int numberToAdd)
     {
-        if (product.getCatalogId() > 0) {
-            removeProductCatalog(product.getCatalogId());
-        }
         addProductToCatalog(product);
         for (int i=0; i < numberToAdd; i++){
             String statement = "INSERT INTO Product (productCatalogID) VALUES (" + product.getCatalogId() + ");";
