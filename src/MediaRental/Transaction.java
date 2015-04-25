@@ -70,7 +70,7 @@ public class Transaction
             thisAmount += rental.getPrice();
            
             // show figures for this rental
-            String className = rental.product.getType();
+            String className = rental.getProduct().getGenre();
             result += "\t" + className + " - " + rental.getProduct().getTitle() +
                       "\t" + String.valueOf(thisAmount) + "<br>\n";
             totalAmount += thisAmount;
@@ -83,7 +83,7 @@ public class Transaction
                    double thisAmount = sale.getPrice();
                   
                    // show figures for this sale
-                   String className = sale.getClass().getName();
+                   String className = sale.getProduct().getGenre();
                    result += "\t" + className + " - " + sale.getProduct().getTitle() +
                              "\t" + String.valueOf(thisAmount) + "<br>\n";
                    totalAmount += thisAmount;

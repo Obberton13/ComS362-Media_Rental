@@ -492,6 +492,9 @@ public class DatabaseSupport
      */
     private int addProductToCatalog(Product product)
     {
+        if (product.getId() == 0){
+            return 0;
+        }
         String statement;
         String strategyName = "";
         String rentalStrategyName = "";
