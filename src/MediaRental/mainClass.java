@@ -140,6 +140,15 @@ public class mainClass
 				System.out.println("Transaction ID: ");
 				b = new StoreController().addRental(tid, pid, date);
 				System.out.println("Operation success boolean is " + b);
+			case 's':
+                System.out.println("Adding Sale to transaction");
+                System.out.println("Product ID: ");
+                pid = in.nextInt();
+
+                System.out.println("Transaction ID: ");
+                tid = in.nextInt();
+                b = new StoreController().addSale(tid, pid);
+                System.out.println("Operation success boolean is " + b);
 		}
 	}
 
