@@ -59,7 +59,7 @@ public class DatabaseSupport
     
     public static FrequentCustomerStrategy getFrequentCustomerStrategy(String name)
     {
-        String statement = "Select name, fixedPoints, pointsPerDay from FrequentCustomerStrategy where name = " + name + ";";
+        String statement = "Select name, fixedPoints, pointsPerDay from FrequentCustomerStrategy where name = '" + name + "';";
         try
         {
             Statement stmt1 = conn.createStatement();
@@ -98,7 +98,7 @@ public class DatabaseSupport
 
     public static RentalPricingStrategy getRentalPricingStrategy(String name)
     {
-        String statement = "SELECT name, standardRentalLength, dailyOverdueCharge, standardRentalCharge FROM RentalPricingStrategy WHERE name = " + name + ";";
+        String statement = "SELECT name, standardRentalLength, dailyOverdueCharge, standardRentalCharge FROM RentalPricingStrategy WHERE name = '" + name + "';";
         try {
             Statement stmt = conn.createStatement();
             ResultSet rs1 = stmt.executeQuery(statement);

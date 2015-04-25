@@ -132,16 +132,18 @@ public class Store
     	return db.addFrequentCustomerStrategy(customerStrategy);
     }
     
-    public boolean setFrequentCustomerStrategy(FrequentCustomerStrategy strategy, int catalogID)
+    public boolean setFrequentCustomerStrategy(String strategyName, int productID)
     {
-    	Product p = DatabaseSupport.getProduct(catalogID);
+    	Product p = db.getProduct(productID);
+    	FrequentCustomerStrategy strategy = DatabaseSupport.getFrequentCustomerStrategy(strategyName);
     	p.setCustomerStrategy(strategy);
     	return db.putProduct(p, 0);
     }
 
-    public boolean setRentalPricingStrategy(RentalPricingStrategy strategy, int catalogID)
+    public boolean setRentalPricingStrategy(String strategyName, int productID)
     {
-        Product p = DatabaseSupport.getProduct(catalogID);
+        Product p = DatabaseSupport.getProduct(productID);
+        RentalPricingStrategy strategy = DatabaseSupport.getRentalPricingStrategy(strategyName);
         p.setRentalPricingStrategy(strategy);
         return db.putProduct(p, 0);
     }
