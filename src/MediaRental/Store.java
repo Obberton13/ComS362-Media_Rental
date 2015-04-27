@@ -82,7 +82,6 @@ public class Store
      * @param dueDate the date the Rental will be due
      * @return true on success, false otherwise
      */
-
     public boolean addRental(int transactionID, int productID, String dueDate, int daysRented) {
         Transaction transaction = db.getTransaction(transactionID);
         if (transaction == null){
@@ -114,8 +113,7 @@ public class Store
     
     public String getTransactionStatement(int tid){
         Transaction transaction = db.getTransaction(tid);
-        if (transaction == null)
-        	return "transaction does not exist";
+        if(transaction == null) return null;
         return transaction.getStatement();
     }
         

@@ -366,7 +366,6 @@ public class DatabaseSupport
             return null;
         }
     }
-
     /**
      * Get a product from the store by ID
      *
@@ -435,8 +434,7 @@ public class DatabaseSupport
             return null;
         }
     }
-    
-    private void setTransactionsOnCustomer(Customer customer){
+    private boolean setTransactionsOnCustomer(Customer customer){
         try {
             ArrayList<Transaction> transactions = new ArrayList<Transaction>();
             Statement stmt1 = conn.createStatement();
@@ -446,19 +444,20 @@ public class DatabaseSupport
             {
                 int transactionID = rs2.getInt("id");
                 Transaction transaction = getTransactionWithoutCustomer(transactionID);
-                if(transaction == null) return;
+                if(transaction == null) return false;
                 transaction.setCustomer(customer);
                 transactions.add(transaction);
             }
             customer.setTransactions(transactions);
+            return true;
         }
         catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
+            return false;
         }
-       
     }
 
     /**
