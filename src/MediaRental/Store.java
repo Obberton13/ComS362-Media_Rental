@@ -158,7 +158,7 @@ public class Store
     {
         Customer c = db.getCustomer(cid);
         if(c==null) return null;
-        ArrayList<Rental> allRentals = new ArrayList<>();
+        ArrayList<Rental> allRentals = new ArrayList<Rental>();
         ArrayList<Transaction> transactions = c.getTransactions();
         for(Transaction t : transactions)
         {

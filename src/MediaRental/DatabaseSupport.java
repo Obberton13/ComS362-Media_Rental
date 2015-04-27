@@ -379,8 +379,7 @@ public class DatabaseSupport
         }
     }
     
-    private boolean setTransactionsOnCustomer(Customer customer){//WHY IS THIS VOID? ARE YOU STUPID?
-            //this shouldn't even be in DBSupport!
+    private void setTransactionsOnCustomer(Customer customer){
         try {
             ArrayList<Transaction> transactions = new ArrayList<Transaction>();
             Statement stmt1 = conn.createStatement();
@@ -390,7 +389,7 @@ public class DatabaseSupport
             {
                 int transactionID = rs2.getInt("id");
                 Transaction transaction = getTransactionWithoutCustomer(transactionID);
-                if(transaction == null) return false;
+                if(transaction == null) return;
                 transaction.setCustomer(customer);
                 transactions.add(transaction);
             }
@@ -406,32 +405,36 @@ public class DatabaseSupport
     }
    
     
-    private void removeRentals(int tid){
+    private boolean removeRentals(int tid){
         String statement = "delete from Rental where transactionID = " + tid + ";";
         try
         {
             Statement stmt1 = conn.createStatement();
             stmt1.execute(statement);
+            return true;
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
+            return false;
         }
         
     }
     
-    private void removeSales(int tid){
+    private boolean removeSales(int tid){
         String statement = "delete from Sale where transactionID = " + tid + ";";
         try
         {
             Statement stmt1 = conn.createStatement();
             stmt1.execute(statement);
+            return true;
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
+            return false;
         }  
     }
     
@@ -441,18 +444,20 @@ public class DatabaseSupport
      *
      * @param id
      */
-    public void removeCustomer(int id)
+    public boolean removeCustomer(int id)
     {
         String statement = "delete from Customer where id = " + id + ";";
         try
         {
             Statement stmt1 = conn.createStatement();
             stmt1.execute(statement);
+            return true;
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
+            return false;
         }
     }
 
