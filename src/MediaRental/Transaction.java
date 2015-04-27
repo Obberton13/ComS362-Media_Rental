@@ -39,6 +39,14 @@ public class Transaction
 		this.paid = paid;
 		this.statement = statement;
 	}
+	public Transaction(ArrayList<Rental> rentals, ArrayList<Sale> sales, Boolean paid, String statement, int id)
+    {
+        this.rentals = rentals;
+        this.sales = sales;
+        this.id = id;
+        this.paid = paid;
+        this.statement = statement;
+    }
 	
 	public void setPaid(boolean paid){
 	    this.paid = paid;
@@ -53,7 +61,7 @@ public class Transaction
         int         frequentRenterPoints = 0;
         String      result               = "<html>\n"; 
         result += "Rental Record for " + customer.getName() + "<br>\n" +
-                "<p style='padding-left:5em'>\n";
+                "<p>\n";
         
        for (Rental rental : rentals) {
             
@@ -62,20 +70,20 @@ public class Transaction
             thisAmount += rental.getPrice();
            
             // show figures for this rental
-            String className = rental.product.getType();
+            String className = rental.getProduct().getGenre();
             result += "\t" + className + " - " + rental.getProduct().getTitle() +
                       "\t" + String.valueOf(thisAmount) + "<br>\n";
             totalAmount += thisAmount;
         }
        if (sales.size() > 0){
            result += "</p>\nSale Record for " + customer.getName() + "<br>\n" +
-                    "<p style='padding-left:5em'>\n";
+                    "<p>\n";
                for (Sale sale : sales) {
                    
                    double thisAmount = sale.getPrice();
                   
                    // show figures for this sale
-                   String className = sale.getClass().getName();
+                   String className = sale.getProduct().getGenre();
                    result += "\t" + className + " - " + sale.getProduct().getTitle() +
                              "\t" + String.valueOf(thisAmount) + "<br>\n";
                    totalAmount += thisAmount;

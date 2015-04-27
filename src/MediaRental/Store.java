@@ -56,7 +56,6 @@ public class Store
     public boolean createTransaction(int cid){
         Transaction transaction = new Transaction(DatabaseSupport.getCustomer(cid));
         int id = db.putTransaction(transaction);
-        transaction.setId(id);
         return id != 0;
     }
 
@@ -81,7 +80,13 @@ public class Store
      */
     public boolean addRental(int transactionID, int productID, String dueDate) {
         Transaction transaction = DatabaseSupport.getTransaction(transactionID);
+        if (transaction == null){
+            return false;
+        }
         Product product = DatabaseSupport.getProduct(productID);
+        if (product == null){
+            return false;
+        }
         Rental rental = new Rental(product, dueDate, 0);
         transaction.addRental(rental);
         return (db.putTransaction(transaction) > 0);
@@ -117,6 +122,7 @@ public class Store
     {
     	Transaction transaction = DatabaseSupport.getTransaction(tid);
     	transaction.pay();
+    	db.putTransaction(transaction);
     	return transaction.paid == true; 
     }
     
@@ -126,16 +132,18 @@ public class Store
     	return db.addFrequentCustomerStrategy(customerStrategy);
     }
     
-    public boolean setFrequentCustomerStrategy(FrequentCustomerStrategy strategy, int catalogID)
+    public boolean setFrequentCustomerStrategy(String strategyName, int productID)
     {
-    	Product p = DatabaseSupport.getProduct(catalogID);
+    	Product p = db.getProduct(productID);
+    	FrequentCustomerStrategy strategy = DatabaseSupport.getFrequentCustomerStrategy(strategyName);
     	p.setCustomerStrategy(strategy);
     	return db.putProduct(p, 0);
     }
 
-    public boolean setRentalPricingStrategy(RentalPricingStrategy strategy, int catalogID)
+    public boolean setRentalPricingStrategy(String strategyName, int productID)
     {
-        Product p = DatabaseSupport.getProduct(catalogID);
+        Product p = DatabaseSupport.getProduct(productID);
+        RentalPricingStrategy strategy = DatabaseSupport.getRentalPricingStrategy(strategyName);
         p.setRentalPricingStrategy(strategy);
         return db.putProduct(p, 0);
     }
