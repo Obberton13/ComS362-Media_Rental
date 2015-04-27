@@ -1,5 +1,6 @@
 package MediaRental;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -15,15 +16,7 @@ public class mainClass
 		//this is the main loop for the program.
 //	    DatabaseSupport db = new DatabaseSupport();
 //	    db.createTables();
-       System.out.println("<cr|a|e|i|d|o|q>\n\n" +
-                "cr - create\n" +
-                "a - add\n" +
-                "e - edit\n" +
-                "i - index\n" +
-                "d - delete\n" +
-                "o - other\n" +
-                "s - set\n" +
-                "q returns to the previous menu");
+		baseCommands();
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNext())
 		{
@@ -63,6 +56,7 @@ public class mainClass
 							create(sc);
 							break;
 						default:
+							System.out.println("Invalid command: " + in);
 							baseCommands();
 							break;
 					}
@@ -72,6 +66,7 @@ public class mainClass
                     break;
 				default:
 					System.out.println("Invalid command: " + in);
+					baseCommands();
 					break;
 			}
 		}
@@ -173,6 +168,16 @@ public class mainClass
                 String s = new StoreController().getTransactionStatement(tid);
                 System.out.println(s);
                 break;
+	        case 'c':
+		        System.out.println("Getting Customer Rental History");
+		        System.out.println("Customer ID: ");
+		        int cid = in.nextInt();
+
+		        ArrayList<Rental> rentals = new StoreController().getCustomerRentalHistory(cid);
+		        for (Rental r : rentals)
+		        {
+
+		        }
         }
 	}
 	
@@ -310,11 +315,14 @@ public class mainClass
 	private static void baseCommands()
 	{
 		System.out.println("Commands:");
-		System.out.println("a (add)\n" +
-				"e (edit)\n" +
-				"i (index)\n" +
-				"d (delete)\n" +
-				"c (commands)\n" +
-				"cr (create)");
+		System.out.println("<cr|a|e|i|d|o|q>\n\n" +
+				"cr - create\n" +
+				"a - add\n" +
+				"e - edit\n" +
+				"i - index\n" +
+				"d - delete\n" +
+				"o - other\n" +
+				"s - set\n" +
+				"q returns to the previous menu");
 	}
 }

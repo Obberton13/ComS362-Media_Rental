@@ -57,7 +57,7 @@ public class DatabaseSupport
         }
     }
     
-    public static FrequentCustomerStrategy getFrequentCustomerStrategy(String name)
+    public FrequentCustomerStrategy getFrequentCustomerStrategy(String name)
     {
         String statement = "Select name, fixedPoints, pointsPerDay from FrequentCustomerStrategy where name = '" + name + "';";
         try
@@ -96,7 +96,7 @@ public class DatabaseSupport
         }
     }
 
-    public static RentalPricingStrategy getRentalPricingStrategy(String name)
+    public RentalPricingStrategy getRentalPricingStrategy(String name)
     {
         String statement = "SELECT name, standardRentalLength, dailyOverdueCharge, standardRentalCharge FROM RentalPricingStrategy WHERE name = '" + name + "';";
         try {
@@ -169,7 +169,7 @@ public class DatabaseSupport
      * @param address - can be null
      * @return customers that have a name or address similar to the passed in values
      */
-    public static ArrayList<Customer> findCustomers(String name, String address)
+    public ArrayList<Customer> findCustomers(String name, String address)
     {
         String statement = "Select id, name, address from Customer";
         String whereClause = "";
@@ -209,7 +209,7 @@ public class DatabaseSupport
 
     }
     
-    public static Transaction getTransaction(int id){
+    public Transaction getTransaction(int id){
         try {
             String statement = "Select customerID from Transaction where id = " + id + ";";
             Statement stmt1 = conn.createStatement();
@@ -218,6 +218,7 @@ public class DatabaseSupport
             int customerID = rs1.getInt("customerID");
             Customer customer = getCustomer(customerID);
             Transaction transaction = getTransactionWithoutCustomer(id);
+            if(transaction == null) return null;
             transaction.setCustomer(customer);
             return transaction;
         } catch (SQLException E)
@@ -230,7 +231,7 @@ public class DatabaseSupport
         
     }
     
-    private static Transaction getTransactionWithoutCustomer(int id)
+    private Transaction getTransactionWithoutCustomer(int id)
     {
         String statement = "Select id, customerID, statement, paid from Transaction where id = " + id + ";";
         ArrayList<Rental> rentals = new ArrayList<Rental>();
@@ -270,7 +271,7 @@ public class DatabaseSupport
         }
     }
     
-    private static Sale getSale(int id)
+    private Sale getSale(int id)
     {
         String statement = "Select id, productID, price, transactionID from Sale where id = " + id + ";";
         try
@@ -292,7 +293,7 @@ public class DatabaseSupport
         }
     }
     
-    private static Rental getRental(int id)
+    private Rental getRental(int id)
     {
         String statement = "Select id, productID, price, dueDate from Rental where id = " + id + ";";
         try
@@ -315,7 +316,7 @@ public class DatabaseSupport
         }
     }
     
-    public static Product getProduct(int id)
+    public Product getProduct(int id)
     {
         String statement = "Select id, productCatalogID from Product where id = " + id + ";";
         try
@@ -356,7 +357,7 @@ public class DatabaseSupport
      * @param id
      * @return a customer object
      */
-    public static Customer getCustomer(int id)
+    public Customer getCustomer(int id)
     {
         String statement = "Select name, address from Customer where id = " + id + ";";
         try
@@ -378,7 +379,8 @@ public class DatabaseSupport
         }
     }
     
-    private static void setTransactionsOnCustomer(Customer customer){
+    private boolean setTransactionsOnCustomer(Customer customer){//WHY IS THIS VOID? ARE YOU STUPID?
+            //this shouldn't even be in DBSupport!
         try {
             ArrayList<Transaction> transactions = new ArrayList<Transaction>();
             Statement stmt1 = conn.createStatement();
@@ -388,6 +390,7 @@ public class DatabaseSupport
             {
                 int transactionID = rs2.getInt("id");
                 Transaction transaction = getTransactionWithoutCustomer(transactionID);
+                if(transaction == null) return false;
                 transaction.setCustomer(customer);
                 transactions.add(transaction);
             }
