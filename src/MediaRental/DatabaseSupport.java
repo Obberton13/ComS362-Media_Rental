@@ -294,7 +294,7 @@ public class DatabaseSupport
     
     private static Rental getRental(int id)
     {
-        String statement = "Select id, productID, price, daysRented, dueDate from Rental where id = " + id + ";";
+        String statement = "Select id, productID, daysRented, dueDate from Rental where id = " + id + ";";
         try
         {
             Statement stmt1 = conn.createStatement();

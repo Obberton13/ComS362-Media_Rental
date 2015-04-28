@@ -16,6 +16,7 @@ public class Rental
         this.product = product;
         this.dueDate = dueDate;
         id = 0;
+        this.daysRented = daysRented;
     }
 
     public Rental(Product product, String dueDate, int id, int daysRented)
@@ -23,6 +24,7 @@ public class Rental
         this.product = product;
         this.dueDate = dueDate;
         this.id = id;
+        this.daysRented = daysRented;
     }
 
     public int getId()
