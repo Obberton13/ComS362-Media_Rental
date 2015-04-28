@@ -152,7 +152,7 @@ public class Store
     {
         Product p = db.getProduct(productID);
         if (p == null)
-        	return false;
+            return false;
         RentalPricingStrategy strategy = db.getRentalPricingStrategy(strategyName);
         if (strategy == null)
         	return false;
