@@ -243,8 +243,10 @@ public class mainClass
 				tid = in.nextInt();
 				System.out.println("Due Date (YYYY-MM-DD): ");
 				String date = in.next(isDate);
+				System.out.println("Days rented: ");
+				int daysRented = in.nextInt();
 				System.out.println("Transaction ID: ");
-				b = new StoreController().addRental(tid, pid, date);
+				b = new StoreController().addRental(tid, pid, date, daysRented);
 				System.out.println("Operation success boolean is " + b);
 				break;
 			case 's':

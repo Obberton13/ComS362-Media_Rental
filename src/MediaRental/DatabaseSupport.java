@@ -294,18 +294,18 @@ public class DatabaseSupport
     
     private static Rental getRental(int id)
     {
-        String statement = "Select id, productID, price, dueDate from Rental where id = " + id + ";";
+        String statement = "Select id, productID, daysRented, dueDate from Rental where id = " + id + ";";
         try
         {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
             rs1.next();
             int productID = rs1.getInt("productID");
-            double price = rs1.getFloat("price");
             Date dueDate = rs1.getDate("dueDate");
+            int daysRented = rs1.getInt("daysRented");
             String dueDateString = dueDate.toString();
             Product product = getProduct(productID);
-            return new Rental(product, dueDateString, price, id);
+            return new Rental(product, dueDateString, id, daysRented);
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
@@ -571,8 +571,8 @@ public class DatabaseSupport
 
     private int addRentalToStore(Rental rental)
     {
-        String statement = "INSERT INTO Rental (productID, price, dueDate) VALUES (" + rental.getProduct().getId() +
-                ", " + rental.getPrice() + ", '" + rental.getDueDate() + "');";
+        String statement = "INSERT INTO Rental (productID, daysRented, dueDate) VALUES (" + rental.getProduct().getId() +
+                ", " + rental.getDaysRented() + ", '" + rental.getDueDate() + "');";
         try
         {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -759,7 +759,7 @@ public class DatabaseSupport
         String statement6 = "CREATE TABLE Rental (" +
                 "id INT NOT NULL AUTO_INCREMENT, " +
                 "productID INT NOT NULL," +
-                "price FLOAT default 0.0, " +
+                "daysRented INT default 0, " +
                 "dueDate DATE NULL, " +
                 "transactionID INT NULL, " +
                 "PRIMARY KEY (id), " +

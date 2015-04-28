@@ -65,9 +65,7 @@ public class Transaction
         
        for (Rental rental : rentals) {
             
-            double thisAmount = 0;
-            
-            thisAmount += rental.getPrice();
+            double thisAmount = rental.getPrice();
            
             // show figures for this rental
             String className = rental.getProduct().getGenre();
