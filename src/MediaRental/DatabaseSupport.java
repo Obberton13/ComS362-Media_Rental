@@ -247,6 +247,7 @@ public class DatabaseSupport
             rs1.next();
             int customerID = rs1.getInt("customerID");
             Customer customer = getCustomer(customerID);
+            if(customer == null) return null;
             Transaction transaction = getTransactionWithoutCustomer(id);
             if(transaction == null) return null;
             transaction.setCustomer(customer);
@@ -325,6 +326,7 @@ public class DatabaseSupport
             double price = rs1.getFloat("price");
             int transactionID = rs1.getInt("transactionID");
             Product product = getProduct(productID);
+            if(product == null) return null;
             return new Sale(product, price, id);
         } catch (SQLException E)
         {
@@ -418,7 +420,7 @@ public class DatabaseSupport
         {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
-            rs1.next();
+            if(!rs1.next()) return null;
             String name = rs1.getString(1);
             String address = rs1.getString(2);
             Customer customer = new Customer(name, address, id);
@@ -534,6 +536,23 @@ public class DatabaseSupport
                 " VALUES ('" + customer.getName() + "', '" + customer.getAddress() + "');";
         try
         {
+            if(customer.getId()==0)
+            {
+                String test = "SELECT id " +
+                        "FROM Customer c " +
+                        "WHERE c.Name = " + customer.getName() +
+                        "AND WHERE c.Address = " + customer.getAddress();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(test);
+                if(rs.next())
+                {
+                    rs.close();
+                    stmt.close();
+                    return 0;
+                }
+                rs.close();
+                stmt.close();
+            }
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
             stmt1.executeUpdate();
             ResultSet rs = stmt1.getGeneratedKeys();
@@ -543,7 +562,8 @@ public class DatabaseSupport
                 customer.setId(id);
                 return (id);
             }
-
+            stmt1.close();
+            rs.close();
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());

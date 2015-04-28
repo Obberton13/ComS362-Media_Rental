@@ -96,7 +96,7 @@ public class StoreController
 	/**
 	 * @param title the title of the product you are looking for
 	 * @param type  the type of the product you are looking for
-	 * @return
+	 * @return a list of products found.
 	 */
 	public ArrayList<Product> findProduct(String title, String type)
 	{

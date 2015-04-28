@@ -40,7 +40,7 @@ public class Store
     }
 
     /**
-     * @param pid the ID of the product to add to the store
+     * @param catalogId the ID of the product to add to the store
      * @param qty the amount of the product to add to the store
      * @return true on success, false otherwise
      */
@@ -54,7 +54,9 @@ public class Store
      * @return true on success, false otherwise
      */
     public boolean createTransaction(int cid){
-        Transaction transaction = new Transaction(db.getCustomer(cid));
+        Customer c = db.getCustomer(cid);
+        if(c==null) return false;
+        Transaction transaction = new Transaction(c);
         int id = db.putTransaction(transaction);
         return id != 0;
     }
@@ -75,8 +77,8 @@ public class Store
     }
 
     /**
-     * @param product The product to add to the transaction
-     * @param transaction The transaction to be added to
+     * @param productID The ID of the product to add to the transaction
+     * @param transactionID The ID of the transaction to be added to
      * @param dueDate the date the Rental will be due
      * @return true on success, false otherwise
      */
