@@ -13,6 +13,7 @@ public class Product
     protected String description;
     protected FrequentCustomerStrategy s;
     protected RentalPricingStrategy rs;
+    protected boolean available;
     
     
     public Product(int catalogId)
@@ -21,16 +22,17 @@ public class Product
     }
 
 
-    public Product(String title, String type, String genre, String description)
+    public Product(String title, String type, String genre, String description, boolean available)
     {
         this.title = title;
         this.type = type;
         this.genre = genre;
         this.catalogId = 0;
         this.id = 0;
+        this.available = available;
     }
     
-    public Product(String title, String type, String genre, String description, int catalogID)
+    public Product(String title, String type, String genre, String description, int catalogID, boolean available)
     {
         this.title = title;
         this.type = type;
@@ -39,7 +41,7 @@ public class Product
         this.id = 0;
     }
     
-    public Product(String title, String type, String genre, String description, int id, int catalogID)
+    public Product(String title, String type, String genre, String description, int id, int catalogID, boolean available)
     {
         this.title = title;
         this.type = type;
@@ -48,7 +50,7 @@ public class Product
         this.id = id;
     }
 
-    public Product (String title, String type, String genre, String description, int id, int catalogID, FrequentCustomerStrategy f, RentalPricingStrategy r)
+    public Product (String title, String type, String genre, String description, int id, int catalogID, FrequentCustomerStrategy f, RentalPricingStrategy r, boolean available)
     {
         this.title = title;
         this.type = type;
@@ -95,6 +97,10 @@ public class Product
     public void setType(String type)
     {
         this.type = type;
+    }
+    
+    public boolean getAvailable(){
+        return this.available;    
     }
 
     public int getCatalogId()
