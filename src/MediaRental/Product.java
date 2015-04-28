@@ -83,6 +83,11 @@ public class Product
     {
         return type;
     }
+    
+    public double getPrice(int daysRented){
+        return this.rs.getRentalCharge(daysRented);
+               
+    }
 
     public void setType(String type)
     {

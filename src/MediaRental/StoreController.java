@@ -88,9 +88,9 @@ public class StoreController
 	 * @param dueDate     the date the Rental will be due
 	 * @return true on success, false otherwise
 	 */
-	public boolean addRental(int tid, int pid, String dueDate)
+	public boolean addRental(int tid, int pid, String dueDate, int daysRented)
 	{
-		return this.store.addRental(tid, pid, dueDate);
+		return this.store.addRental(tid, pid, dueDate, daysRented);
 	}
 
 	/**
