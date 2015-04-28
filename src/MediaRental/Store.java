@@ -109,6 +109,8 @@ public class Store
     
     public String getTransactionStatement(int tid){
         Transaction transaction = db.getTransaction(tid);
+        if (transaction == null)
+        	return "transaction does not exist";
         return transaction.getStatement();
     }
         
@@ -121,6 +123,8 @@ public class Store
     public boolean payForTransaction(int tid)
     {
     	Transaction transaction = DatabaseSupport.getTransaction(tid);
+    	if (transaction == null)
+    		return false;
     	transaction.pay();
     	db.putTransaction(transaction);
     	return transaction.paid == true; 
@@ -135,7 +139,11 @@ public class Store
     public boolean setFrequentCustomerStrategy(String strategyName, int productID)
     {
     	Product p = db.getProduct(productID);
+    	if (p == null)
+    		return false;
     	FrequentCustomerStrategy strategy = DatabaseSupport.getFrequentCustomerStrategy(strategyName);
+    	if (strategy == null)
+    		return false;
     	p.setCustomerStrategy(strategy);
     	return db.putProduct(p, 0);
     }
@@ -143,7 +151,11 @@ public class Store
     public boolean setRentalPricingStrategy(String strategyName, int productID)
     {
         Product p = DatabaseSupport.getProduct(productID);
+        if (p == null)
+        	return false;
         RentalPricingStrategy strategy = DatabaseSupport.getRentalPricingStrategy(strategyName);
+        if (strategy == null)
+        	return false;
         p.setRentalPricingStrategy(strategy);
         return db.putProduct(p, 0);
     }
