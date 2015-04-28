@@ -38,7 +38,13 @@ public class DatabaseSupport
             System.out.println("VendorError: " + E.getErrorCode());
         }
     }
-    
+
+    /**
+     * adds a frequentCustomerStrategy object to the database
+     *
+     * @param strategy the FrequentCustomerStrategy object to add
+     * @return true on success, false on failure.
+     */
     public boolean addFrequentCustomerStrategy(FrequentCustomerStrategy strategy){
         String statement = "INSERT INTO FrequentCustomerStrategy (name, fixedPoints, pointsPerDay) VALUES " +
                            "('" + strategy.getName() + "', '" + strategy.getFixedPoints() + "', '" + strategy.getPointsPerDay() + "');";
@@ -56,7 +62,13 @@ public class DatabaseSupport
             return false;
         }
     }
-    
+
+    /**
+     * Gets a frequentCustomerStrategy from the database by name
+     *
+     * @param name the name of the FrequentCustomerStrategy to get
+     * @return the FrequentcustomerStrategy object with the given name
+     */
     public FrequentCustomerStrategy getFrequentCustomerStrategy(String name)
     {
         String statement = "Select name, fixedPoints, pointsPerDay from FrequentCustomerStrategy where name = '" + name + "';";
@@ -77,7 +89,13 @@ public class DatabaseSupport
             return null;
         }
     }
-    
+
+    /**
+     * Adds a RentalPricingStrategy to the database
+     *
+     * @param pricing the RentalPricingStrategy object to add to the database
+     * @return true on success, false otherwise
+     */
     public boolean addRentalPricingStrategy(RentalPricingStrategy pricing){
         String statement = "INSERT INTO RentalPricingStrategy (name, standardRentalLength, dailyOverdueCharge, standardRentalCharge) VALUES " +
                            "('" + pricing.getName() + "', '" + pricing.getStandardRentalLength() + "', '" + pricing.getDailyOverdueCharge() + "', '" + pricing.getStandardRentalCharge() + "');";
@@ -96,6 +114,12 @@ public class DatabaseSupport
         }
     }
 
+    /**
+     * Gets a RentalPricingStrategy object from the database by name
+     *
+     * @param name the name of the rental pricing strategy to get
+     * @return the RentalPricingStrategy object with the given name
+     */
     public RentalPricingStrategy getRentalPricingStrategy(String name)
     {
         String statement = "SELECT name, standardRentalLength, dailyOverdueCharge, standardRentalCharge FROM RentalPricingStrategy WHERE name = '" + name + "';";
@@ -208,7 +232,13 @@ public class DatabaseSupport
         return customers;
 
     }
-    
+
+    /**
+     * Gets a transaction from the Database by ID
+     *
+     * @param id the ID of the transaction to get from the database
+     * @return The Transaction object with the given ID
+     */
     public Transaction getTransaction(int id){
         try {
             String statement = "Select customerID from Transaction where id = " + id + ";";
@@ -230,7 +260,13 @@ public class DatabaseSupport
         }
         
     }
-    
+
+    /**
+     * Gets a transaction from the Database (without the customer) by ID
+     *
+     * @param id the ID of the transaction to get
+     * @return the Transaction object with the given ID
+     */
     private Transaction getTransactionWithoutCustomer(int id)
     {
         String statement = "Select id, customerID, statement, paid from Transaction where id = " + id + ";";
@@ -270,7 +306,13 @@ public class DatabaseSupport
             return null;
         }
     }
-    
+
+    /**
+     * Gets a sale from the Database by ID
+     *
+     * @param id The ID of the sale to get
+     * @return The Sale object with the given ID
+     */
     private Sale getSale(int id)
     {
         String statement = "Select id, productID, price, transactionID from Sale where id = " + id + ";";
@@ -292,7 +334,13 @@ public class DatabaseSupport
             return null;
         }
     }
-    
+
+    /**
+     * Gets a rental from the database by ID
+     *
+     * @param id the ID of the rental to get
+     * @return the Rental object with the given ID
+     */
     private Rental getRental(int id)
     {
         String statement = "Select id, productID, price, dueDate from Rental where id = " + id + ";";
@@ -315,7 +363,13 @@ public class DatabaseSupport
             return null;
         }
     }
-    
+
+    /**
+     * Get a product from the store by ID
+     *
+     * @param id the ID of the product to get
+     * @return The product object with the given ID
+     */
     public Product getProduct(int id)
     {
         String statement = "Select id, productCatalogID from Product where id = " + id + ";";
@@ -354,7 +408,7 @@ public class DatabaseSupport
     /**
      * Get a customer from the database by id
      *
-     * @param id
+     * @param id The ID of the customer to get
      * @return a customer object
      */
     public Customer getCustomer(int id)
@@ -403,8 +457,11 @@ public class DatabaseSupport
         }
        
     }
-   
-    
+
+    /**
+     * @param tid the ID of the transaction whose rentals are to be removed
+     * @return true on success, false otherwise
+     */
     private boolean removeRentals(int tid){
         String statement = "delete from Rental where transactionID = " + tid + ";";
         try
@@ -421,7 +478,11 @@ public class DatabaseSupport
         }
         
     }
-    
+
+    /**
+     * @param tid The ID of the transaction whose sales we are removing
+     * @return true on success, false otherwise
+     */
     private boolean removeSales(int tid){
         String statement = "delete from Sale where transactionID = " + tid + ";";
         try
@@ -442,7 +503,7 @@ public class DatabaseSupport
     /**
      * Remove a customer from the db
      *
-     * @param id
+     * @param id The ID of the customer to remove
      */
     public boolean removeCustomer(int id)
     {
@@ -546,7 +607,9 @@ public class DatabaseSupport
     /**
      * Add a product to the database.
      *
-     * @param catalog_id: Id of the catalog item
+     * @param product: Id of the catalog item
+     * @param numberToAdd how many products you want to add
+     *
      * @return - id of the product from the product db
      */
     public boolean putProduct(Product product, int numberToAdd)
@@ -629,7 +692,7 @@ public class DatabaseSupport
     /**
      * Add a transaction to the database
      *
-     * @param transaction
+     * @param transaction the transaction to put in the database
      * @return id of transaction
      */
     public int putTransaction(Transaction transaction)
@@ -646,13 +709,13 @@ public class DatabaseSupport
                 ArrayList<Sale> sales = transaction.getSales();
                 for (int i=0; i < sales.size(); i++){
                     addSaleToStore(sales.get(i));
-                    addSaleToTransaction(sales.get(i).getId(), transaction);
+                    if(!addSaleToTransaction(sales.get(i).getId(), transaction)) return 0;
                 }
                 ArrayList<Rental> rentals = transaction.getRentals();
                 for (int i=0; i < rentals.size(); i++){
                     int id = addRentalToStore(rentals.get(i));
                     rentals.get(i).setId(id);
-                    addRentalToTransaction(rentals.get(i).getId(), rentals.get(i).getDueDate(), transaction);
+                    if(!addRentalToTransaction(rentals.get(i).getId(), rentals.get(i).getDueDate(), transaction)) return 0;
                 }
                 
             }
@@ -688,7 +751,7 @@ public class DatabaseSupport
      * @param duedate     - format YYYY-MM-DD
      * @param transaction The transaction to be added to
      */
-    private void addRentalToTransaction(int rental_id, String duedate, Transaction transaction)
+    private boolean addRentalToTransaction(int rental_id, String duedate, Transaction transaction)
     {
         String statement = "UPDATE Rental SET transactionID=" + transaction.getId() +
                 ", dueDate='" + duedate + "' WHERE id=" + rental_id;
@@ -696,26 +759,32 @@ public class DatabaseSupport
         {
             Statement stmt1 = conn.createStatement();
             stmt1.executeUpdate(statement);
+            return true;
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
+            return false;
         }
     }
 
-    private void addSaleToTransaction(int sale_id, Transaction transaction)
+    //Are we sure that this should be in the DatabaseSupport?
+    //I think this would be a part of Transaction
+    private boolean addSaleToTransaction(int sale_id, Transaction transaction)
     {
         String statement = "UPDATE Sale SET transactionID=" + transaction.getId() + " WHERE id=" + sale_id;
         try
         {
             Statement stmt1 = conn.createStatement();
             stmt1.executeUpdate(statement);
+            return true;
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
+            return false;
         }
     }
 
