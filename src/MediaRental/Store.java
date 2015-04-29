@@ -66,6 +66,9 @@ public class Store
      */
     public boolean addSale(int transactionID, int productID) {
         Transaction transaction = DatabaseSupport.getTransaction(transactionID);
+        if (transaction == null || transaction.paid == true){
+            return false;
+        }
         Product product = DatabaseSupport.getProduct(productID);
         if (product.getAvailable() == false){
             return false;
@@ -88,6 +91,9 @@ public class Store
         if (transaction == null){
             return false;
         }
+        if (transaction.paid == true){
+            return false;
+        }
         Product product = DatabaseSupport.getProduct(productID);
         if (product == null){
             return false;
@@ -97,6 +103,7 @@ public class Store
         }
         Rental rental = new Rental(product, dueDate, daysRented);
         transaction.addRental(rental);
+        
         product.available = false;
         db.putProduct(product, 0);
         return (db.putTransaction(transaction) > 0);
