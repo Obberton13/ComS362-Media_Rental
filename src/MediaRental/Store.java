@@ -76,8 +76,7 @@ public class Store
         if (product.getAvailable() == false){
             return false;
         }
-        Sale sale = new Sale(product, price);
-        transaction.addSale(sale);
+        transaction.addSale(product, price);
         product.available = false;
         db.putProduct(product, 0);
         return (db.putTransaction(transaction) > 0);

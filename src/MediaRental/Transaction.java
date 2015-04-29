@@ -135,8 +135,9 @@ public class Transaction
 		this.customer = customer;
 	}
 
-	public void addSale(Sale sale)
+	public void addSale(Product product, double price)
 	{
+	    Sale sale = new Sale(product, price);
 		sales.add(sale);
 	}
 
