@@ -545,28 +545,32 @@ public class DatabaseSupport
     public boolean putProduct(Product product, int numberToAdd)
     {
         addProductToCatalog(product);
-        for (int i=0; i < numberToAdd; i++){
-            String statement = "INSERT INTO Product (productCatalogID, available) VALUES (" + product.getCatalogId() + ", " + product.getAvailable() +  ");";
-            try
-            {
+        try{
+            if (product.getId() > 0){
+                String statement = "UPDATE Product set available = " + product.getAvailable() + " where id =" + product.getId() + ";"; 
                 PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
                 stmt1.executeUpdate();
-                ResultSet rs = stmt1.getGeneratedKeys();
-                if (rs.next())
-                {
-                    int id = rs.getInt(1);
-                    product.id = id;
-                }
-
-            } catch (SQLException E)
-            {
-                System.out.println("SQLException: " + E.getMessage());
-                System.out.println("SQLState: " + E.getSQLState());
-                System.out.println("VendorError: " + E.getErrorCode());
-                return false;
             }
+            for (int i=0; i < numberToAdd; i++){
+                String statement = "INSERT INTO Product (productCatalogID, available) VALUES (" + product.getCatalogId() + ", " + product.getAvailable() +  ");";
+                
+                    PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+                    stmt1.executeUpdate();
+                    ResultSet rs = stmt1.getGeneratedKeys();
+                    if (rs.next())
+                    {
+                        int id = rs.getInt(1);
+                        product.id = id;
+                    }
+            }
+            return true;
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return false;
         }
-        return true;
         
     }
 

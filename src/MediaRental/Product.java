@@ -39,6 +39,7 @@ public class Product
         this.genre = genre;
         this.catalogId = catalogID;
         this.id = 0;
+        this.available = available;
     }
     
     public Product(String title, String type, String genre, String description, int id, int catalogID, boolean available)
@@ -48,6 +49,7 @@ public class Product
         this.genre = genre;
         this.catalogId = catalogID;
         this.id = id;
+        this.available = available;
     }
 
     public Product (String title, String type, String genre, String description, int id, int catalogID, FrequentCustomerStrategy f, RentalPricingStrategy r, boolean available)
@@ -59,6 +61,7 @@ public class Product
         this.id = id;
         this.rs = r;
         this.s = f;
+        this.available = available;
     }
 
     public int getId()

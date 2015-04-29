@@ -97,6 +97,7 @@ public class Store
         Rental rental = new Rental(product, dueDate, daysRented);
         transaction.addRental(rental);
         product.available = false;
+        db.putProduct(product, 0);
         return (db.putTransaction(transaction) > 0);
 
     }
