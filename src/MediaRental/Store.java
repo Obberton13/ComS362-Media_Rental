@@ -73,6 +73,7 @@ public class Store
         Sale sale = new Sale(product, 0);
         transaction.addSale(sale);
         product.available = false;
+        db.putProduct(product, 0);
         return (db.putTransaction(transaction) > 0);
     }
 
