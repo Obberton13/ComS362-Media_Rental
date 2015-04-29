@@ -1,6 +1,5 @@
 package MediaRental;
 
-
 import java.util.ArrayList;
 
 /**
@@ -8,10 +7,11 @@ import java.util.ArrayList;
  */
 public class Store
 {
-	private static DatabaseSupport db = new DatabaseSupport();
+	private static DatabaseSupport db;
 
 	public Store()
 	{
+        db = new DatabaseSupport();
 	}
 
 	public boolean addCustomer(String name, String address) {
@@ -40,7 +40,7 @@ public class Store
     }
 
     /**
-     * @param pid the ID of the product to add to the store
+     * @param catalogId the ID of the product to add to the store
      * @param qty the amount of the product to add to the store
      * @return true on success, false otherwise
      */
@@ -54,7 +54,9 @@ public class Store
      * @return true on success, false otherwise
      */
     public boolean createTransaction(int cid){
-        Transaction transaction = new Transaction(DatabaseSupport.getCustomer(cid));
+        Customer c = db.getCustomer(cid);
+        if(c==null) return false;
+        Transaction transaction = new Transaction(c);
         int id = db.putTransaction(transaction);
         return id != 0;
     }
@@ -65,25 +67,28 @@ public class Store
      * @return true on success, false otherwise
      */
     public boolean addSale(int transactionID, int productID) {
-        Transaction transaction = DatabaseSupport.getTransaction(transactionID);
-        Product product = DatabaseSupport.getProduct(productID);
+        Transaction transaction = db.getTransaction(transactionID);
+        if(transaction == null) return false;
+        Product product = db.getProduct(productID);
+        if(product == null) return false;
         Sale sale = new Sale(product, 0);
         transaction.addSale(sale);
         return (db.putTransaction(transaction) > 0);
     }
 
     /**
-     * @param product The product to add to the transaction
-     * @param transaction The transaction to be added to
+     * @param productID The ID of the product to add to the transaction
+     * @param transactionID The ID of the transaction to be added to
      * @param dueDate the date the Rental will be due
      * @return true on success, false otherwise
      */
+
     public boolean addRental(int transactionID, int productID, String dueDate, int daysRented) {
-        Transaction transaction = DatabaseSupport.getTransaction(transactionID);
+        Transaction transaction = db.getTransaction(transactionID);
         if (transaction == null){
             return false;
         }
-        Product product = DatabaseSupport.getProduct(productID);
+        Product product = db.getProduct(productID);
         if (product == null){
             return false;
         }
@@ -122,12 +127,11 @@ public class Store
     
     public boolean payForTransaction(int tid)
     {
-    	Transaction transaction = DatabaseSupport.getTransaction(tid);
-    	if (transaction == null)
-    		return false;
+    	Transaction transaction = db.getTransaction(tid);
+        if(transaction == null) return false;
     	transaction.pay();
     	db.putTransaction(transaction);
-    	return transaction.paid == true; 
+    	return transaction.paid;
     }
     
     public boolean createFrequentCustomerStrategy(int fixedPoints, int pointsPerDay, String name)
@@ -139,25 +143,40 @@ public class Store
     public boolean setFrequentCustomerStrategy(String strategyName, int productID)
     {
     	Product p = db.getProduct(productID);
-    	if (p == null)
-    		return false;
-    	FrequentCustomerStrategy strategy = DatabaseSupport.getFrequentCustomerStrategy(strategyName);
-    	if (strategy == null)
-    		return false;
+        if(p==null) return false;
+    	FrequentCustomerStrategy strategy = db.getFrequentCustomerStrategy(strategyName);
+        if(strategy==null) return false;
     	p.setCustomerStrategy(strategy);
     	return db.putProduct(p, 0);
     }
 
     public boolean setRentalPricingStrategy(String strategyName, int productID)
     {
-        Product p = DatabaseSupport.getProduct(productID);
+        Product p = db.getProduct(productID);
         if (p == null)
         	return false;
-        RentalPricingStrategy strategy = DatabaseSupport.getRentalPricingStrategy(strategyName);
+        RentalPricingStrategy strategy = db.getRentalPricingStrategy(strategyName);
         if (strategy == null)
         	return false;
         p.setRentalPricingStrategy(strategy);
         return db.putProduct(p, 0);
+    }
+
+    public ArrayList<Rental> getCustomerRentalHistory(int cid)
+    {
+        Customer c = db.getCustomer(cid);
+        if(c==null) return null;
+        ArrayList<Rental> allRentals = new ArrayList<Rental>();
+        ArrayList<Transaction> transactions = c.getTransactions();
+        for(Transaction t : transactions)
+        {
+            ArrayList<Rental> rentals = t.getRentals();
+            for(Rental r : rentals)
+            {
+                allRentals.add(r);
+            }
+        }
+        return allRentals;
     }
     
 }

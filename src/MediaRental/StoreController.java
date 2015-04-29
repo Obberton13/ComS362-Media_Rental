@@ -96,7 +96,7 @@ public class StoreController
 	/**
 	 * @param title the title of the product you are looking for
 	 * @param type  the type of the product you are looking for
-	 * @return
+	 * @return a list of products found.
 	 */
 	public ArrayList<Product> findProduct(String title, String type)
 	{
@@ -116,6 +116,11 @@ public class StoreController
 	public boolean setFrequentCustomerStrategy(String strategyName, int productID)
 	{
 		return this.store.setFrequentCustomerStrategy(strategyName, productID);
+	}
+
+	public ArrayList<Rental> getCustomerRentalHistory(int cid)
+	{
+		return this.store.getCustomerRentalHistory(cid);
 	}
 }
 

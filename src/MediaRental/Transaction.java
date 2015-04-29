@@ -11,7 +11,7 @@ public class Transaction
 	protected ArrayList<Rental> rentals;
 	protected ArrayList<Sale> sales;
 	protected Customer customer;
-	protected Boolean paid;
+	protected boolean paid;
 	protected String statement;
 
 	public Transaction(Customer customer)
@@ -147,6 +147,6 @@ public class Transaction
 	public boolean pay()
 	{
 		paid = true;
-		return paid == true;
+		return true;
 	}
 }
