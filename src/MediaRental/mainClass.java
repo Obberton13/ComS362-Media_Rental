@@ -260,7 +260,9 @@ public class mainClass
 
                 System.out.println("Transaction ID: ");
                 tid = in.nextInt();
-                b = new StoreController().addSale(tid, pid);
+                System.out.println("Price: ");
+                double price = in.nextDouble();
+                b = new StoreController().addSale(tid, pid, price);
                 System.out.println("Operation success boolean is " + b);
 		}
 	}

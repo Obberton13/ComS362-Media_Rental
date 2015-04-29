@@ -493,7 +493,7 @@ public class DatabaseSupport
      */
     private int addProductToCatalog(Product product)
     {
-        if (product.getId() == 0){
+        if (product.getTitle() == null){
             return 0;
         }
         String statement;

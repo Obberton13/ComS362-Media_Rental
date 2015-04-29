@@ -45,7 +45,7 @@ public class Store
      * @return true on success, false otherwise
      */
     public boolean addProduct(int catalogId, int qty) {
-        Product product = new Product(catalogId);
+        Product product = new Product(catalogId, true);
         return db.putProduct(product, qty);
     }
 
@@ -64,16 +64,19 @@ public class Store
      * @param transactionID The ID of the transaction to be added to
      * @return true on success, false otherwise
      */
-    public boolean addSale(int transactionID, int productID) {
+    public boolean addSale(int transactionID, int productID, double price) {
         Transaction transaction = DatabaseSupport.getTransaction(transactionID);
         if (transaction == null || transaction.paid == true){
             return false;
         }
         Product product = DatabaseSupport.getProduct(productID);
+        if (product == null){
+            return false;
+        }
         if (product.getAvailable() == false){
             return false;
         }
-        Sale sale = new Sale(product, 0);
+        Sale sale = new Sale(product, price);
         transaction.addSale(sale);
         product.available = false;
         db.putProduct(product, 0);

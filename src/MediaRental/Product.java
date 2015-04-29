@@ -16,9 +16,10 @@ public class Product
     protected boolean available;
     
     
-    public Product(int catalogId)
+    public Product(int catalogId, boolean available)
     {
         this.catalogId = catalogId;
+        this.available = available;
     }
 
 
