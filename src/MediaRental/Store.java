@@ -35,7 +35,7 @@ public class Store
      * @return true on success, false otherwise
      */
     public boolean createProduct(String name, String type, String genre, String description) {
-        Product product = new Product(name,type, genre, description);
+        Product product = new Product(name,type, genre, description, true);
         return db.putProduct(product, 0);
     }
 
@@ -67,8 +67,13 @@ public class Store
     public boolean addSale(int transactionID, int productID) {
         Transaction transaction = DatabaseSupport.getTransaction(transactionID);
         Product product = DatabaseSupport.getProduct(productID);
+        if (product.getAvailable() == false){
+            return false;
+        }
         Sale sale = new Sale(product, 0);
         transaction.addSale(sale);
+        product.available = false;
+        db.putProduct(product, 0);
         return (db.putTransaction(transaction) > 0);
     }
 
@@ -87,8 +92,13 @@ public class Store
         if (product == null){
             return false;
         }
+        if (product.getAvailable() == false){
+            return false;
+        }
         Rental rental = new Rental(product, dueDate, daysRented);
         transaction.addRental(rental);
+        product.available = false;
+        db.putProduct(product, 0);
         return (db.putTransaction(transaction) > 0);
 
     }
