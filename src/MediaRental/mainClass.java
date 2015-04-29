@@ -220,6 +220,10 @@ public class mainClass
 
 	private static void add(Scanner in)
 	{
+	    System.out.println("<p|r|s>\n\n" +
+                "p adds a product\n" +
+                "r adds a rental\n" +
+                "s adds a sale\n");
 		String input = in.next();
 		switch (input.charAt(0))
 		{
@@ -256,7 +260,9 @@ public class mainClass
 
                 System.out.println("Transaction ID: ");
                 tid = in.nextInt();
-                b = new StoreController().addSale(tid, pid);
+                System.out.println("Price: ");
+                double price = in.nextDouble();
+                b = new StoreController().addSale(tid, pid, price);
                 System.out.println("Operation success boolean is " + b);
 		}
 	}
@@ -269,6 +275,8 @@ public class mainClass
 
 	private static void index(Scanner in)
 	{
+       System.out.println("<p\n\n" +
+                "p finds a product\n");
 		String input = in.next();
 		switch (input.charAt(0))
 		{
@@ -294,6 +302,8 @@ public class mainClass
 
 	private static void delete(Scanner in)
 	{
+       System.out.println("<c>\n\n" +
+                "c removes a customer\n");
 		String input = in.next();
 		switch(input.charAt(0))
 		{
