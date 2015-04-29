@@ -82,7 +82,8 @@ public class Store
      * @param dueDate the date the Rental will be due
      * @return true on success, false otherwise
      */
-    public boolean addRental(int transactionID, int productID, String dueDate) {
+
+    public boolean addRental(int transactionID, int productID, String dueDate, int daysRented) {
         Transaction transaction = db.getTransaction(transactionID);
         if (transaction == null){
             return false;
@@ -91,7 +92,7 @@ public class Store
         if (product == null){
             return false;
         }
-        Rental rental = new Rental(product, dueDate, 0);
+        Rental rental = new Rental(product, dueDate, daysRented);
         transaction.addRental(rental);
         return (db.putTransaction(transaction) > 0);
 
@@ -113,7 +114,8 @@ public class Store
     
     public String getTransactionStatement(int tid){
         Transaction transaction = db.getTransaction(tid);
-        if(transaction == null) return null;
+        if (transaction == null)
+        	return "transaction does not exist";
         return transaction.getStatement();
     }
         
@@ -151,7 +153,11 @@ public class Store
     public boolean setRentalPricingStrategy(String strategyName, int productID)
     {
         Product p = db.getProduct(productID);
+        if (p == null)
+        	return false;
         RentalPricingStrategy strategy = db.getRentalPricingStrategy(strategyName);
+        if (strategy == null)
+        	return false;
         p.setRentalPricingStrategy(strategy);
         return db.putProduct(p, 0);
     }
