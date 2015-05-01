@@ -134,6 +134,6 @@ public class Product
     @Override
     public String toString()
     {
-        return "" + id + ", " + title + ", " + type;
+        return "" + id + ", " + title + ", " + type + ", " + genre;
     }
 }

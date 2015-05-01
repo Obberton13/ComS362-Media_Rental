@@ -148,19 +148,19 @@ public class DatabaseSupport
      */
     public ArrayList<Product> findProducts(String title, String genre)
     {
-        String statement = "Select id, title, genre, description, catalogID from ProductCatalog";
+        String statement = "Select id, title, genre, description from ProductCatalog\n";
         String whereClause = "";
         ArrayList<Product> products = new ArrayList<Product>();
         if (title != null && !title.isEmpty())
         {
-            whereClause += "where title like %'" + title + "%'";
+            whereClause += "where title like '%" + title + "%'\n";
             if (genre != null && !genre.isEmpty())
             {
-                whereClause += "and genre like %'" + genre + "%'";
+                whereClause += "and genre like '%" + genre + "%'\n";
             }
         } else if (genre != null && !genre.isEmpty())
         {
-            whereClause += "where genre like %'" + genre + "%'";
+            whereClause += "where genre like '%" + genre + "%'\n";
         }
         statement += whereClause + ";";
         try
@@ -169,6 +169,7 @@ public class DatabaseSupport
             ResultSet rs1 = stmt1.executeQuery(statement);
             while (rs1.next())
             {
+                System.out.println("Found product...");
                 int id = rs1.getInt("id");
                 String t = rs1.getString("title");
                 String g = rs1.getString("genre");
