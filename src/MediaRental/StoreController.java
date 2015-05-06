@@ -121,6 +121,11 @@ public class StoreController
 	{
 		return this.store.setFrequentCustomerStrategy(strategyName, productID);
 	}
+	
+	public String getCustomerContactInfo(int customerID)
+	{
+		return this.store.getCustomerContactInfo(customerID);
+	}
 }
 
 

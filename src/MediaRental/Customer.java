@@ -84,4 +84,11 @@ public class Customer
     {
         return "" + id + ", " + name + ", " + address;
     }
+    
+    public String contactInfo()
+    {
+    	return "name: " + name +
+    			"address: " + address;
+    }
+    
 }

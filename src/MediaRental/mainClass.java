@@ -179,6 +179,14 @@ public class mainClass
                 int f = new StoreController().getFrequentCustomerPoints(cid);
                 System.out.println(f);
                 break;
+            case 'c':
+                System.out.println("Get customer contact info");
+                System.out.println("Customer ID: ");
+                int customerid = in.nextInt();
+                
+                String info = new StoreController().getCustomerContactInfo(customerid);
+                System.out.println(info);
+                break;
         }
 	}
 	
