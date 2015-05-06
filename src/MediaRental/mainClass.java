@@ -339,9 +339,35 @@ public class mainClass
 
     private static void edit(Scanner in)
     {
-        System.out.println("Editing items is not yet supported");
-        System.out.println("Press enter to continue...");
-        in.nextLine();
+        System.out.println("<p|c>\n" +
+                "p updates the title of a product\n" +
+                "c updates the name of a customer");
+        String input = in.nextLine();
+        if(input.isEmpty()) return;
+        switch(input.charAt(0))
+        {
+            case 'c':
+                System.out.println("Updating name of a customer.");
+                System.out.println("Please enter the ID of the customer you would like to update");
+                int cid = in.nextInt();
+                in.nextLine();
+                System.out.println("Please enter the new name of the customer");
+                String name = in.nextLine();
+                boolean b = new StoreController().updateCustomerName(cid, name);
+                System.out.println("Operation success boolean is " + b);
+                break;
+            case 'p':
+                System.out.println("Updating name of a customer.");
+                System.out.println("Please enter the ID of the customer you would like to update");
+                int pid = in.nextInt();
+                in.nextLine();
+                System.out.println("Please enter the new name of the customer");
+                String title = in.nextLine();
+                b = new StoreController().updateProductTitle(pid, title);
+                System.out.println("Operation success boolean is " + b);
+                break;
+
+        }
     }
 
     private static void index(Scanner in)

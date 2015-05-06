@@ -563,34 +563,41 @@ public class DatabaseSupport
                 " VALUES ('" + customer.getName() + "', '" + customer.getAddress() + "');";
         try
         {
-            if (customer.getId() == 0)
-            {
-                String test = "SELECT id " +
-                        "FROM Customer c " +
-                        "WHERE c.Name = '" + customer.getName() +
-                        "' AND c.Address = '" + customer.getAddress() + "'";
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(test);
-                if (rs.next())
-                {
-                    rs.close();
-                    stmt.close();
-                    return 0;
-                }
-                rs.close();
-                stmt.close();
-            }
-            PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
-            stmt1.executeUpdate();
-            ResultSet rs = stmt1.getGeneratedKeys();
+            String test = "SELECT id " +
+                    "FROM Customer c " +
+                    "WHERE c.Name = '" + customer.getName() +
+                    "' AND c.Address = '" + customer.getAddress() + "'";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(test);
             if (rs.next())
             {
-                int id = rs.getInt(1);
-                customer.setId(id);
-                return (id);
+                rs.close();
+                stmt.close();
+                return 0;
             }
-            stmt1.close();
-            rs.close();
+            if (customer.getId() == 0)
+            {
+                rs.close();
+                stmt.close();
+                PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+                stmt1.executeUpdate();
+                rs = stmt1.getGeneratedKeys();
+                if (rs.next())
+                {
+                    int id = rs.getInt(1);
+                    customer.setId(id);
+                    rs.close();
+                    stmt1.close();
+                    return (id);
+                }
+                return 0;
+            }
+            String sql = "UPDATE Customer c SET (c.name, c.address) VALUES('" +
+                    customer.getName() + "','" +
+                    customer.getAddress() + "') " +
+                    "WHERE c.id = " + customer.getId();
+            stmt = conn.createStatement();
+            return stmt.executeUpdate(sql);
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());

@@ -246,4 +246,20 @@ public class Store
         return db.putProduct(p, 0);
     }
 
+    public boolean updateProductTitle(int pid, String newTitle)
+    {
+        Product p = db.getProduct(pid);
+        if(p==null) return false;
+        p.setTitle(newTitle);
+        return db.putProduct(p, 0);
+    }
+
+    public boolean updateCustomerName(int cid, String newName)
+    {
+        Customer c = db.getCustomer(cid);
+        if(c==null) return false;
+        c.setName(newName);
+        return db.addCustomer(c)!=0;
+    }
+
 }
