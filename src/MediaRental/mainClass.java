@@ -171,6 +171,14 @@ public class mainClass
                 String s = new StoreController().getTransactionStatement(tid);
                 System.out.println(s);
                 break;
+            case 'f':
+                System.out.println("Get frequent customer points");
+                System.out.println("Customer ID: ");
+                int cid = in.nextInt();
+                
+                int f = new StoreController().getFrequentCustomerPoints(cid);
+                System.out.println(f);
+                break;
         }
 	}
 	
@@ -220,6 +228,10 @@ public class mainClass
 
 	private static void add(Scanner in)
 	{
+	    System.out.println("<p|r|s>\n\n" +
+                "p adds a product\n" +
+                "r adds a rental\n" +
+                "s adds a sale\n");
 		String input = in.next();
 		switch (input.charAt(0))
 		{
@@ -243,8 +255,10 @@ public class mainClass
 				tid = in.nextInt();
 				System.out.println("Due Date (YYYY-MM-DD): ");
 				String date = in.next(isDate);
+				System.out.println("Days rented: ");
+				int daysRented = in.nextInt();
 				System.out.println("Transaction ID: ");
-				b = new StoreController().addRental(tid, pid, date);
+				b = new StoreController().addRental(tid, pid, date, daysRented);
 				System.out.println("Operation success boolean is " + b);
 				break;
 			case 's':
@@ -254,7 +268,9 @@ public class mainClass
 
                 System.out.println("Transaction ID: ");
                 tid = in.nextInt();
-                b = new StoreController().addSale(tid, pid);
+                System.out.println("Price: ");
+                double price = in.nextDouble();
+                b = new StoreController().addSale(tid, pid, price);
                 System.out.println("Operation success boolean is " + b);
 		}
 	}
@@ -267,6 +283,8 @@ public class mainClass
 
 	private static void index(Scanner in)
 	{
+       System.out.println("<p\n\n" +
+                "p finds a product\n");
 		String input = in.next();
 		switch (input.charAt(0))
 		{
@@ -292,6 +310,8 @@ public class mainClass
 
 	private static void delete(Scanner in)
 	{
+       System.out.println("<c>\n\n" +
+                "c removes a customer\n");
 		String input = in.next();
 		switch(input.charAt(0))
 		{

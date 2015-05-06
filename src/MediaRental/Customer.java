@@ -69,6 +69,15 @@ public class Customer
     {
         this.transactions = transactions;
     }
+    
+    public int getFrequentCustomerPoints(){
+        int points = 0;
+        for (int i=0; i<this.transactions.size(); i++){
+            Transaction transaction = this.transactions.get(i);
+            points += transaction.getFrequentCustomerPoints();
+        }
+        return points;
+    }
 
     @Override
     public String toString()

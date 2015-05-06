@@ -13,6 +13,16 @@ public class Store
 	public Store()
 	{
 	}
+	
+	public int getFrequentCustomerPoints(int cid){
+	    Customer customer = db.getCustomer(cid);
+	    if (customer == null){
+	        return 0;
+	    }
+	    else {
+	        return customer.getFrequentCustomerPoints();
+	    }
+	}
 
 	public boolean addCustomer(String name, String address) {
         Customer customer = new Customer(name, address);
@@ -35,7 +45,7 @@ public class Store
      * @return true on success, false otherwise
      */
     public boolean createProduct(String name, String type, String genre, String description) {
-        Product product = new Product(name,type, genre, description);
+        Product product = new Product(name,type, genre, description, true);
         return db.putProduct(product, 0);
     }
 
@@ -45,7 +55,7 @@ public class Store
      * @return true on success, false otherwise
      */
     public boolean addProduct(int catalogId, int qty) {
-        Product product = new Product(catalogId);
+        Product product = new Product(catalogId, true);
         return db.putProduct(product, qty);
     }
 
@@ -64,11 +74,21 @@ public class Store
      * @param transactionID The ID of the transaction to be added to
      * @return true on success, false otherwise
      */
-    public boolean addSale(int transactionID, int productID) {
+    public boolean addSale(int transactionID, int productID, double price) {
         Transaction transaction = DatabaseSupport.getTransaction(transactionID);
+        if (transaction == null || transaction.paid == true){
+            return false;
+        }
         Product product = DatabaseSupport.getProduct(productID);
-        Sale sale = new Sale(product, 0);
-        transaction.addSale(sale);
+        if (product == null){
+            return false;
+        }
+        if (product.getAvailable() == false){
+            return false;
+        }
+        transaction.addSale(product, price);
+        product.available = false;
+        db.putProduct(product, 0);
         return (db.putTransaction(transaction) > 0);
     }
 
@@ -78,17 +98,26 @@ public class Store
      * @param dueDate the date the Rental will be due
      * @return true on success, false otherwise
      */
-    public boolean addRental(int transactionID, int productID, String dueDate) {
+    public boolean addRental(int transactionID, int productID, String dueDate, int daysRented) {
         Transaction transaction = DatabaseSupport.getTransaction(transactionID);
         if (transaction == null){
+            return false;
+        }
+        if (transaction.paid == true){
             return false;
         }
         Product product = DatabaseSupport.getProduct(productID);
         if (product == null){
             return false;
         }
-        Rental rental = new Rental(product, dueDate, 0);
+        if (product.getAvailable() == false){
+            return false;
+        }
+        Rental rental = new Rental(product, dueDate, daysRented);
         transaction.addRental(rental);
+        
+        product.available = false;
+        db.putProduct(product, 0);
         return (db.putTransaction(transaction) > 0);
 
     }

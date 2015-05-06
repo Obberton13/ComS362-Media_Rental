@@ -149,7 +149,7 @@ public class DatabaseSupport
                 String t = rs1.getString("title");
                 String g = rs1.getString("genre");
                 String desc = rs1.getString("description");
-                Product prod = new Product(title, "", g, desc, id);
+                Product prod = new Product(title, "", g, desc, id, false);
                 prod.setGenre(g);
                 prod.setCatalogId(id);
                 products.add(prod);
@@ -294,18 +294,18 @@ public class DatabaseSupport
     
     private static Rental getRental(int id)
     {
-        String statement = "Select id, productID, price, dueDate from Rental where id = " + id + ";";
+        String statement = "Select id, productID, daysRented, dueDate from Rental where id = " + id + ";";
         try
         {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
             rs1.next();
             int productID = rs1.getInt("productID");
-            double price = rs1.getFloat("price");
             Date dueDate = rs1.getDate("dueDate");
+            int daysRented = rs1.getInt("daysRented");
             String dueDateString = dueDate.toString();
             Product product = getProduct(productID);
-            return new Rental(product, dueDateString, price, id);
+            return new Rental(product, dueDateString, id, daysRented);
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
@@ -317,13 +317,14 @@ public class DatabaseSupport
     
     public static Product getProduct(int id)
     {
-        String statement = "Select id, productCatalogID from Product where id = " + id + ";";
+        String statement = "Select id, available, productCatalogID from Product where id = " + id + ";";
         try
         {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
             rs1.next();
             int catalogID = rs1.getInt("productCatalogID");
+            boolean available = rs1.getBoolean("available");
             String statement2 = "Select id, title, description, genre, rentalStrategyName, customerStrategyName from ProductCatalog where id = " + catalogID + ";";
             ResultSet rs2 = stmt1.executeQuery(statement2);
             rs2.next();
@@ -340,7 +341,7 @@ public class DatabaseSupport
             if (!customerStrategyName.equals("")){
                 cs = getFrequentCustomerStrategy(customerStrategyName);
             }
-            return new Product(title, "", genre, description, id, catalogID, cs, rs);
+            return new Product(title, "", genre, description, id, catalogID, cs, rs, available);
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
@@ -492,7 +493,7 @@ public class DatabaseSupport
      */
     private int addProductToCatalog(Product product)
     {
-        if (product.getId() == 0){
+        if (product.getTitle() == null){
             return 0;
         }
         String statement;
@@ -544,35 +545,39 @@ public class DatabaseSupport
     public boolean putProduct(Product product, int numberToAdd)
     {
         addProductToCatalog(product);
-        for (int i=0; i < numberToAdd; i++){
-            String statement = "INSERT INTO Product (productCatalogID) VALUES (" + product.getCatalogId() + ");";
-            try
-            {
+        try{
+            if (product.getId() > 0){
+                String statement = "UPDATE Product set available = " + product.getAvailable() + " where id =" + product.getId() + ";"; 
                 PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
                 stmt1.executeUpdate();
-                ResultSet rs = stmt1.getGeneratedKeys();
-                if (rs.next())
-                {
-                    int id = rs.getInt(1);
-                    product.id = id;
-                }
-
-            } catch (SQLException E)
-            {
-                System.out.println("SQLException: " + E.getMessage());
-                System.out.println("SQLState: " + E.getSQLState());
-                System.out.println("VendorError: " + E.getErrorCode());
-                return false;
             }
+            for (int i=0; i < numberToAdd; i++){
+                String statement = "INSERT INTO Product (productCatalogID, available) VALUES (" + product.getCatalogId() + ", " + product.getAvailable() +  ");";
+                
+                    PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+                    stmt1.executeUpdate();
+                    ResultSet rs = stmt1.getGeneratedKeys();
+                    if (rs.next())
+                    {
+                        int id = rs.getInt(1);
+                        product.id = id;
+                    }
+            }
+            return true;
+        } catch (SQLException E)
+        {
+            System.out.println("SQLException: " + E.getMessage());
+            System.out.println("SQLState: " + E.getSQLState());
+            System.out.println("VendorError: " + E.getErrorCode());
+            return false;
         }
-        return true;
         
     }
 
     private int addRentalToStore(Rental rental)
     {
-        String statement = "INSERT INTO Rental (productID, price, dueDate) VALUES (" + rental.getProduct().getId() +
-                ", " + rental.getPrice() + ", '" + rental.getDueDate() + "');";
+        String statement = "INSERT INTO Rental (productID, daysRented, dueDate) VALUES (" + rental.getProduct().getId() +
+                ", " + rental.getDaysRented() + ", '" + rental.getDueDate() + "');";
         try
         {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -736,6 +741,7 @@ public class DatabaseSupport
         String statement3 = "CREATE TABLE Product ( " +
                 "id INT NOT NULL AUTO_INCREMENT, " +
                 "productCatalogID INT NOT NULL, " +
+                "available TINYINT(1) NOT NULL DEFAULT 1, " +
                 "PRIMARY KEY (id), " +
                 "FOREIGN KEY (productCatalogID) REFERENCES ProductCatalog(id));";
 
@@ -759,7 +765,7 @@ public class DatabaseSupport
         String statement6 = "CREATE TABLE Rental (" +
                 "id INT NOT NULL AUTO_INCREMENT, " +
                 "productID INT NOT NULL," +
-                "price FLOAT default 0.0, " +
+                "daysRented INT default 0, " +
                 "dueDate DATE NULL, " +
                 "transactionID INT NULL, " +
                 "PRIMARY KEY (id), " +

@@ -9,21 +9,22 @@ public class Rental
     protected int id;
     protected double price;
     protected String dueDate;
+    protected int daysRented;
 
-    public Rental(Product product, String dueDate, double price)
+    public Rental(Product product, String dueDate, int daysRented)
     {
         this.product = product;
         this.dueDate = dueDate;
         id = 0;
-        this.price = price;
+        this.daysRented = daysRented;
     }
 
-    public Rental(Product product, String dueDate, double price, int id)
+    public Rental(Product product, String dueDate, int id, int daysRented)
     {
         this.product = product;
         this.dueDate = dueDate;
         this.id = id;
-        this.price = price;
+        this.daysRented = daysRented;
     }
 
     public int getId()
@@ -43,7 +44,11 @@ public class Rental
 
     public double getPrice()
     {
-        return price;
+        return product.getPrice(this.daysRented);
+    }
+    
+    public int getDaysRented(){
+        return this.daysRented;
     }
 
     public void setDueDate(String len)
