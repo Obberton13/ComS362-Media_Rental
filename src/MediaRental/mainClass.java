@@ -21,6 +21,7 @@ public class mainClass
 		while (sc.hasNext())
 		{
 			String in = sc.nextLine().toLowerCase();
+			if(in.equals("")) continue;
 			char c = in.charAt(0);
 			switch (c)
 			{
@@ -92,7 +93,7 @@ public class mainClass
 				String name = in.nextLine();
 				System.out.println(name);
 				System.out.println("Customer Address: ");
-				String address = in.next();
+				String address = in.nextLine();
 				System.out.println("Customer ID: ");
 				boolean b = new StoreController().addCustomer(name, address);
 				System.out.println("Operation success boolean is " + b);
@@ -103,9 +104,9 @@ public class mainClass
 				String title = in.nextLine();
 				System.out.println(title);
 				System.out.println("Product Type: ");
-				String type = in.next();
+				String type = in.nextLine();
 				System.out.println("Product Genre: ");
-				String genre = in.next();
+				String genre = in.nextLine();
 				System.out.println("Product ID: ");
 				String description = "";
 				b = new StoreController().createProduct(title, type, genre, description);
@@ -116,18 +117,19 @@ public class mainClass
 				System.out.println("Customer ID: ");
 				int cid;
                 cid = in.nextInt();
+				in.nextLine();
 				b = new StoreController().createTransaction(cid);
 				System.out.println("Operation success boolean is " + b);
 				break;
 			case 'r':
                 System.out.println("Creating a rental strategy: ");
                 System.out.println("Strategy Name: ");
-                in.next();
-                name = in.next();
+                name = in.nextLine();
                 System.out.println("Standard Rental Charge: ");
                 double standardRentalCharge = in.nextDouble();
                 System.out.println("StandardRentalLength: ");
                 int standardRentalLength = in.nextInt();
+				in.nextLine();
                 System.out.println("Daily overdue charge: ");
                 double dailyOverdueCharge = in.nextDouble();
                 b = new StoreController().createRentalPricingStrategy(standardRentalCharge, standardRentalLength, dailyOverdueCharge, name);
@@ -136,14 +138,14 @@ public class mainClass
 			case 'f':
 			    System.out.println("Creating a frequent renter strategy: ");
                 System.out.println("Strategy Name: ");
-                in.next();
-                name = in.next();
+                name = in.nextLine();
                 System.out.println("Fixed Points: ");
                 int fixedPoints = in.nextInt();
+				in.nextLine();
                 System.out.println("Points Per day: ");
                 int ppd = in.nextInt();
+				in.nextLine();
                 b = new StoreController().createFrequentCustomerStrategy(fixedPoints, ppd, name);
-
                 System.out.println("Operation success boolean is " + b);
                 break;
 			case 'q':
@@ -158,14 +160,14 @@ public class mainClass
 		System.out.println("<t|c>\n" +
 				"t gets a transaction\n" +
 				"c gets a customer's rental history");
-	    String input = in.next();
+	    String input = in.nextLine();
         switch (input.charAt(0))
         {
             case 't':
                 System.out.println("Getting transaction statement");
                 System.out.println("Transaction ID: ");
                 int tid = in.nextInt();
-                
+	            in.nextLine();
                 String s = new StoreController().getTransactionStatement(tid);
                 System.out.println(s);
                 break;
@@ -173,27 +175,33 @@ public class mainClass
 		        System.out.println("Getting Customer Rental History");
 		        System.out.println("Customer ID: ");
 		        int cid = in.nextInt();
-		        ArrayList<Rental> rentals = new StoreController().getCustomerRentalHistory(cid);
-		        for (Rental r : rentals)
+		        in.nextLine();
+		        ArrayList<Product> rentedProducts = new StoreController().getCustomerRentalHistory(cid);
+		        if(rentedProducts==null)
 		        {
-					System.out.println("Title " + r.getProduct().getTitle() +
-							" for $" + r.getPrice() +
-							" due at" + r.getDueDate());
+			        System.out.println("A customer with id " + cid + " does not exist.");
+		        }
+		        else
+		        {
+			        for (Product p : rentedProducts)
+			        {
+				        System.out.println(p);
+			        }
 		        }
         }
 	}
 	
 	private static void set(Scanner in){
-        String input = in.next();
+        String input = in.nextLine();
         switch (input.charAt(0))
         {
             case 'f':
                 System.out.println("Set frequent customer strategy on product");
                 System.out.println("Product ID: ");
                 int pid = in.nextInt();
-                System.out.println("Strategy Name");
-                in.next();
-                String strategyName = in.next();
+	            in.nextLine();
+	            System.out.println("Strategy Name: ");
+                String strategyName = in.nextLine();
                 
                 boolean b = new StoreController().setFrequentCustomerStrategy(strategyName, pid);
                 System.out.println("Operation success boolean is " + b);
@@ -202,9 +210,9 @@ public class mainClass
                 System.out.println("Set rental pricing strategy on product");
                 System.out.println("Product ID: ");
                 pid = in.nextInt();
+	            in.nextLine();
                 System.out.println("Strategy Name");
-                in.next();
-                strategyName = in.next();
+                strategyName = in.nextLine();
                 
                 b = new StoreController().setRentalPricingStrategy(strategyName, pid);
                 System.out.println("Operation success boolean is " + b);
@@ -213,14 +221,14 @@ public class mainClass
     }
 	
 	private static void other(Scanner in){
-        String input = in.next();
+        String input = in.nextLine();
         switch (input.charAt(0))
         {
             case 'p':
                 System.out.println("Paying for transaction");
                 System.out.println("Transaction ID: ");
                 int tid = in.nextInt();
-                
+	            in.nextLine();
                 boolean b = new StoreController().payForTransaction(tid);
                 System.out.println("Operation success boolean is " + b);
                 break;
@@ -236,8 +244,10 @@ public class mainClass
 				System.out.println("Adding a product to the store");
 				System.out.println("Product Catalog ID: ");
 				int pid = in.nextInt();
+				in.nextLine();
 				System.out.println("Quantity: ");
 				int qty = in.nextInt();
+				in.nextLine();
 				boolean b = new StoreController().addProduct(pid, qty);
 				System.out.println("Operation success boolean is " + b);
 				break;
@@ -245,14 +255,17 @@ public class mainClass
 				System.out.println("Adding rental to transaction");
 				System.out.println("Product ID: ");
                 pid = in.nextInt();
-
+				in.nextLine();
 				System.out.println("Transaction ID: ");
 				int tid;
 				tid = in.nextInt();
+				in.nextLine();
 				System.out.println("Due Date (YYYY-MM-DD): ");
 				String date = in.next(isDate);
+				in.nextLine();
 				System.out.println("Days rented: ");
 				int daysRented = in.nextInt();
+				in.nextLine();
 				System.out.println("Transaction ID: ");
 				b = new StoreController().addRental(tid, pid, date, daysRented);
 				System.out.println("Operation success boolean is " + b);
@@ -261,9 +274,10 @@ public class mainClass
                 System.out.println("Adding Sale to transaction");
                 System.out.println("Product ID: ");
                 pid = in.nextInt();
-
+				in.nextLine();
                 System.out.println("Transaction ID: ");
                 tid = in.nextInt();
+				in.nextLine();
                 b = new StoreController().addSale(tid, pid);
                 System.out.println("Operation success boolean is " + b);
 		}
@@ -272,7 +286,7 @@ public class mainClass
 	private static void edit(Scanner in)
 	{
 		System.out.println("Editing items is not yet supported");
-		in.next();
+		in.nextLine();
 	}
 
 	private static void index(Scanner in)
@@ -283,9 +297,16 @@ public class mainClass
 			case 'p':
 				System.out.println("Indexing Products: \n");
 				System.out.println("Title (Leave blank to get all): ");
-				String title = in.next();
+				String title = in.nextLine();
 				System.out.println("Genre (Leave blank to get all): ");
-				String genre = in.next();
+				String genre = in.nextLine();
+				ArrayList<Product> products = new StoreController().findProduct(title, genre);
+				if(products.isEmpty())
+				{
+					System.out.println("Found no products.");
+					return;
+				}
+				System.out.println("Found products: ");
 				for (Product p : new StoreController().findProduct(title, genre))
 				{
 					System.out.println(p);
@@ -311,6 +332,7 @@ public class mainClass
 				System.out.println("Removing customer");
 				System.out.println("Customer ID: ");
 				int cid = in.nextInt();
+				in.nextLine();
 				boolean b = new StoreController().removeCustomer(cid);
 				System.out.println("Operation success boolean is " + b);
 		}

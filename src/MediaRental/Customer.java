@@ -70,6 +70,20 @@ public class Customer
         this.transactions = transactions;
     }
 
+    public ArrayList<Product> getRentalHistory()
+    {
+        ArrayList<Product> allProducts = new ArrayList<Product>();
+        for(Transaction t : transactions)
+        {
+            ArrayList<Rental> rentals = t.getRentals();
+            for(Rental r : rentals)
+            {
+                allProducts.add(r.getProduct());
+            }
+        }
+        return allProducts;
+    }
+
     @Override
     public String toString()
     {

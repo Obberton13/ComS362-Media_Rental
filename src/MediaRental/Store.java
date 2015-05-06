@@ -160,21 +160,11 @@ public class Store
         return db.putProduct(p, 0);
     }
 
-    public ArrayList<Rental> getCustomerRentalHistory(int cid)
+    public ArrayList<Product> getCustomerRentalHistory(int cid)
     {
         Customer c = db.getCustomer(cid);
         if(c==null) return null;
-        ArrayList<Rental> allRentals = new ArrayList<Rental>();
-        ArrayList<Transaction> transactions = c.getTransactions();
-        for(Transaction t : transactions)
-        {
-            ArrayList<Rental> rentals = t.getRentals();
-            for(Rental r : rentals)
-            {
-                allRentals.add(r);
-            }
-        }
-        return allRentals;
+        return c.getRentalHistory();
     }
     
 }

@@ -540,8 +540,8 @@ public class DatabaseSupport
             {
                 String test = "SELECT id " +
                         "FROM Customer c " +
-                        "WHERE c.Name = " + customer.getName() +
-                        "AND WHERE c.Address = " + customer.getAddress();
+                        "WHERE c.Name = '" + customer.getName() +
+                        "' AND c.Address = '" + customer.getAddress() + "'";
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(test);
                 if(rs.next())

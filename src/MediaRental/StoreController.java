@@ -118,7 +118,7 @@ public class StoreController
 		return this.store.setFrequentCustomerStrategy(strategyName, productID);
 	}
 
-	public ArrayList<Rental> getCustomerRentalHistory(int cid)
+	public ArrayList<Product> getCustomerRentalHistory(int cid)
 	{
 		return this.store.getCustomerRentalHistory(cid);
 	}
