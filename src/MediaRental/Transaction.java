@@ -56,6 +56,15 @@ public class Transaction
 	    return this.paid;
 	}
 	
+	public int getFrequentCustomerPoints(){
+	    int points = 0;
+	    for (int j=0; j<this.getRentals().size(); j++){
+            Rental rental = this.getRentals().get(j);
+            points += rental.getProduct().getCustomerStrategy().getPoints(rental.getDaysRented());
+        }
+	    return points;
+	}
+	
 	public String getStatement(){
 	    double      totalAmount          = 0;
         int         frequentRenterPoints = 0;
