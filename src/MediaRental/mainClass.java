@@ -16,12 +16,12 @@ public class mainClass
 		//this is the main loop for the program.
 //	    DatabaseSupport db = new DatabaseSupport();
 //	    db.createTables();
-		baseCommands();
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNext())
 		{
+			baseCommands();
 			String in = sc.nextLine().toLowerCase();
-			if(in.equals("")) continue;
+			if(in.isEmpty()) continue;
 			char c = in.charAt(0);
 			switch (c)
 			{
@@ -85,6 +85,7 @@ public class mainClass
                 "f adds a frequentRenterStrategy\n" + 
 				"q returns to the previous menu");
 		String input = in.nextLine();
+		if(input.isEmpty())return;
 		switch (input.charAt(0))//creates a customer
 		{
 			case 'c':
@@ -164,6 +165,7 @@ public class mainClass
 				"c gets a customer's rental history\n" +
 				"f gets a customer's frequent rental points");
 	    String input = in.nextLine();
+		if(input.isEmpty()) return;
         switch (input.charAt(0))
         {
             case 't':
@@ -205,6 +207,7 @@ public class mainClass
 	
 	private static void set(Scanner in){
         String input = in.nextLine();
+		if(input.isEmpty())return;
         switch (input.charAt(0))
         {
             case 'f':
@@ -233,7 +236,10 @@ public class mainClass
     }
 	
 	private static void other(Scanner in){
+		System.out.println("<p>\n" +
+				"p pays for a transaction");
         String input = in.nextLine();
+		if(input.isEmpty()) return;
         switch (input.charAt(0))
         {
             case 'p':
@@ -254,6 +260,7 @@ public class mainClass
                 "r adds a rental\n" +
                 "s adds a sale\n");
 		String input = in.nextLine();
+		if(input.isEmpty()) return;
 		switch (input.charAt(0))
 		{
 			case 'p':
@@ -305,6 +312,7 @@ public class mainClass
 	private static void edit(Scanner in)
 	{
 		System.out.println("Editing items is not yet supported");
+		System.out.println("Press enter to continue...");
 		in.nextLine();
 	}
 
@@ -313,6 +321,7 @@ public class mainClass
 		System.out.println("<p>\n" +
 				"p finds a product\n");
 		String input = in.nextLine();
+		if(input.isEmpty()) return;
 		switch (input.charAt(0))
 		{
 			case 'p':
@@ -347,6 +356,7 @@ public class mainClass
 		System.out.println("<c>\n" +
 				"c deletes a customer");
 		String input = in.nextLine();
+		if(input.isEmpty()) return;
 		switch(input.charAt(0))
 		{
 			case 'c':
