@@ -193,5 +193,13 @@ public class Store
         if(c==null) return null;
         return c.getRentalHistory();
     }
+
+    public boolean returnProduct(int pid)
+    {
+        Product p = db.getProduct(pid);
+        if(p==null) return false;
+        p.returnToStore();
+        return db.putProduct(p, 0);
+    }
     
 }

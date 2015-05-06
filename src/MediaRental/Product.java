@@ -104,7 +104,7 @@ public class Product
     }
     
     public boolean getAvailable(){
-        return this.available;    
+        return this.available;
     }
 
     public int getCatalogId()
@@ -139,6 +139,12 @@ public class Product
     public void setRentalPricingStrategy(RentalPricingStrategy strategy){ rs = strategy; }
 
     public RentalPricingStrategy getRentalPricingStrategy() {return rs; }
+
+    public boolean returnToStore()
+    {
+        available = true;
+        return true;
+    }
 
 
     @Override

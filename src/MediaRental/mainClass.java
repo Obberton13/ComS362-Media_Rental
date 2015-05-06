@@ -236,8 +236,9 @@ public class mainClass
     }
 	
 	private static void other(Scanner in){
-		System.out.println("<p>\n" +
-				"p pays for a transaction");
+		System.out.println("<p|r>\n" +
+				"p pays for a transaction\n" +
+				"r returns a product to the store");
         String input = in.nextLine();
 		if(input.isEmpty()) return;
         switch (input.charAt(0))
@@ -250,6 +251,13 @@ public class mainClass
                 boolean b = new StoreController().payForTransaction(tid);
                 System.out.println("Operation success boolean is " + b);
                 break;
+	        case 'r':
+		        System.out.println("Returning a product");
+		        System.out.println("Product ID: ");
+		        int pid = in.nextInt();
+		        in.nextLine();
+		        b = new StoreController().returnProduct(pid);
+		        System.out.println("operation success boolean is " + b);
         }
     }
 

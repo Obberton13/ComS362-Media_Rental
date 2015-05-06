@@ -126,6 +126,11 @@ public class StoreController
 	{
 		return this.store.getCustomerRentalHistory(cid);
 	}
+
+	public boolean returnProduct(int pid)
+	{
+		return this.store.returnProduct(pid);
+	}
 }
 
 
