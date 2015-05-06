@@ -69,6 +69,18 @@ public class Customer
     {
         this.transactions = transactions;
     }
+    
+    public int getFrequentCustomerPoints(){
+        int points = 0;
+        for (int i=0; i<this.transactions.size(); i++){
+            Transaction transaction = this.transactions.get(i);
+            for (int j=0; j<transaction.getRentals().size(); j++){
+                Rental rental = transaction.getRentals().get(j);
+                points += rental.getProduct().getCustomerStrategy().getPoints(rental.getDaysRented());
+            }
+        }
+        return points;
+    }
 
     @Override
     public String toString()
