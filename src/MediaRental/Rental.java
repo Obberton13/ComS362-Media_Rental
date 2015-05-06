@@ -46,8 +46,9 @@ public class Rental
     {
         return product.getPrice(this.daysRented);
     }
-    
-    public int getDaysRented(){
+
+    public int getDaysRented()
+    {
         return this.daysRented;
     }
 

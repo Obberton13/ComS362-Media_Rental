@@ -45,9 +45,10 @@ public class DatabaseSupport
      * @param strategy the FrequentCustomerStrategy object to add
      * @return true on success, false on failure.
      */
-    public boolean addFrequentCustomerStrategy(FrequentCustomerStrategy strategy){
+    public boolean addFrequentCustomerStrategy(FrequentCustomerStrategy strategy)
+    {
         String statement = "INSERT INTO FrequentCustomerStrategy (name, fixedPoints, pointsPerDay) VALUES " +
-                           "('" + strategy.getName() + "', '" + strategy.getFixedPoints() + "', '" + strategy.getPointsPerDay() + "');";
+                "('" + strategy.getName() + "', '" + strategy.getFixedPoints() + "', '" + strategy.getPointsPerDay() + "');";
         try
         {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -96,9 +97,10 @@ public class DatabaseSupport
      * @param pricing the RentalPricingStrategy object to add to the database
      * @return true on success, false otherwise
      */
-    public boolean addRentalPricingStrategy(RentalPricingStrategy pricing){
+    public boolean addRentalPricingStrategy(RentalPricingStrategy pricing)
+    {
         String statement = "INSERT INTO RentalPricingStrategy (name, standardRentalLength, dailyOverdueCharge, standardRentalCharge) VALUES " +
-                           "('" + pricing.getName() + "', '" + pricing.getStandardRentalLength() + "', '" + pricing.getDailyOverdueCharge() + "', '" + pricing.getStandardRentalCharge() + "');";
+                "('" + pricing.getName() + "', '" + pricing.getStandardRentalLength() + "', '" + pricing.getDailyOverdueCharge() + "', '" + pricing.getStandardRentalCharge() + "');";
         try
         {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -123,7 +125,8 @@ public class DatabaseSupport
     public RentalPricingStrategy getRentalPricingStrategy(String name)
     {
         String statement = "SELECT name, standardRentalLength, dailyOverdueCharge, standardRentalCharge FROM RentalPricingStrategy WHERE name = '" + name + "';";
-        try {
+        try
+        {
             Statement stmt = conn.createStatement();
             ResultSet rs1 = stmt.executeQuery(statement);
             rs1.next();
@@ -131,8 +134,7 @@ public class DatabaseSupport
             int rentalLength = rs1.getInt("standardRentalLength");
             double dailyCharge = rs1.getDouble("dailyOverdueCharge");
             return new RentalPricingStrategy(stdCharge, rentalLength, dailyCharge, name);
-        }
-        catch (SQLException E)
+        } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
@@ -240,17 +242,25 @@ public class DatabaseSupport
      * @param id the ID of the transaction to get from the database
      * @return The Transaction object with the given ID
      */
-    public Transaction getTransaction(int id){
-        try {
+    public Transaction getTransaction(int id)
+    {
+        try
+        {
             String statement = "Select customerID from Transaction where id = " + id + ";";
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
             rs1.next();
             int customerID = rs1.getInt("customerID");
             Customer customer = getCustomer(customerID);
-            if(customer == null) return null;
+            if (customer == null)
+            {
+                return null;
+            }
             Transaction transaction = getTransactionWithoutCustomer(id);
-            if(transaction == null) return null;
+            if (transaction == null)
+            {
+                return null;
+            }
             transaction.setCustomer(customer);
             return transaction;
         } catch (SQLException E)
@@ -260,7 +270,7 @@ public class DatabaseSupport
             System.out.println("VendorError: " + E.getErrorCode());
             return null;
         }
-        
+
     }
 
     /**
@@ -327,7 +337,10 @@ public class DatabaseSupport
             double price = rs1.getFloat("price");
             int transactionID = rs1.getInt("transactionID");
             Product product = getProduct(productID);
-            if(product == null) return null;
+            if (product == null)
+            {
+                return null;
+            }
             return new Sale(product, price, id);
         } catch (SQLException E)
         {
@@ -366,6 +379,7 @@ public class DatabaseSupport
             return null;
         }
     }
+
     /**
      * Get a product from the store by ID
      *
@@ -392,10 +406,12 @@ public class DatabaseSupport
             String customerStrategyName = rs2.getString("customerStrategyName");
             FrequentCustomerStrategy cs = null;
             RentalPricingStrategy rs = null;
-            if (!rentalPricingStrategyName.equals("")){
+            if (!rentalPricingStrategyName.equals(""))
+            {
                 rs = getRentalPricingStrategy(rentalPricingStrategyName);
             }
-            if (!customerStrategyName.equals("")){
+            if (!customerStrategyName.equals(""))
+            {
                 cs = getFrequentCustomerStrategy(customerStrategyName);
             }
             return new Product(title, "", genre, description, id, catalogID, cs, rs, available);
@@ -421,7 +437,10 @@ public class DatabaseSupport
         {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
-            if(!rs1.next()) return null;
+            if (!rs1.next())
+            {
+                return null;
+            }
             String name = rs1.getString(1);
             String address = rs1.getString(2);
             Customer customer = new Customer(name, address, id);
@@ -435,8 +454,11 @@ public class DatabaseSupport
             return null;
         }
     }
-    private boolean setTransactionsOnCustomer(Customer customer){
-        try {
+
+    private boolean setTransactionsOnCustomer(Customer customer)
+    {
+        try
+        {
             ArrayList<Transaction> transactions = new ArrayList<Transaction>();
             Statement stmt1 = conn.createStatement();
             String statement = "Select id from Transaction where customerID = " + customer.getId() + ";";
@@ -445,14 +467,16 @@ public class DatabaseSupport
             {
                 int transactionID = rs2.getInt("id");
                 Transaction transaction = getTransactionWithoutCustomer(transactionID);
-                if(transaction == null) return false;
+                if (transaction == null)
+                {
+                    return false;
+                }
                 transaction.setCustomer(customer);
                 transactions.add(transaction);
             }
             customer.setTransactions(transactions);
             return true;
-        }
-        catch (SQLException E)
+        } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
@@ -465,7 +489,8 @@ public class DatabaseSupport
      * @param tid the ID of the transaction whose rentals are to be removed
      * @return true on success, false otherwise
      */
-    private boolean removeRentals(int tid){
+    private boolean removeRentals(int tid)
+    {
         String statement = "delete from Rental where transactionID = " + tid + ";";
         try
         {
@@ -479,14 +504,15 @@ public class DatabaseSupport
             System.out.println("VendorError: " + E.getErrorCode());
             return false;
         }
-        
+
     }
 
     /**
      * @param tid The ID of the transaction whose sales we are removing
      * @return true on success, false otherwise
      */
-    private boolean removeSales(int tid){
+    private boolean removeSales(int tid)
+    {
         String statement = "delete from Sale where transactionID = " + tid + ";";
         try
         {
@@ -499,10 +525,10 @@ public class DatabaseSupport
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
             return false;
-        }  
+        }
     }
-    
-    
+
+
     /**
      * Remove a customer from the db
      *
@@ -537,7 +563,7 @@ public class DatabaseSupport
                 " VALUES ('" + customer.getName() + "', '" + customer.getAddress() + "');";
         try
         {
-            if(customer.getId()==0)
+            if (customer.getId() == 0)
             {
                 String test = "SELECT id " +
                         "FROM Customer c " +
@@ -545,7 +571,7 @@ public class DatabaseSupport
                         "' AND c.Address = '" + customer.getAddress() + "'";
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(test);
-                if(rs.next())
+                if (rs.next())
                 {
                     rs.close();
                     stmt.close();
@@ -582,7 +608,8 @@ public class DatabaseSupport
      */
     private int addProductToCatalog(Product product)
     {
-        if (product.getTitle() == null){
+        if (product.getTitle() == null)
+        {
             return 0;
         }
         String statement;
@@ -590,20 +617,23 @@ public class DatabaseSupport
         String rentalStrategyName = "";
         FrequentCustomerStrategy strategy = product.getCustomerStrategy();
         RentalPricingStrategy rental_pricing_strategy = product.getRentalPricingStrategy();
-        if (strategy != null){
+        if (strategy != null)
+        {
             strategyName = strategy.getName();
         }
-        if (rental_pricing_strategy != null){
+        if (rental_pricing_strategy != null)
+        {
             rentalStrategyName = rental_pricing_strategy.getName();
         }
-        if (product.getCatalogId() > 0){
+        if (product.getCatalogId() > 0)
+        {
             statement = "Update ProductCatalog set title = '" + product.getTitle() + "', genre = '" + product.getGenre() + "', customerStrategyName = '" + strategyName + "', rentalStrategyName = '" + rentalStrategyName + "' where id = " + product.getCatalogId() + ";";
-        }
-        else {
+        } else
+        {
             statement = "INSERT INTO ProductCatalog (title, genre, customerStrategyName, rentalStrategyName)" +
-                    " VALUES ('" + product.getTitle() + "', '" + product.getType() + "', '" + strategyName +  "', '" + rentalStrategyName + "');";
+                    " VALUES ('" + product.getTitle() + "', '" + product.getType() + "', '" + strategyName + "', '" + rentalStrategyName + "');";
         }
-        
+
         try
         {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -628,31 +658,33 @@ public class DatabaseSupport
     /**
      * Add a product to the database.
      *
-     * @param product: Id of the catalog item
+     * @param product:    Id of the catalog item
      * @param numberToAdd how many products you want to add
-     *
      * @return - id of the product from the product db
      */
     public boolean putProduct(Product product, int numberToAdd)
     {
         addProductToCatalog(product);
-        try{
-            if (product.getId() > 0){
-                String statement = "UPDATE Product set available = " + product.getAvailable() + " where id =" + product.getId() + ";"; 
+        try
+        {
+            if (product.getId() > 0)
+            {
+                String statement = "UPDATE Product set available = " + product.getAvailable() + " where id =" + product.getId() + ";";
                 PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
                 stmt1.executeUpdate();
             }
-            for (int i=0; i < numberToAdd; i++){
-                String statement = "INSERT INTO Product (productCatalogID, available) VALUES (" + product.getCatalogId() + ", " + product.getAvailable() +  ");";
-                
-                    PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
-                    stmt1.executeUpdate();
-                    ResultSet rs = stmt1.getGeneratedKeys();
-                    if (rs.next())
-                    {
-                        int id = rs.getInt(1);
-                        product.id = id;
-                    }
+            for (int i = 0; i < numberToAdd; i++)
+            {
+                String statement = "INSERT INTO Product (productCatalogID, available) VALUES (" + product.getCatalogId() + ", " + product.getAvailable() + ");";
+
+                PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+                stmt1.executeUpdate();
+                ResultSet rs = stmt1.getGeneratedKeys();
+                if (rs.next())
+                {
+                    int id = rs.getInt(1);
+                    product.id = id;
+                }
             }
             return true;
         } catch (SQLException E)
@@ -662,7 +694,7 @@ public class DatabaseSupport
             System.out.println("VendorError: " + E.getErrorCode());
             return false;
         }
-        
+
     }
 
     private int addRentalToStore(Rental rental)
@@ -721,10 +753,11 @@ public class DatabaseSupport
      * @return id of transaction
      */
     public int putTransaction(Transaction transaction)
-    { 
+    {
         try
         {
-            if (transaction.getId() > 0){
+            if (transaction.getId() > 0)
+            {
                 String statement = "UPDATE Transaction SET statement='" + transaction.getStatement() +
                         "',paid=" + transaction.getPaid() + " WHERE id=" + transaction.getId();
                 PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -732,19 +765,27 @@ public class DatabaseSupport
                 removeRentals(transaction.getId());
                 removeSales(transaction.getId());
                 ArrayList<Sale> sales = transaction.getSales();
-                for (int i=0; i < sales.size(); i++){
+                for (int i = 0; i < sales.size(); i++)
+                {
                     addSaleToStore(sales.get(i));
-                    if(!addSaleToTransaction(sales.get(i).getId(), transaction)) return 0;
+                    if (!addSaleToTransaction(sales.get(i).getId(), transaction))
+                    {
+                        return 0;
+                    }
                 }
                 ArrayList<Rental> rentals = transaction.getRentals();
-                for (int i=0; i < rentals.size(); i++){
+                for (int i = 0; i < rentals.size(); i++)
+                {
                     int id = addRentalToStore(rentals.get(i));
                     rentals.get(i).setId(id);
-                    if(!addRentalToTransaction(rentals.get(i).getId(), rentals.get(i).getDueDate(), transaction)) return 0;
+                    if (!addRentalToTransaction(rentals.get(i).getId(), rentals.get(i).getDueDate(), transaction))
+                    {
+                        return 0;
+                    }
                 }
-                
-            }
-            else {
+
+            } else
+            {
                 System.out.println(transaction.getCustomer().getId());
                 String statement = "INSERT INTO Transaction (customerID, paid) " +
                         "VALUES (" + transaction.getCustomer().getId() + ", 0);";
@@ -758,8 +799,8 @@ public class DatabaseSupport
                     return id;
                 }
             }
-            
-        return 1;
+
+            return 1;
         } catch (SQLException E)
         {
             System.out.println("SQLException: " + E.getMessage());
@@ -868,14 +909,14 @@ public class DatabaseSupport
                 "PRIMARY KEY (id), " +
                 "FOREIGN KEY (transactionID) REFERENCES Transaction(id), " +
                 "FOREIGN KEY (productID) REFERENCES Product(id));";
-       
+
         String statement7 = "CREATE TABLE RentalPricingStrategy (" +
                 "name VARCHAR(45) NOT NULL, " +
                 "standardRentalLength INT NOT NULL," +
                 "dailyOverdueCharge DOUBLE NOT NULL, " +
                 "standardRentalCharge DOUBLE NOT NULL, " +
                 "PRIMARY KEY (name));";
-       
+
         String statement8 = "CREATE TABLE FrequentCustomerStrategy (" +
                 "name VARCHAR(45) NOT NULL, " +
                 "fixedPoints INT," +

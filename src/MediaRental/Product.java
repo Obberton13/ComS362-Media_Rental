@@ -14,8 +14,8 @@ public class Product
     protected FrequentCustomerStrategy s;
     protected RentalPricingStrategy rs;
     protected boolean available;
-    
-    
+
+
     public Product(int catalogId, boolean available)
     {
         this.catalogId = catalogId;
@@ -32,7 +32,7 @@ public class Product
         this.id = 0;
         this.available = available;
     }
-    
+
     public Product(String title, String type, String genre, String description, int catalogID, boolean available)
     {
         this.title = title;
@@ -42,7 +42,7 @@ public class Product
         this.id = 0;
         this.available = available;
     }
-    
+
     public Product(String title, String type, String genre, String description, int id, int catalogID, boolean available)
     {
         this.title = title;
@@ -53,7 +53,7 @@ public class Product
         this.available = available;
     }
 
-    public Product (String title, String type, String genre, String description, int id, int catalogID, FrequentCustomerStrategy f, RentalPricingStrategy r, boolean available)
+    public Product(String title, String type, String genre, String description, int id, int catalogID, FrequentCustomerStrategy f, RentalPricingStrategy r, boolean available)
     {
         this.title = title;
         this.type = type;
@@ -89,21 +89,24 @@ public class Product
     {
         return type;
     }
-    
-    public double getPrice(int daysRented){
-        if (this.rs == null){
+
+    public double getPrice(int daysRented)
+    {
+        if (this.rs == null)
+        {
             return 0.0;
         }
         return this.rs.getRentalCharge(daysRented);
-               
+
     }
 
     public void setType(String type)
     {
         this.type = type;
     }
-    
-    public boolean getAvailable(){
+
+    public boolean getAvailable()
+    {
         return this.available;
     }
 
@@ -126,19 +129,26 @@ public class Product
     {
         return genre;
     }
-    
+
     public void setCustomerStrategy(FrequentCustomerStrategy strategy)
     {
-    	s = strategy;
+        s = strategy;
     }
-    
-    public FrequentCustomerStrategy getCustomerStrategy(){
+
+    public FrequentCustomerStrategy getCustomerStrategy()
+    {
         return s;
     }
 
-    public void setRentalPricingStrategy(RentalPricingStrategy strategy){ rs = strategy; }
+    public void setRentalPricingStrategy(RentalPricingStrategy strategy)
+    {
+        rs = strategy;
+    }
 
-    public RentalPricingStrategy getRentalPricingStrategy() {return rs; }
+    public RentalPricingStrategy getRentalPricingStrategy()
+    {
+        return rs;
+    }
 
     public boolean returnToStore()
     {
