@@ -160,4 +160,11 @@ public class Store
         return db.putProduct(p, 0);
     }
     
+    public String getCustomerContactInfo(int customerID)
+    {
+    	Customer c = db.getCustomer(customerID);
+    	if (c == null)
+    		return "customer does not exist";
+    	return c.contactInfo();
+    }
 }
