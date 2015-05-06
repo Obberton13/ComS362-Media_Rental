@@ -56,6 +56,15 @@ public class Transaction
 	    return this.paid;
 	}
 	
+	public int getFrequentCustomerPoints(){
+	    int points = 0;
+	    for (int j=0; j<this.getRentals().size(); j++){
+            Rental rental = this.getRentals().get(j);
+            points += rental.getProduct().getCustomerStrategy().getPoints(rental.getDaysRented());
+        }
+	    return points;
+	}
+	
 	public String getStatement(){
 	    double      totalAmount          = 0;
         int         frequentRenterPoints = 0;
@@ -70,7 +79,7 @@ public class Transaction
             // show figures for this rental
             String className = rental.getProduct().getGenre();
             result += "\t" + className + " - " + rental.getProduct().getTitle() +
-                      "\t" + String.valueOf(thisAmount) + "<br>\n";
+                      "\t" + String.format("%.2f", thisAmount) + "<br>\n";
             totalAmount += thisAmount;
         }
        if (sales.size() > 0){
@@ -83,14 +92,14 @@ public class Transaction
                    // show figures for this sale
                    String className = sale.getProduct().getGenre();
                    result += "\t" + className + " - " + sale.getProduct().getTitle() +
-                             "\t" + String.valueOf(thisAmount) + "<br>\n";
+                             "\t" + String.format("%.2f", thisAmount) + "<br>\n";
                    totalAmount += thisAmount;
                }
        }
        
         
         // add footer lines
-        result += "</p>\nAmount owed is " + String.valueOf(totalAmount) + "<br>\n";
+        result += "</p>\nAmount owed is " + String.format("%.2f", totalAmount) + "<br>\n";
         result += "</html>";
         return result;
 	}
@@ -135,8 +144,9 @@ public class Transaction
 		this.customer = customer;
 	}
 
-	public void addSale(Sale sale)
+	public void addSale(Product product, double price)
 	{
+	    Sale sale = new Sale(product, price);
 		sales.add(sale);
 	}
 

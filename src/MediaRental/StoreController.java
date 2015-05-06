@@ -20,6 +20,10 @@ public class StoreController
 		return this.store.setRentalPricingStrategy(strategyName, productID);
 	}
 	
+	public int getFrequentCustomerPoints(int cid){
+	    return this.store.getFrequentCustomerPoints(cid);
+	}
+	
 	public String getTransactionStatement(int tid){
         return this.store.getTransactionStatement(tid);
     }
@@ -77,9 +81,9 @@ public class StoreController
 	 * @param transactionID The ID of the transaction to be added to
 	 * @return true on success, false otherwise
 	 */
-	public boolean addSale(int tid, int pid)
+	public boolean addSale(int tid, int pid, double price)
 	{
-		return this.store.addSale(tid, pid);
+		return this.store.addSale(tid, pid, price);
 	}
 
 	/**

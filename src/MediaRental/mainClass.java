@@ -127,11 +127,13 @@ public class mainClass
                 name = in.nextLine();
                 System.out.println("Standard Rental Charge: ");
                 double standardRentalCharge = in.nextDouble();
+				in.nextLine();
                 System.out.println("StandardRentalLength: ");
                 int standardRentalLength = in.nextInt();
 				in.nextLine();
                 System.out.println("Daily overdue charge: ");
                 double dailyOverdueCharge = in.nextDouble();
+				in.nextLine();
                 b = new StoreController().createRentalPricingStrategy(standardRentalCharge, standardRentalLength, dailyOverdueCharge, name);
                 System.out.println("Operation success boolean is " + b);
                 break;
@@ -159,7 +161,8 @@ public class mainClass
 	private static void get(Scanner in){
 		System.out.println("<t|c>\n" +
 				"t gets a transaction\n" +
-				"c gets a customer's rental history");
+				"c gets a customer's rental history\n" +
+				"f gets a customer's frequent rental points");
 	    String input = in.nextLine();
         switch (input.charAt(0))
         {
@@ -188,6 +191,15 @@ public class mainClass
 				        System.out.println(p);
 			        }
 		        }
+		        break;
+            case 'f':
+                System.out.println("Getting frequent customer points");
+                System.out.println("Customer ID: ");
+                cid = in.nextInt();
+	            in.nextLine();
+                int f = new StoreController().getFrequentCustomerPoints(cid);
+                System.out.println(f);
+                break;
         }
 	}
 	
@@ -237,6 +249,10 @@ public class mainClass
 
 	private static void add(Scanner in)
 	{
+	    System.out.println("<p|r|s>\n\n" +
+                "p adds a product\n" +
+                "r adds a rental\n" +
+                "s adds a sale\n");
 		String input = in.nextLine();
 		switch (input.charAt(0))
 		{
@@ -275,10 +291,13 @@ public class mainClass
                 System.out.println("Product ID: ");
                 pid = in.nextInt();
 				in.nextLine();
-                System.out.println("Transaction ID: ");
+				System.out.println("Transaction ID: ");
                 tid = in.nextInt();
 				in.nextLine();
-                b = new StoreController().addSale(tid, pid);
+                System.out.println("Price: ");
+                double price = in.nextDouble();
+				in.nextLine();
+                b = new StoreController().addSale(tid, pid, price);
                 System.out.println("Operation success boolean is " + b);
 		}
 	}
@@ -291,6 +310,8 @@ public class mainClass
 
 	private static void index(Scanner in)
 	{
+		System.out.println("<p>\n" +
+				"p finds a product\n");
 		String input = in.nextLine();
 		switch (input.charAt(0))
 		{

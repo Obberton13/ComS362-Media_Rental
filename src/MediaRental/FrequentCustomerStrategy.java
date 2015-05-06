@@ -37,5 +37,9 @@ public class FrequentCustomerStrategy {
 	    return name;
 	}
 	
+	public int getPoints(int days){
+	    return fixedPoints + (pointsPerDay * days);
+	}
+	
 
 }
