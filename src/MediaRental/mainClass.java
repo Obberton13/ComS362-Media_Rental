@@ -171,6 +171,14 @@ public class mainClass
                 String s = new StoreController().getTransactionStatement(tid);
                 System.out.println(s);
                 break;
+            case 'f':
+                System.out.println("Get frequent customer points");
+                System.out.println("Customer ID: ");
+                int cid = in.nextInt();
+                
+                int f = new StoreController().getFrequentCustomerPoints(cid);
+                System.out.println(f);
+                break;
         }
 	}
 	

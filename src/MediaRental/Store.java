@@ -13,6 +13,16 @@ public class Store
 	public Store()
 	{
 	}
+	
+	public int getFrequentCustomerPoints(int cid){
+	    Customer customer = db.getCustomer(cid);
+	    if (customer == null){
+	        return 0;
+	    }
+	    else {
+	        return customer.getFrequentCustomerPoints();
+	    }
+	}
 
 	public boolean addCustomer(String name, String address) {
         Customer customer = new Customer(name, address);

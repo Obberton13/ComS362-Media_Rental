@@ -20,6 +20,10 @@ public class StoreController
 		return this.store.setRentalPricingStrategy(strategyName, productID);
 	}
 	
+	public int getFrequentCustomerPoints(int cid){
+	    return this.store.getFrequentCustomerPoints(cid);
+	}
+	
 	public String getTransactionStatement(int tid){
         return this.store.getTransactionStatement(tid);
     }
