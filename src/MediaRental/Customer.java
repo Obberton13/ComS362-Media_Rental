@@ -69,14 +69,30 @@ public class Customer
     {
         this.transactions = transactions;
     }
-    
-    public int getFrequentCustomerPoints(){
+
+    public int getFrequentCustomerPoints()
+    {
         int points = 0;
-        for (int i=0; i<this.transactions.size(); i++){
+        for (int i = 0; i < this.transactions.size(); i++)
+        {
             Transaction transaction = this.transactions.get(i);
             points += transaction.getFrequentCustomerPoints();
         }
         return points;
+    }
+
+    public ArrayList<Product> getRentalHistory()
+    {
+        ArrayList<Product> allProducts = new ArrayList<Product>();
+        for (Transaction t : transactions)
+        {
+            ArrayList<Rental> rentals = t.getRentals();
+            for (Rental r : rentals)
+            {
+                allProducts.add(r.getProduct());
+            }
+        }
+        return allProducts;
     }
 
     @Override
