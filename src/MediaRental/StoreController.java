@@ -135,13 +135,19 @@ public class StoreController
         return this.store.returnProduct(pid);
     }
 
-    public boolean updateProductTitle(int pid, String newTitle) {
+    public boolean updateProductTitle(int pid, String newTitle)
+    {
         return this.store.updateProductTitle(pid, newTitle);
     }
 
     public boolean updateCustomerName(int cid, String newName)
     {
         return this.store.updateCustomerName(cid, newName);
+    }
+
+    public String getCustomerContactInfo(int customerID)
+    {
+        return this.store.getCustomerContactInfo(customerID);
     }
 }
 

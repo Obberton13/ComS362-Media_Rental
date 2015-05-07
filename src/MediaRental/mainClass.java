@@ -167,9 +167,10 @@ public class mainClass
 
     private static void get(Scanner in)
     {
-        System.out.println("<t|c>\n" +
+        System.out.println("<t|c|r|f>\n" +
                 "t gets a transaction\n" +
-                "c gets a customer's rental history\n" +
+                "c gets a customer's contact information\n" +
+                "r gets a customer's rental history\n" +
                 "f gets a customer's frequent rental points");
         String input = in.nextLine();
         if (input.isEmpty())
@@ -186,7 +187,7 @@ public class mainClass
                 String s = new StoreController().getTransactionStatement(tid);
                 System.out.println(s);
                 break;
-            case 'c':
+            case 'r':
                 System.out.println("Getting Customer Rental History");
                 System.out.println("Customer ID: ");
                 int cid = in.nextInt();
@@ -210,6 +211,14 @@ public class mainClass
                 in.nextLine();
                 int f = new StoreController().getFrequentCustomerPoints(cid);
                 System.out.println(f);
+                break;
+            case 'c':
+                System.out.println("Get customer contact info");
+                System.out.println("Customer ID: ");
+                int customerid = in.nextInt();
+                
+                String info = new StoreController().getCustomerContactInfo(customerid);
+                System.out.println(info);
                 break;
         }
     }

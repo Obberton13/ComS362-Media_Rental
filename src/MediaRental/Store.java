@@ -249,7 +249,10 @@ public class Store
     public boolean updateProductTitle(int pid, String newTitle)
     {
         Product p = db.getProduct(pid);
-        if(p==null) return false;
+        if (p == null)
+        {
+            return false;
+        }
         p.setTitle(newTitle);
         return db.putProduct(p, 0);
     }
@@ -257,9 +260,21 @@ public class Store
     public boolean updateCustomerName(int cid, String newName)
     {
         Customer c = db.getCustomer(cid);
-        if(c==null) return false;
+        if (c == null)
+        {
+            return false;
+        }
         c.setName(newName);
-        return db.addCustomer(c)!=0;
+        return db.addCustomer(c) != 0;
     }
 
+    public String getCustomerContactInfo(int customerID)
+    {
+        Customer c = db.getCustomer(customerID);
+        if (c == null)
+        {
+            return "customer does not exist";
+        }
+        return c.contactInfo();
+    }
 }
