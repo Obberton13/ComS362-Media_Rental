@@ -547,10 +547,8 @@ public class DatabaseSupport {
                 }
                 return 0;
             }
-            String sql = "UPDATE Customer c SET (c.name, c.address) VALUES('" +
-                    customer.getName() + "','" +
-                    customer.getAddress() + "') " +
-                    "WHERE c.id = " + customer.getId();
+            String sql = "UPDATE Customer c SET c.name = '" + customer.getName() + "', c.address = '" + customer.getAddress() +
+                    "' WHERE c.id = " + customer.getId();
             stmt = conn.createStatement();
             return stmt.executeUpdate(sql);
         } catch (SQLException E) {
