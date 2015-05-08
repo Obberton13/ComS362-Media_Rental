@@ -7,27 +7,22 @@ import java.util.regex.Pattern;
 /**
  * Created by Obberton13 on 2/20/2015.
  */
-public class mainClass
-{
+public class mainClass {
     private static Pattern isDate = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}$");
 
-    public static void main(String args[])
-    {
+    public static void main(String args[]) {
         //this is the main loop for the program.
 //	    DatabaseSupport db = new DatabaseSupport();
 //	    db.createTables();
         Scanner sc = new Scanner(System.in);
-        while (sc.hasNext())
-        {
-            baseCommands();
+        baseCommands();
+        while (sc.hasNext()) {
             String in = sc.nextLine().toLowerCase();
-            if (in.isEmpty())
-            {
+            if (in.isEmpty()) {
                 continue;
             }
             char c = in.charAt(0);
-            switch (c)
-            {
+            switch (c) {
                 case 'q':
                     return;
                 case 'a':
@@ -49,13 +44,11 @@ public class mainClass
                     set(sc);
                     break;
                 case 'c':
-                    if (in.length() < 2)
-                    {
+                    if (in.length() < 2) {
                         System.out.println("Please distinguish between co(mmands) and cr(eate)");
                         break;
                     }
-                    switch (in.charAt(1))
-                    {
+                    switch (in.charAt(1)) {
                         case 'r':
                             create(sc);
                             break;
@@ -70,16 +63,15 @@ public class mainClass
                     break;
                 default:
                     System.out.println("Invalid command: " + in);
-                    baseCommands();
                     break;
             }
+            baseCommands();
         }
         System.out.println("G'bye!");
         sc.close();
     }
 
-    private static void create(Scanner in)
-    {
+    private static void create(Scanner in) {
         System.out.println("<c|p|t|q>\n\n" +
                 "c adds a customer\n" +
                 "p adds a product\n" +
@@ -88,8 +80,7 @@ public class mainClass
                 "f adds a frequentRenterStrategy\n" +
                 "q returns to the previous menu");
         String input = in.nextLine();
-        if (input.isEmpty())
-        {
+        if (input.isEmpty()) {
             return;
         }
         switch (input.charAt(0))//creates a customer
@@ -165,20 +156,17 @@ public class mainClass
         }
     }
 
-    private static void get(Scanner in)
-    {
+    private static void get(Scanner in) {
         System.out.println("<t|c|r|f>\n" +
                 "t gets a transaction\n" +
                 "c gets a customer's contact information\n" +
                 "r gets a customer's rental history\n" +
                 "f gets a customer's frequent rental points");
         String input = in.nextLine();
-        if (input.isEmpty())
-        {
+        if (input.isEmpty()) {
             return;
         }
-        switch (input.charAt(0))
-        {
+        switch (input.charAt(0)) {
             case 't':
                 System.out.println("Getting transaction statement");
                 System.out.println("Transaction ID: ");
@@ -193,13 +181,10 @@ public class mainClass
                 int cid = in.nextInt();
                 in.nextLine();
                 ArrayList<Product> rentedProducts = new StoreController().getCustomerRentalHistory(cid);
-                if (rentedProducts == null)
-                {
+                if (rentedProducts == null) {
                     System.out.println("A customer with id " + cid + " does not exist.");
-                } else
-                {
-                    for (Product p : rentedProducts)
-                    {
+                } else {
+                    for (Product p : rentedProducts) {
                         System.out.println(p);
                     }
                 }
@@ -216,22 +201,22 @@ public class mainClass
                 System.out.println("Get customer contact info");
                 System.out.println("Customer ID: ");
                 int customerid = in.nextInt();
-                
+
                 String info = new StoreController().getCustomerContactInfo(customerid);
                 System.out.println(info);
                 break;
         }
     }
 
-    private static void set(Scanner in)
-    {
+    private static void set(Scanner in) {
+        System.out.println("<f|r>\n" +
+                "f sets a frequent customer strategy on a product\n" +
+                "r sets a rental pricing strategy on a product");
         String input = in.nextLine();
-        if (input.isEmpty())
-        {
+        if (input.isEmpty()) {
             return;
         }
-        switch (input.charAt(0))
-        {
+        switch (input.charAt(0)) {
             case 'f':
                 System.out.println("Set frequent customer strategy on product");
                 System.out.println("Product ID: ");
@@ -257,18 +242,15 @@ public class mainClass
         }
     }
 
-    private static void other(Scanner in)
-    {
+    private static void other(Scanner in) {
         System.out.println("<p|r>\n" +
                 "p pays for a transaction\n" +
                 "r returns a product to the store");
         String input = in.nextLine();
-        if (input.isEmpty())
-        {
+        if (input.isEmpty()) {
             return;
         }
-        switch (input.charAt(0))
-        {
+        switch (input.charAt(0)) {
             case 'p':
                 System.out.println("Paying for transaction");
                 System.out.println("Transaction ID: ");
@@ -287,19 +269,16 @@ public class mainClass
         }
     }
 
-    private static void add(Scanner in)
-    {
+    private static void add(Scanner in) {
         System.out.println("<p|r|s>\n\n" +
                 "p adds a product\n" +
                 "r adds a rental\n" +
                 "s adds a sale\n");
         String input = in.nextLine();
-        if (input.isEmpty())
-        {
+        if (input.isEmpty()) {
             return;
         }
-        switch (input.charAt(0))
-        {
+        switch (input.charAt(0)) {
             case 'p':
                 System.out.println("Adding a product to the store");
                 System.out.println("Product Catalog ID: ");
@@ -346,15 +325,13 @@ public class mainClass
         }
     }
 
-    private static void edit(Scanner in)
-    {
+    private static void edit(Scanner in) {
         System.out.println("<p|c>\n" +
                 "p updates the title of a product\n" +
                 "c updates the name of a customer");
         String input = in.nextLine();
-        if(input.isEmpty()) return;
-        switch(input.charAt(0))
-        {
+        if (input.isEmpty()) return;
+        switch (input.charAt(0)) {
             case 'c':
                 System.out.println("Updating name of a customer.");
                 System.out.println("Please enter the ID of the customer you would like to update");
@@ -367,10 +344,10 @@ public class mainClass
                 break;
             case 'p':
                 System.out.println("Updating name of a customer.");
-                System.out.println("Please enter the ID of the customer you would like to update");
+                System.out.println("Please enter the ID of the product you would like to update");
                 int pid = in.nextInt();
                 in.nextLine();
-                System.out.println("Please enter the new name of the customer");
+                System.out.println("Please enter the new title of the product");
                 String title = in.nextLine();
                 b = new StoreController().updateProductTitle(pid, title);
                 System.out.println("Operation success boolean is " + b);
@@ -379,17 +356,14 @@ public class mainClass
         }
     }
 
-    private static void index(Scanner in)
-    {
+    private static void index(Scanner in) {
         System.out.println("<p>\n" +
                 "p finds a product\n");
         String input = in.nextLine();
-        if (input.isEmpty())
-        {
+        if (input.isEmpty()) {
             return;
         }
-        switch (input.charAt(0))
-        {
+        switch (input.charAt(0)) {
             case 'p':
                 System.out.println("Indexing Products: \n");
                 System.out.println("Title (Leave blank to get all): ");
@@ -397,14 +371,12 @@ public class mainClass
                 System.out.println("Genre (Leave blank to get all): ");
                 String genre = in.nextLine();
                 ArrayList<Product> products = new StoreController().findProduct(title, genre);
-                if (products.isEmpty())
-                {
+                if (products.isEmpty()) {
                     System.out.println("Found no products.");
                     return;
                 }
                 System.out.println("Found products: ");
-                for (Product p : new StoreController().findProduct(title, genre))
-                {
+                for (Product p : new StoreController().findProduct(title, genre)) {
                     System.out.println(p);
                 }
                 break;
@@ -417,17 +389,14 @@ public class mainClass
         }
     }
 
-    private static void delete(Scanner in)
-    {
+    private static void delete(Scanner in) {
         System.out.println("<c>\n" +
                 "c deletes a customer");
         String input = in.nextLine();
-        if (input.isEmpty())
-        {
+        if (input.isEmpty()) {
             return;
         }
-        switch (input.charAt(0))
-        {
+        switch (input.charAt(0)) {
             case 'c':
                 System.out.println("Removing customer");
                 System.out.println("Customer ID: ");
@@ -438,10 +407,9 @@ public class mainClass
         }
     }
 
-    private static void baseCommands()
-    {
+    private static void baseCommands() {
         System.out.println("Commands:");
-        System.out.println("<cr|a|e|i|d|o|q>\n\n" +
+        System.out.println("<cr|a|e|i|d|o|g|q>\n\n" +
                 "cr - create\n" +
                 "a - add\n" +
                 "e - edit\n" +
@@ -449,6 +417,7 @@ public class mainClass
                 "d - delete\n" +
                 "o - other\n" +
                 "s - set\n" +
+                "g - get\n" +
                 "q returns to the previous menu");
     }
 }

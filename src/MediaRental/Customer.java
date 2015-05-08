@@ -5,8 +5,7 @@ import java.util.ArrayList;
 /**
  * Created by Obberton13 on 2/16/2015.
  */
-public class Customer
-{
+public class Customer {
 
     protected int id;
     protected String name;
@@ -14,8 +13,7 @@ public class Customer
     protected ArrayList<Transaction> transactions;
 
 
-    public Customer(String name, String address)
-    {
+    public Customer(String name, String address) {
         id = 0;
         this.name = name;
         this.address = address;
@@ -23,72 +21,58 @@ public class Customer
     }
 
 
-    public Customer(String name, String address, int id)
-    {
+    public Customer(String name, String address, int id) {
         this.id = id;
         this.name = name;
         this.address = address;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getAddress()
-    {
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address)
-    {
+    public void setAddress(String address) {
         this.address = address;
     }
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
-    public void setId(int id)
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public ArrayList<Transaction> getTransactions()
-    {
+    public ArrayList<Transaction> getTransactions() {
         return transactions;
     }
 
-    public void setTransactions(ArrayList<Transaction> transactions)
-    {
+    public void setTransactions(ArrayList<Transaction> transactions) {
         this.transactions = transactions;
     }
 
-    public int getFrequentCustomerPoints()
-    {
+    public int getFrequentCustomerPoints() {
         int points = 0;
-        for (int i = 0; i < this.transactions.size(); i++)
-        {
+        for (int i = 0; i < this.transactions.size(); i++) {
             Transaction transaction = this.transactions.get(i);
             points += transaction.getFrequentCustomerPoints();
         }
         return points;
     }
 
-    public ArrayList<Product> getRentalHistory()
-    {
+    public ArrayList<Product> getRentalHistory() {
         ArrayList<Product> allProducts = new ArrayList<Product>();
-        for (Transaction t : transactions)
-        {
+        for (Transaction t : transactions) {
             ArrayList<Rental> rentals = t.getRentals();
-            for (Rental r : rentals)
-            {
+            for (Rental r : rentals) {
                 allProducts.add(r.getProduct());
             }
         }
@@ -96,15 +80,13 @@ public class Customer
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "" + id + ", " + name + ", " + address;
     }
-    
-    public String contactInfo()
-    {
-    	return "name: " + name +
-    			"address: " + address;
+
+    public String contactInfo() {
+        return "name: " + name +
+                "address: " + address;
     }
-    
+
 }

@@ -3,8 +3,7 @@ package MediaRental;
 /**
  * Created by Obberton13 on 2/16/2015.
  */
-public class Product
-{
+public class Product {
     protected int id;
     protected String title;
     protected String type;
@@ -16,15 +15,13 @@ public class Product
     protected boolean available;
 
 
-    public Product(int catalogId, boolean available)
-    {
+    public Product(int catalogId, boolean available) {
         this.catalogId = catalogId;
         this.available = available;
     }
 
 
-    public Product(String title, String type, String genre, String description, boolean available)
-    {
+    public Product(String title, String type, String genre, String description, boolean available) {
         this.title = title;
         this.type = type;
         this.genre = genre;
@@ -33,8 +30,7 @@ public class Product
         this.available = available;
     }
 
-    public Product(String title, String type, String genre, String description, int catalogID, boolean available)
-    {
+    public Product(String title, String type, String genre, String description, int catalogID, boolean available) {
         this.title = title;
         this.type = type;
         this.genre = genre;
@@ -43,8 +39,7 @@ public class Product
         this.available = available;
     }
 
-    public Product(String title, String type, String genre, String description, int id, int catalogID, boolean available)
-    {
+    public Product(String title, String type, String genre, String description, int id, int catalogID, boolean available) {
         this.title = title;
         this.type = type;
         this.genre = genre;
@@ -53,8 +48,7 @@ public class Product
         this.available = available;
     }
 
-    public Product(String title, String type, String genre, String description, int id, int catalogID, FrequentCustomerStrategy f, RentalPricingStrategy r, boolean available)
-    {
+    public Product(String title, String type, String genre, String description, int id, int catalogID, FrequentCustomerStrategy f, RentalPricingStrategy r, boolean available) {
         this.title = title;
         this.type = type;
         this.genre = genre;
@@ -65,101 +59,82 @@ public class Product
         this.available = available;
     }
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
-    public void setId(int id)
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title)
-    {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getType()
-    {
+    public String getType() {
         return type;
     }
 
-    public double getPrice(int daysRented)
-    {
-        if (this.rs == null)
-        {
+    public double getPrice(int daysRented) {
+        if (this.rs == null) {
             return 0.0;
         }
         return this.rs.getRentalCharge(daysRented);
 
     }
 
-    public void setType(String type)
-    {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public boolean getAvailable()
-    {
+    public boolean getAvailable() {
         return this.available;
     }
 
-    public int getCatalogId()
-    {
+    public int getCatalogId() {
         return catalogId;
     }
 
-    public void setCatalogId(int id)
-    {
+    public void setCatalogId(int id) {
         catalogId = id;
     }
 
-    public void setGenre(String genre)
-    {
+    public void setGenre(String genre) {
         this.genre = genre;
     }
 
-    public String getGenre()
-    {
+    public String getGenre() {
         return genre;
     }
 
-    public void setCustomerStrategy(FrequentCustomerStrategy strategy)
-    {
+    public void setCustomerStrategy(FrequentCustomerStrategy strategy) {
         s = strategy;
     }
 
-    public FrequentCustomerStrategy getCustomerStrategy()
-    {
+    public FrequentCustomerStrategy getCustomerStrategy() {
         return s;
     }
 
-    public void setRentalPricingStrategy(RentalPricingStrategy strategy)
-    {
+    public void setRentalPricingStrategy(RentalPricingStrategy strategy) {
         rs = strategy;
     }
 
-    public RentalPricingStrategy getRentalPricingStrategy()
-    {
+    public RentalPricingStrategy getRentalPricingStrategy() {
         return rs;
     }
 
-    public boolean returnToStore()
-    {
+    public boolean returnToStore() {
         available = true;
         return true;
     }
 
 
     @Override
-    public String toString()
-    {
-        return "" + id + ", " + title + ", " + type + ", " + genre;
+    public String toString() {
+        return "" + id + ", " + title + ", " + genre;
     }
 }

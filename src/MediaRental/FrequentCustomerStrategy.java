@@ -1,45 +1,37 @@
 package MediaRental;
 
-public class FrequentCustomerStrategy
-{
+public class FrequentCustomerStrategy {
     private int fixedPoints = 0;
     private int pointsPerDay = 0;
     private String name = "";
 
-    public FrequentCustomerStrategy(int fPoints, int ppd, String name)
-    {
+    public FrequentCustomerStrategy(int fPoints, int ppd, String name) {
         fixedPoints = fPoints;
         pointsPerDay = ppd;
         this.name = name;
     }
 
-    public void setFixedPoints(int fPoints)
-    {
+    public void setFixedPoints(int fPoints) {
         fixedPoints = fPoints;
     }
 
-    public void setPointsPerDay(int ppd)
-    {
+    public void setPointsPerDay(int ppd) {
         fixedPoints = ppd;
     }
 
-    public int getFixedPoints()
-    {
+    public int getFixedPoints() {
         return fixedPoints;
     }
 
-    public int getPointsPerDay()
-    {
+    public int getPointsPerDay() {
         return pointsPerDay;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public int getPoints(int days)
-    {
+    public int getPoints(int days) {
         return fixedPoints + (pointsPerDay * days);
     }
 

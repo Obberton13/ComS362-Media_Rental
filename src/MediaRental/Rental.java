@@ -2,8 +2,7 @@ package MediaRental;
 
 import java.util.regex.Pattern;
 
-public class Rental
-{
+public class Rental {
 
     protected Product product;
     protected int id;
@@ -11,69 +10,57 @@ public class Rental
     protected String dueDate;
     protected int daysRented;
 
-    public Rental(Product product, String dueDate, int daysRented)
-    {
+    public Rental(Product product, String dueDate, int daysRented) {
         this.product = product;
         this.dueDate = dueDate;
         id = 0;
         this.daysRented = daysRented;
     }
 
-    public Rental(Product product, String dueDate, int id, int daysRented)
-    {
+    public Rental(Product product, String dueDate, int id, int daysRented) {
         this.product = product;
         this.dueDate = dueDate;
         this.id = id;
         this.daysRented = daysRented;
     }
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
-    public void setId(int id)
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public void setPrice(double p)
-    {
+    public void setPrice(double p) {
         price = p;
     }
 
-    public double getPrice()
-    {
+    public double getPrice() {
         return product.getPrice(this.daysRented);
     }
 
-    public int getDaysRented()
-    {
+    public int getDaysRented() {
         return this.daysRented;
     }
 
-    public void setDueDate(String len)
-    {
+    public void setDueDate(String len) {
         dueDate = len;
     }
 
-    public String getDueDate()
-    {
+    public String getDueDate() {
         return dueDate;
     }
 
-    public void setProduct(Product p)
-    {
+    public void setProduct(Product p) {
         product = p;
     }
 
-    public Product getProduct()
-    {
+    public Product getProduct() {
         return product;
     }
 
-    private boolean isDate(String date)
-    {
+    private boolean isDate(String date) {
         return Pattern.compile("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/").matcher(date).matches();
     }
 

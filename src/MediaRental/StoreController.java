@@ -6,28 +6,23 @@ import java.util.HashMap;
 /**
  * Created by Obberton13 on 2/16/2015.
  */
-public class StoreController
-{
+public class StoreController {
     private Store store = new Store();
     static DatabaseSupport db = new DatabaseSupport();
 
-    public boolean createRentalPricingStrategy(double standardRentalCharge, int standardRentalLength, double dailyOverdueCharge, String name)
-    {
+    public boolean createRentalPricingStrategy(double standardRentalCharge, int standardRentalLength, double dailyOverdueCharge, String name) {
         return this.store.createRentalPricingStrategy(standardRentalCharge, standardRentalLength, dailyOverdueCharge, name);
     }
 
-    public boolean setRentalPricingStrategy(String strategyName, int productID)
-    {
+    public boolean setRentalPricingStrategy(String strategyName, int productID) {
         return this.store.setRentalPricingStrategy(strategyName, productID);
     }
 
-    public int getFrequentCustomerPoints(int cid)
-    {
+    public int getFrequentCustomerPoints(int cid) {
         return this.store.getFrequentCustomerPoints(cid);
     }
 
-    public String getTransactionStatement(int tid)
-    {
+    public String getTransactionStatement(int tid) {
         return this.store.getTransactionStatement(tid);
     }
 
@@ -36,8 +31,7 @@ public class StoreController
      * @param address the address of the customer to add
      * @return true on success, false otherwise
      */
-    public boolean addCustomer(String name, String address)
-    {
+    public boolean addCustomer(String name, String address) {
         return this.store.addCustomer(name, address);
     }
 
@@ -45,8 +39,7 @@ public class StoreController
      * @param cid the ID of the customer to remove
      * @return true on success, false otherwise
      */
-    public boolean removeCustomer(int cid)
-    {
+    public boolean removeCustomer(int cid) {
         return this.store.removeCustomer(cid);
     }
 
@@ -55,8 +48,7 @@ public class StoreController
      * @param type the type of the product to create
      * @return true on success, false otherwise
      */
-    public boolean createProduct(String name, String type, String genre, String description)
-    {
+    public boolean createProduct(String name, String type, String genre, String description) {
         return this.store.createProduct(name, type, genre, description);
     }
 
@@ -65,8 +57,7 @@ public class StoreController
      * @param qty the amount of the product to add to the store
      * @return true on success, false otherwise
      */
-    public boolean addProduct(int pid, int qty)
-    {
+    public boolean addProduct(int pid, int qty) {
         return this.store.addProduct(pid, qty);
     }
 
@@ -74,8 +65,7 @@ public class StoreController
      * @param cid The ID of the customer who is doing the purchasing
      * @return true on success, false otherwise
      */
-    public boolean createTransaction(int cid)
-    {
+    public boolean createTransaction(int cid) {
         return this.store.createTransaction(cid);
     }
 
@@ -84,8 +74,7 @@ public class StoreController
      * @param tid The ID of the transaction to be added to
      * @return true on success, false otherwise
      */
-    public boolean addSale(int tid, int pid, double price)
-    {
+    public boolean addSale(int tid, int pid, double price) {
         return this.store.addSale(tid, pid, price);
     }
 
@@ -95,8 +84,7 @@ public class StoreController
      * @param dueDate the date the Rental will be due
      * @return true on success, false otherwise
      */
-    public boolean addRental(int tid, int pid, String dueDate, int daysRented)
-    {
+    public boolean addRental(int tid, int pid, String dueDate, int daysRented) {
         return this.store.addRental(tid, pid, dueDate, daysRented);
     }
 
@@ -105,48 +93,39 @@ public class StoreController
      * @param type  the type of the product you are looking for
      * @return a list of products found.
      */
-    public ArrayList<Product> findProduct(String title, String type)
-    {
+    public ArrayList<Product> findProduct(String title, String type) {
         return this.store.findProducts(title, type);
     }
 
-    public boolean payForTransaction(int tid)
-    {
+    public boolean payForTransaction(int tid) {
         return this.store.payForTransaction(tid);
     }
 
-    public boolean createFrequentCustomerStrategy(int fixedPoints, int pointsPerDay, String name)
-    {
+    public boolean createFrequentCustomerStrategy(int fixedPoints, int pointsPerDay, String name) {
         return this.store.createFrequentCustomerStrategy(fixedPoints, pointsPerDay, name);
     }
 
-    public boolean setFrequentCustomerStrategy(String strategyName, int productID)
-    {
+    public boolean setFrequentCustomerStrategy(String strategyName, int productID) {
         return this.store.setFrequentCustomerStrategy(strategyName, productID);
     }
 
-    public ArrayList<Product> getCustomerRentalHistory(int cid)
-    {
+    public ArrayList<Product> getCustomerRentalHistory(int cid) {
         return this.store.getCustomerRentalHistory(cid);
     }
 
-    public boolean returnProduct(int pid)
-    {
+    public boolean returnProduct(int pid) {
         return this.store.returnProduct(pid);
     }
 
-    public boolean updateProductTitle(int pid, String newTitle)
-    {
+    public boolean updateProductTitle(int pid, String newTitle) {
         return this.store.updateProductTitle(pid, newTitle);
     }
 
-    public boolean updateCustomerName(int cid, String newName)
-    {
+    public boolean updateCustomerName(int cid, String newName) {
         return this.store.updateCustomerName(cid, newName);
     }
 
-    public String getCustomerContactInfo(int customerID)
-    {
+    public String getCustomerContactInfo(int customerID) {
         return this.store.getCustomerContactInfo(customerID);
     }
 }

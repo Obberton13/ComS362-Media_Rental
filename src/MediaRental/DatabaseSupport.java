@@ -10,29 +10,23 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 
-public class DatabaseSupport
-{
+public class DatabaseSupport {
     public static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/movie_rental";
     public static final String USER = "root";
     public static final String PASSWORD = "pass";
     public static final String DB_DRIVER = "com.mysql.jdbc.Driver";
     private static Connection conn;
 
-    public DatabaseSupport()
-    {
-        try
-        {
+    public DatabaseSupport() {
+        try {
             Class.forName(DB_DRIVER);
-        } catch (Exception E)
-        {
+        } catch (Exception E) {
             System.err.println("Unable to load driver.");
             E.printStackTrace();
         }
-        try
-        {
+        try {
             conn = DriverManager.getConnection(DB_URL, USER, PASSWORD);
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -45,18 +39,16 @@ public class DatabaseSupport
      * @param strategy the FrequentCustomerStrategy object to add
      * @return true on success, false on failure.
      */
-    public boolean addFrequentCustomerStrategy(FrequentCustomerStrategy strategy)
-    {
+    public boolean addFrequentCustomerStrategy(FrequentCustomerStrategy strategy) {
         String statement = "INSERT INTO FrequentCustomerStrategy (name, fixedPoints, pointsPerDay) VALUES " +
                 "('" + strategy.getName() + "', '" + strategy.getFixedPoints() + "', '" + strategy.getPointsPerDay() + "');";
-        try
-        {
+        try {
+            System.out.println("Adding a Frequent Customer Strategy");
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
             stmt1.executeUpdate();
             return true;
 
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -70,20 +62,19 @@ public class DatabaseSupport
      * @param name the name of the FrequentCustomerStrategy to get
      * @return the FrequentcustomerStrategy object with the given name
      */
-    public FrequentCustomerStrategy getFrequentCustomerStrategy(String name)
-    {
+    public FrequentCustomerStrategy getFrequentCustomerStrategy(String name) {
         String statement = "Select name, fixedPoints, pointsPerDay from FrequentCustomerStrategy where name = '" + name + "';";
-        try
-        {
+        try {
+            System.out.println("Getting fcs");
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
+            if (!rs1.isBeforeFirst()) return null;
             rs1.next();
             int fixedPoints = rs1.getInt("fixedPoints");
             int ppd = rs1.getInt("pointsPerDay");
             FrequentCustomerStrategy strategy = new FrequentCustomerStrategy(fixedPoints, ppd, name);
             return strategy;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -97,18 +88,16 @@ public class DatabaseSupport
      * @param pricing the RentalPricingStrategy object to add to the database
      * @return true on success, false otherwise
      */
-    public boolean addRentalPricingStrategy(RentalPricingStrategy pricing)
-    {
+    public boolean addRentalPricingStrategy(RentalPricingStrategy pricing) {
         String statement = "INSERT INTO RentalPricingStrategy (name, standardRentalLength, dailyOverdueCharge, standardRentalCharge) VALUES " +
                 "('" + pricing.getName() + "', '" + pricing.getStandardRentalLength() + "', '" + pricing.getDailyOverdueCharge() + "', '" + pricing.getStandardRentalCharge() + "');";
-        try
-        {
+        try {
+            System.out.println("Adding rps");
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
             stmt1.executeUpdate();
             return true;
 
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -122,20 +111,21 @@ public class DatabaseSupport
      * @param name the name of the rental pricing strategy to get
      * @return the RentalPricingStrategy object with the given name
      */
-    public RentalPricingStrategy getRentalPricingStrategy(String name)
-    {
+    public RentalPricingStrategy getRentalPricingStrategy(String name) {
         String statement = "SELECT name, standardRentalLength, dailyOverdueCharge, standardRentalCharge FROM RentalPricingStrategy WHERE name = '" + name + "';";
-        try
-        {
+        try {
+            System.out.println("Getting rps");
             Statement stmt = conn.createStatement();
             ResultSet rs1 = stmt.executeQuery(statement);
+            if (!rs1.isBeforeFirst()) {
+                return null;
+            }
             rs1.next();
             double stdCharge = rs1.getDouble("standardRentalCharge");
             int rentalLength = rs1.getInt("standardRentalLength");
             double dailyCharge = rs1.getDouble("dailyOverdueCharge");
             return new RentalPricingStrategy(stdCharge, rentalLength, dailyCharge, name);
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -148,29 +138,25 @@ public class DatabaseSupport
      * @param genre - can be null
      * @return customers that have a name or address similar to the passed in values
      */
-    public ArrayList<Product> findProducts(String title, String genre)
-    {
+    public ArrayList<Product> findProducts(String title, String genre) {
+        System.out.println("Finding Products");
         String statement = "Select id, title, genre, description from ProductCatalog\n";
         String whereClause = "";
         ArrayList<Product> products = new ArrayList<Product>();
-        if (title != null && !title.isEmpty())
-        {
+        if (title != null && !title.isEmpty()) {
             whereClause += "where title like '%" + title + "%'\n";
-            if (genre != null && !genre.isEmpty())
-            {
+            if (genre != null && !genre.isEmpty()) {
                 whereClause += "and genre like '%" + genre + "%'\n";
             }
-        } else if (genre != null && !genre.isEmpty())
-        {
+        } else if (genre != null && !genre.isEmpty()) {
             whereClause += "where genre like '%" + genre + "%'\n";
         }
         statement += whereClause + ";";
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
-            while (rs1.next())
-            {
+            if (!rs1.isBeforeFirst()) return null;
+            while (rs1.next()) {
                 System.out.println("Found product...");
                 int id = rs1.getInt("id");
                 String t = rs1.getString("title");
@@ -181,8 +167,7 @@ public class DatabaseSupport
                 prod.setCatalogId(id);
                 products.add(prod);
             }
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -196,29 +181,25 @@ public class DatabaseSupport
      * @param address - can be null
      * @return customers that have a name or address similar to the passed in values
      */
-    public ArrayList<Customer> findCustomers(String name, String address)
-    {
+    public ArrayList<Customer> findCustomers(String name, String address) {
+        System.out.println("Finding Customers");
         String statement = "Select id, name, address from Customer";
         String whereClause = "";
         ArrayList<Customer> customers = new ArrayList<Customer>();
-        if (name != null && !name.isEmpty())
-        {
+        if (name != null && !name.isEmpty()) {
             whereClause += "where name like %'" + name + "%'";
-            if (address != null && !address.isEmpty())
-            {
+            if (address != null && !address.isEmpty()) {
                 whereClause += "and address like %'" + address + "%'";
             }
-        } else if (address != null && !address.isEmpty())
-        {
+        } else if (address != null && !address.isEmpty()) {
             whereClause += "where address like %'" + address + "%'";
         }
         statement += whereClause + ";";
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
-            while (rs1.next())
-            {
+            if (!rs1.isBeforeFirst()) return null;
+            while (rs1.next()) {
                 int id = rs1.getInt("id");
                 String n = rs1.getString("name");
                 String a = rs1.getString("address");
@@ -226,8 +207,7 @@ public class DatabaseSupport
                 cust.setId(id);
                 customers.add(cust);
             }
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -242,29 +222,26 @@ public class DatabaseSupport
      * @param id the ID of the transaction to get from the database
      * @return The Transaction object with the given ID
      */
-    public Transaction getTransaction(int id)
-    {
-        try
-        {
+    public Transaction getTransaction(int id) {
+        try {
+            System.out.println("Getting transaction");
             String statement = "Select customerID from Transaction where id = " + id + ";";
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
+            if (!rs1.isBeforeFirst()) return null;
             rs1.next();
             int customerID = rs1.getInt("customerID");
             Customer customer = getCustomer(customerID);
-            if (customer == null)
-            {
+            if (customer == null) {
                 return null;
             }
             Transaction transaction = getTransactionWithoutCustomer(id);
-            if (transaction == null)
-            {
+            if (transaction == null) {
                 return null;
             }
             transaction.setCustomer(customer);
             return transaction;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -279,39 +256,36 @@ public class DatabaseSupport
      * @param id the ID of the transaction to get
      * @return the Transaction object with the given ID
      */
-    private Transaction getTransactionWithoutCustomer(int id)
-    {
+    private Transaction getTransactionWithoutCustomer(int id) {
+        System.out.println("getting transaction (no customer) + " + id);
         String statement = "Select id, customerID, statement, paid from Transaction where id = " + id + ";";
         ArrayList<Rental> rentals = new ArrayList<Rental>();
         ArrayList<Sale> sales = new ArrayList<Sale>();
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
+            if (!rs1.isBeforeFirst()) return null;
             rs1.next();
             int customerID = rs1.getInt("customerID");
             String transactionStatement = rs1.getString("statement");
             Boolean paid = rs1.getBoolean("paid");
             String statement2 = "Select id from Rental where transactionID = " + id + ";";
             ResultSet rs2 = stmt1.executeQuery(statement2);
-            while (rs2.next())
-            {
+            while (rs2.next()) {
                 int rentalID = rs2.getInt("id");
                 Rental rental = getRental(rentalID);
                 rentals.add(rental);
             }
             String statement3 = "Select id from Sale where transactionID = " + id + ";";
             ResultSet rs3 = stmt1.executeQuery(statement3);
-            while (rs3.next())
-            {
+            while (rs3.next()) {
                 int saleID = rs3.getInt("id");
                 Sale sale = getSale(saleID);
                 sales.add(sale);
             }
 
             return new Transaction(rentals, sales, paid, transactionStatement, id);
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -325,25 +299,23 @@ public class DatabaseSupport
      * @param id The ID of the sale to get
      * @return The Sale object with the given ID
      */
-    private Sale getSale(int id)
-    {
+    private Sale getSale(int id) {
+        System.out.println("Getting sale");
         String statement = "Select id, productID, price, transactionID from Sale where id = " + id + ";";
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
+            if (!rs1.isBeforeFirst()) return null;
             rs1.next();
             int productID = rs1.getInt("productID");
             double price = rs1.getFloat("price");
             int transactionID = rs1.getInt("transactionID");
             Product product = getProduct(productID);
-            if (product == null)
-            {
+            if (product == null) {
                 return null;
             }
             return new Sale(product, price, id);
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -357,13 +329,13 @@ public class DatabaseSupport
      * @param id the ID of the rental to get
      * @return the Rental object with the given ID
      */
-    private Rental getRental(int id)
-    {
+    private Rental getRental(int id) {
+        System.out.println("Getting Rental");
         String statement = "Select id, productID, daysRented, dueDate from Rental where id = " + id + ";";
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
+            if (!rs1.isBeforeFirst()) return null;
             rs1.next();
             int productID = rs1.getInt("productID");
             Date dueDate = rs1.getDate("dueDate");
@@ -371,8 +343,7 @@ public class DatabaseSupport
             String dueDateString = dueDate.toString();
             Product product = getProduct(productID);
             return new Rental(product, dueDateString, id, daysRented);
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -386,18 +357,19 @@ public class DatabaseSupport
      * @param id the ID of the product to get
      * @return The product object with the given ID
      */
-    public Product getProduct(int id)
-    {
+    public Product getProduct(int id) {
+        System.out.println("Getting Product");
         String statement = "Select id, available, productCatalogID from Product where id = " + id + ";";
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
+            if (!rs1.isBeforeFirst()) return null;
             rs1.next();
             int catalogID = rs1.getInt("productCatalogID");
             boolean available = rs1.getBoolean("available");
             String statement2 = "Select id, title, description, genre, rentalStrategyName, customerStrategyName from ProductCatalog where id = " + catalogID + ";";
             ResultSet rs2 = stmt1.executeQuery(statement2);
+            if (!rs2.isBeforeFirst()) return null;
             rs2.next();
             String title = rs2.getString("title");
             String description = rs2.getString("description");
@@ -406,17 +378,14 @@ public class DatabaseSupport
             String customerStrategyName = rs2.getString("customerStrategyName");
             FrequentCustomerStrategy cs = null;
             RentalPricingStrategy rs = null;
-            if (!rentalPricingStrategyName.equals(""))
-            {
+            if (!rentalPricingStrategyName.equals("")) {
                 rs = getRentalPricingStrategy(rentalPricingStrategyName);
             }
-            if (!customerStrategyName.equals(""))
-            {
+            if (!customerStrategyName.equals("")) {
                 cs = getFrequentCustomerStrategy(customerStrategyName);
             }
             return new Product(title, "", genre, description, id, catalogID, cs, rs, available);
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -430,24 +399,22 @@ public class DatabaseSupport
      * @param id The ID of the customer to get
      * @return a customer object
      */
-    public Customer getCustomer(int id)
-    {
+    public Customer getCustomer(int id) {
+        System.out.println("Getting customer");
         String statement = "Select name, address from Customer where id = " + id + ";";
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             ResultSet rs1 = stmt1.executeQuery(statement);
-            if (!rs1.next())
-            {
+            if (!rs1.isBeforeFirst()) {
                 return null;
             }
+            rs1.next();
             String name = rs1.getString(1);
             String address = rs1.getString(2);
             Customer customer = new Customer(name, address, id);
             setTransactionsOnCustomer(customer);
             return customer;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -455,20 +422,19 @@ public class DatabaseSupport
         }
     }
 
-    private boolean setTransactionsOnCustomer(Customer customer)
-    {
-        try
-        {
+    private boolean setTransactionsOnCustomer(Customer customer) {
+        try {
+            System.out.println("Setting customer transactions");
             ArrayList<Transaction> transactions = new ArrayList<Transaction>();
             Statement stmt1 = conn.createStatement();
             String statement = "Select id from Transaction where customerID = " + customer.getId() + ";";
             ResultSet rs2 = stmt1.executeQuery(statement);
-            while (rs2.next())
-            {
+            if (!rs2.isBeforeFirst()) return false;
+            while (rs2.next()) {
                 int transactionID = rs2.getInt("id");
                 Transaction transaction = getTransactionWithoutCustomer(transactionID);
-                if (transaction == null)
-                {
+                if (transaction == null) {
+                    System.out.println("Transaction is null + " + transactionID);
                     return false;
                 }
                 transaction.setCustomer(customer);
@@ -476,8 +442,7 @@ public class DatabaseSupport
             }
             customer.setTransactions(transactions);
             return true;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -489,16 +454,14 @@ public class DatabaseSupport
      * @param tid the ID of the transaction whose rentals are to be removed
      * @return true on success, false otherwise
      */
-    private boolean removeRentals(int tid)
-    {
+    private boolean removeRentals(int tid) {
+        System.out.println("Removing rentals");
         String statement = "delete from Rental where transactionID = " + tid + ";";
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             stmt1.execute(statement);
             return true;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -511,16 +474,14 @@ public class DatabaseSupport
      * @param tid The ID of the transaction whose sales we are removing
      * @return true on success, false otherwise
      */
-    private boolean removeSales(int tid)
-    {
+    private boolean removeSales(int tid) {
+        System.out.println("Removing Sales");
         String statement = "delete from Sale where transactionID = " + tid + ";";
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             stmt1.execute(statement);
             return true;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -534,16 +495,14 @@ public class DatabaseSupport
      *
      * @param id The ID of the customer to remove
      */
-    public boolean removeCustomer(int id)
-    {
+    public boolean removeCustomer(int id) {
+        System.out.println("Removing Customer");
         String statement = "delete from Customer where id = " + id + ";";
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             stmt1.execute(statement);
             return true;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -557,33 +516,29 @@ public class DatabaseSupport
      * @param customer object to add (id should not be set yet)
      * @return id of customer added
      */
-    public int addCustomer(Customer customer)
-    {
+    public int addCustomer(Customer customer) {
+        System.out.println("Adding Customer");
         String statement = "INSERT INTO Customer (Name, Address)" +
                 " VALUES ('" + customer.getName() + "', '" + customer.getAddress() + "');";
-        try
-        {
+        try {
             String test = "SELECT id " +
                     "FROM Customer c " +
                     "WHERE c.Name = '" + customer.getName() +
                     "' AND c.Address = '" + customer.getAddress() + "'";
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(test);
-            if (rs.next())
-            {
+            if (rs.isBeforeFirst()) {
                 rs.close();
                 stmt.close();
                 return 0;
             }
-            if (customer.getId() == 0)
-            {
+            if (customer.getId() == 0) {
                 rs.close();
                 stmt.close();
                 PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
                 stmt1.executeUpdate();
                 rs = stmt1.getGeneratedKeys();
-                if (rs.next())
-                {
+                if (rs.next()) {
                     int id = rs.getInt(1);
                     customer.setId(id);
                     rs.close();
@@ -598,8 +553,7 @@ public class DatabaseSupport
                     "WHERE c.id = " + customer.getId();
             stmt = conn.createStatement();
             return stmt.executeUpdate(sql);
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -613,10 +567,9 @@ public class DatabaseSupport
      * @param product - should have a title and a type but no id
      * @return new id of product
      */
-    private int addProductToCatalog(Product product)
-    {
-        if (product.getTitle() == null)
-        {
+    private int addProductToCatalog(Product product) {
+        System.out.println("Adding product to Catalog");
+        if (product.getTitle() == null) {
             return 0;
         }
         String statement;
@@ -624,37 +577,30 @@ public class DatabaseSupport
         String rentalStrategyName = "";
         FrequentCustomerStrategy strategy = product.getCustomerStrategy();
         RentalPricingStrategy rental_pricing_strategy = product.getRentalPricingStrategy();
-        if (strategy != null)
-        {
+        if (strategy != null) {
             strategyName = strategy.getName();
         }
-        if (rental_pricing_strategy != null)
-        {
+        if (rental_pricing_strategy != null) {
             rentalStrategyName = rental_pricing_strategy.getName();
         }
-        if (product.getCatalogId() > 0)
-        {
+        if (product.getCatalogId() > 0) {
             statement = "Update ProductCatalog set title = '" + product.getTitle() + "', genre = '" + product.getGenre() + "', customerStrategyName = '" + strategyName + "', rentalStrategyName = '" + rentalStrategyName + "' where id = " + product.getCatalogId() + ";";
-        } else
-        {
+        } else {
             statement = "INSERT INTO ProductCatalog (title, genre, customerStrategyName, rentalStrategyName)" +
                     " VALUES ('" + product.getTitle() + "', '" + product.getType() + "', '" + strategyName + "', '" + rentalStrategyName + "');";
         }
 
-        try
-        {
+        try {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
             stmt1.executeUpdate();
             ResultSet rs = stmt1.getGeneratedKeys();
-            if (rs.next())
-            {
+            if (rs.next()) {
                 int id = rs.getInt(1);
                 product.setCatalogId(id);
                 return id;
             }
 
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -669,33 +615,28 @@ public class DatabaseSupport
      * @param numberToAdd how many products you want to add
      * @return - id of the product from the product db
      */
-    public boolean putProduct(Product product, int numberToAdd)
-    {
+    public boolean putProduct(Product product, int numberToAdd) {
+        System.out.println("putting product");
         addProductToCatalog(product);
-        try
-        {
-            if (product.getId() > 0)
-            {
+        try {
+            if (product.getId() > 0) {
                 String statement = "UPDATE Product set available = " + product.getAvailable() + " where id =" + product.getId() + ";";
                 PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
                 stmt1.executeUpdate();
             }
-            for (int i = 0; i < numberToAdd; i++)
-            {
+            for (int i = 0; i < numberToAdd; i++) {
                 String statement = "INSERT INTO Product (productCatalogID, available) VALUES (" + product.getCatalogId() + ", " + product.getAvailable() + ");";
 
                 PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
                 stmt1.executeUpdate();
                 ResultSet rs = stmt1.getGeneratedKeys();
-                if (rs.next())
-                {
+                if (rs.next()) {
                     int id = rs.getInt(1);
                     product.id = id;
                 }
             }
             return true;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -704,23 +645,20 @@ public class DatabaseSupport
 
     }
 
-    private int addRentalToStore(Rental rental)
-    {
+    private int addRentalToStore(Rental rental) {
+        System.out.println("Adding rental to store");
         String statement = "INSERT INTO Rental (productID, daysRented, dueDate) VALUES (" + rental.getProduct().getId() +
                 ", " + rental.getDaysRented() + ", '" + rental.getDueDate() + "');";
-        try
-        {
+        try {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
             stmt1.executeUpdate();
             ResultSet rs = stmt1.getGeneratedKeys();
-            if (rs.next())
-            {
+            if (rs.next()) {
                 int id = rs.getInt(1);
                 return id;
             }
 
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -728,24 +666,21 @@ public class DatabaseSupport
         return 0;
     }
 
-    private int addSaleToStore(Sale sale)
-    {
+    private int addSaleToStore(Sale sale) {
+        System.out.println("adding sale to store");
         String statement = "INSERT INTO Sale (productID, price) VALUES (" + sale.getProduct().getId() +
                 ", " + sale.getPrice() + ");";
-        try
-        {
+        try {
             PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
             stmt1.executeUpdate();
             ResultSet rs = stmt1.getGeneratedKeys();
-            if (rs.next())
-            {
+            if (rs.next()) {
                 int id = rs.getInt(1);
                 sale.setId(id);
                 return id;
             }
 
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -759,12 +694,10 @@ public class DatabaseSupport
      * @param transaction the transaction to put in the database
      * @return id of transaction
      */
-    public int putTransaction(Transaction transaction)
-    {
-        try
-        {
-            if (transaction.getId() > 0)
-            {
+    public int putTransaction(Transaction transaction) {
+        System.out.println("putting transaction");
+        try {
+            if (transaction.getId() > 0) {
                 String statement = "UPDATE Transaction SET statement='" + transaction.getStatement() +
                         "',paid=" + transaction.getPaid() + " WHERE id=" + transaction.getId();
                 PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
@@ -772,35 +705,30 @@ public class DatabaseSupport
                 removeRentals(transaction.getId());
                 removeSales(transaction.getId());
                 ArrayList<Sale> sales = transaction.getSales();
-                for (int i = 0; i < sales.size(); i++)
-                {
+                for (int i = 0; i < sales.size(); i++) {
                     addSaleToStore(sales.get(i));
-                    if (!addSaleToTransaction(sales.get(i).getId(), transaction))
-                    {
+                    if (!addSaleToTransaction(sales.get(i).getId(), transaction)) {
                         return 0;
                     }
                 }
                 ArrayList<Rental> rentals = transaction.getRentals();
-                for (int i = 0; i < rentals.size(); i++)
-                {
+                for (int i = 0; i < rentals.size(); i++) {
                     int id = addRentalToStore(rentals.get(i));
                     rentals.get(i).setId(id);
-                    if (!addRentalToTransaction(rentals.get(i).getId(), rentals.get(i).getDueDate(), transaction))
-                    {
+                    if (!addRentalToTransaction(rentals.get(i).getId(), rentals.get(i).getDueDate(), transaction)) {
+                        System.out.println("Failed to add rental to transaction.");
                         return 0;
                     }
                 }
 
-            } else
-            {
+            } else {
                 System.out.println(transaction.getCustomer().getId());
                 String statement = "INSERT INTO Transaction (customerID, paid) " +
                         "VALUES (" + transaction.getCustomer().getId() + ", 0);";
                 PreparedStatement stmt1 = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
                 stmt1.executeUpdate();
                 ResultSet rs = stmt1.getGeneratedKeys();
-                if (rs.next())
-                {
+                if (rs.next()) {
                     int id = rs.getInt(1);
                     transaction.setId(id);
                     return id;
@@ -808,8 +736,7 @@ public class DatabaseSupport
             }
 
             return 1;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -824,17 +751,15 @@ public class DatabaseSupport
      * @param duedate     - format YYYY-MM-DD
      * @param transaction The transaction to be added to
      */
-    private boolean addRentalToTransaction(int rental_id, String duedate, Transaction transaction)
-    {
+    private boolean addRentalToTransaction(int rental_id, String duedate, Transaction transaction) {
+        System.out.println("Adding rental to transaction");
         String statement = "UPDATE Rental SET transactionID=" + transaction.getId() +
                 ", dueDate='" + duedate + "' WHERE id=" + rental_id;
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             stmt1.executeUpdate(statement);
             return true;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -844,16 +769,14 @@ public class DatabaseSupport
 
     //Are we sure that this should be in the DatabaseSupport?
     //I think this would be a part of Transaction
-    private boolean addSaleToTransaction(int sale_id, Transaction transaction)
-    {
+    private boolean addSaleToTransaction(int sale_id, Transaction transaction) {
+        System.out.println("Adding sale to transaction");
         String statement = "UPDATE Sale SET transactionID=" + transaction.getId() + " WHERE id=" + sale_id;
-        try
-        {
+        try {
             Statement stmt1 = conn.createStatement();
             stmt1.executeUpdate(statement);
             return true;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
@@ -866,8 +789,7 @@ public class DatabaseSupport
      *
      * @return boolean indicating success
      */
-    public boolean createTables()
-    {
+    public boolean createTables() {
         String statement = "CREATE TABLE Customer ( " +
                 "id INT NOT NULL AUTO_INCREMENT, " +
                 "Name VARCHAR(45) NULL, " +
@@ -930,8 +852,7 @@ public class DatabaseSupport
                 "pointsPerDay INT, " +
                 "PRIMARY KEY (name));";
 
-        try
-        {
+        try {
             Statement stmt = conn.createStatement();
             stmt.execute(statement);
             stmt.execute(statement2);
@@ -943,8 +864,7 @@ public class DatabaseSupport
             stmt.execute(statement8);
             stmt.close();
             return true;
-        } catch (SQLException E)
-        {
+        } catch (SQLException E) {
             System.out.println("SQLException: " + E.getMessage());
             System.out.println("SQLState: " + E.getSQLState());
             System.out.println("VendorError: " + E.getErrorCode());
